@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>{{ person.first_name }} {{ person.last_name }}</h1>
+<p>Genre: {{ person.gender }}</p>
+<p>Date de naissance: {{ person.birth_date or 'Inconnue' }}</p>
+
+<h3>Biographie courte</h3>
+<p>{{ person.short_bio or 'Aucune biographie disponible' }}</p>
+
+<a href="/person/{{ person.id }}/details" class="btn btn-primary">
+    Voir la biographie complète
+</a>
+
+<a href="/family_tree" class="btn btn-secondary">
+    Retour à l'arbre
+</a>
+{% endblock %}

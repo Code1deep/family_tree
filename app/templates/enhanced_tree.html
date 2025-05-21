@@ -1,0 +1,306 @@
+<!-- app/templates/enhanced_tree.html -->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>شجرة العائلة الحسنة</title>
+    <style>
+        /* Définition des variables CSS pour les couleurs des différents niveaux de génération */
+        :root {
+            --level-0: #e6f7ff;  /* Ancêtres */
+            --level-1: #e6ffe6;  /* Grands-parents */
+            --level-2: #fff2e6;  /* Parents */
+            --level-3: #f9e6ff;  /* Enfants */
+            --level-4: #ffe6f7;  /* Petits-enfants */
+            --level-5: #e0d4fd;
+            --level-6: #d1f5d3;
+            --level-7: #ffe0b3;
+            --level-8: #fcdada;
+            --level-9: #d0e7f9;
+
+            --connector-color: #3498db; /* Couleur des connecteurs entre parents/enfants */
+            --sibling-connector: #e74c3c; /* Couleur des connecteurs entre frères/soeurs */
+        }
+        /* Styles de base pour la page */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+        /* Conteneur principal de l'arbre */
+        .tree-container {
+            text-align: center;
+        }
+        /* Style pour chaque niveau de génération */
+        .generation {
+            display: flex; /* Disposition flexible pour aligner les éléments */
+            justify-content: center; /* Centrage horizontal */
+            margin-bottom: 30px; /* Espacement entre les générations */
+        }
+        /* Groupe de frères et soeurs */
+        .sibling-group {
+            display: flex;
+            position: relative;
+            margin: 0 15px;
+        }
+        /* Ligne de connexion entre frères et soeurs */
+        .sibling-group::before {
+            content: "";
+            position: absolute;
+            top: -20px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: var(--sibling-connector);
+            z-index: 1;
+        }
+        /* Carte représentant une personne */
+        .person-card {
+            margin: 10px;
+            padding: 15px;
+            border-radius: 8px;
+            min-width: 220px;
+            position: relative;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+        /* Classes pour les différents niveaux de génération */
+        .level-0 { background-color: var(--level-0); }
+        .level-1 { background-color: var(--level-1); }
+        .level-2 { background-color: var(--level-2); }
+        .level-3 { background-color: var(--level-3); }
+        .level-4 { background-color: var(--level-4); }
+        .level-5 { background-color: var(--level-5); }
+        .level-6 { background-color: var(--level-6); }
+        .level-7 { background-color: var(--level-7); }
+        .level-8 { background-color: var(--level-8); }
+        .level-9 { background-color: var(--level-9); }
+        /* Style par défaut pour les niveaux non définis */
+        [class^="level-"] {
+        background-color: #f0f0f0; /* Couleur par défaut pour niveaux non définis */
+        }
+        /* Effet au survol d'une carte */
+        .person-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        /* Connecteur vertical entre parents et enfants */
+        .vertical-connector {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            height: 20px;
+            width: 2px;
+            background-color: var(--connector-color);
+            transform: translateX(-50%);
+            z-index: 2;
+        }
+        /* Style pour le nom de la personne */
+        .person-name {
+            font-weight: bold;
+            font-size: 1.1em;
+            color: #2c3e50;
+        }
+        /* Style pour les détails de la personne */
+        .person-details {
+            font-size: 0.9em;
+            color: #555;
+            margin: 5px 0;
+        }
+        /* Style pour le lien "Voir plus" */
+        .view-more {
+            display: inline-block;
+            margin-top: 8px;
+            color: #3498db;
+            text-decoration: none;
+            font-size: 0.8em;
+        }
+        /* Style pour le label de génération */
+        .generation-label {
+            text-align: center;
+            margin: 10px 0;
+            font-weight: bold;
+            color: #7f8c8d;
+        }
+    </style>
+</head>
+
+<body>
+    <h1 style="text-align: center;">شجرة العائلة</h1>
+    
+    <div style="text-align: center; margin-bottom: 30px;">
+        <a href="/add" style="margin: 0 10px; padding: 8px 15px; background: #4CAF50; color: white; text-decoration: none; border-radius: 4px;">
+            ➕ إضافة فرد جديد
+        </a>
+    </div>
+
+    <div class="tree-container">
+        {% macro render_node(node) %}
+            <div class="generation-label">الجيل {{ node.level + 1 }}</div>
+            
+            <div class="generation">
+                {% for sibling_group in node.sibling_groups %}
+                    <div class="sibling-group">
+                        {% for person in sibling_group %}
+                            <div style="position: relative;">
+                                {% if person.level > 0 %}
+                                    <div class="vertical-connector"></div>
+                                {% endif %}
+                                
+                                <div class="person-card level-{{ person.level }}">
+                                    <div class="person-name">
+                                        {{ person.first_name }} {{ person.last_name }}
+                                    </div>
+                                    
+                                    <div class="person-details">
+                                        <div>ابن/ابنة: {{ person.mother_name or "غير معروفة" }}</div>
+                                        <div>تاريخ الميلاد: {{ person.birth_date or "غير معروف" }}</div>
+                                        <div>مكان الميلاد: {{ person.birth_place or "غير معروف" }}</div>
+                                        {% if person.age %}
+                                            <div>العمر: {{ person.age }} سنة</div>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <a href="/person/{{ person.id }}" class="view-more">المزيد من التفاصيل →</a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            </div>
+            
+            {% for sibling_group in node.sibling_groups %}
+                {% for person in sibling_group if person.children %}
+                    {{ render_node(person) }}
+                {% endfor %}
+            {% endfor %}
+        {% endmacro %}
+        
+        {% for root in tree %}
+            {{ render_node(root) }}
+        {% endfor %}
+    </div>
+    
+<script>
+    fetch("/api/tree")
+        .then(response => response.json())
+        .then(data => {
+            const allNodes = [];
+
+            function flatten(person, generation = 0) {
+                allNodes.push({
+                    id: person.id,
+                    pid: person.father_id || null,
+                    mid: person.mother_id || null,
+                    name: person.first_name + " " + person.last_name,
+                    gender: person.gender,
+                    img: person.photo_url || "",
+                    generation: generation,
+                    tags: [`gen${generation}`]
+                });
+
+                if (person.children) {
+                    person.children.forEach(child => flatten(child, generation + 1));
+                }
+            }
+
+            const colors = [
+                "#A8D5E2", "#BDE5A8", "#F7D08A", "#F29E4C", "#D94F4F",
+                "#9E579D", "#e0d4fd", "#d1f5d3", "#ffe0b3", "#fcdada", "#d0e7f9"
+            ];
+            const tags = {};
+            colors.forEach((color, index) => {
+                tags[`gen${index}`] = { template: "ana", color: color };
+            });
+
+            if (Array.isArray(data)) {
+                data.forEach(flatten);
+            }
+
+            new FamilyTree(document.getElementById("tree"), {
+                mode: "family",
+                enableDragDrop: true,
+                template: "john",
+                nodeBinding: {
+                    field_0: "name",
+                    img_0: "img"
+                },
+                nodes: allNodes,
+                tags: tags,
+                click: function (sender, args) {
+                    const personId = args.node.id;
+                    window.location.href = `/person/${personId}`;
+                }
+            });
+        })
+        .catch(error => {
+            console.error("Error loading tree data:", error);
+        });
+</script>
+
+
+    <script>
+        function showModal(personId) {
+            fetch(`/api/person/${personId}`)
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById("modalName").textContent = data.first_name + " " + data.last_name;
+                    document.getElementById("modalMother").textContent = data.mother_name || "غير معروفة";
+                    document.getElementById("bioLink").href = `/person_bio/${personId}`;
+                    document.getElementById("personModal").style.display = "block";
+                });
+        }
+        
+        function closeModal() {
+            document.getElementById("personModal").style.display = "none";
+        }
+        </script>
+        
+        <!-- MODAL PERSON INFO -->
+    <div id="personModal" class="modal" style="display:none;">
+        <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h2 id="modalName">الاسم الكامل</h2>
+        <p><strong>الأم:</strong> <span id="modalMother">غير معروفة</span></p>
+        <a id="bioLink" href="#" class="btn">عرض السيرة الذاتية</a>
+        </div>
+    </div>
+  
+    <style>
+    .modal {
+        position: fixed;
+        z-index: 999;
+        padding-top: 60px;
+        left: 0; top: 0;
+        width: 100%; height: 100%;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.5);
+    }
+    .modal-content {
+        margin: auto;
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        width: 90%;
+        max-width: 500px;
+        font-family: Arial, sans-serif;
+        direction: rtl;
+        text-align: right;
+    }
+    .close {
+        float: left;
+        font-size: 28px;
+        cursor: pointer;
+    }
+    .btn {
+        color: white;
+        background-color: #3498db;
+        padding: 10px;
+        text-decoration: none;
+        border-radius: 4px;
+        display: inline-block;
+    }
+    </style>
+  
+</body>
+</html>

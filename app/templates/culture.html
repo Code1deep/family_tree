@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>قائمة الأجيال العائلية</title>
+  <style>
+    body {
+      display: flex;
+      font-family: Arial, sans-serif;
+      margin: 0;
+    }
+    .sidebar {
+      width: 250px;
+      background: #2c3e50;
+      color: white;
+      padding: 20px;
+      height: 100vh;
+      overflow-y: auto;
+    }
+    .sidebar h2 {
+      margin-top: 0;
+      color: #ecf0f1;
+    }
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+    }
+    .sidebar li {
+      margin-bottom: 10px;
+    }
+    .sidebar a {
+      color: #ecf0f1;
+      text-decoration: none;
+    }
+    .sidebar a:hover {
+      text-decoration: underline;
+    }
+    .content {
+      flex: 1;
+      padding: 30px;
+      background: #f4f4f4;
+    }
+    .generation {
+      margin-bottom: 50px;
+      padding: 20px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+    .generation h3 {
+      margin-top: 0;
+      color: #2980b9;
+    }
+    .person {
+      margin: 5px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <h2>قائمة الأجيال</h2>
+    <ul id="menu">
+      <!-- Menu auto-généré ici -->
+    </ul>
+  </div>
+
+  <div class="content" id="content">
+    <!-- Sections dynamiques ici -->
+  </div>
+
+  <script>
+    // Simulation des données (on remplace ça par un fetch AJAX pour charger depuis un backend)
+    const familyData = [
+      { id: 1, name: "محمد بن صالح", generation: 1 },
+      { id: 2, name: "سعاد بنت محمد", generation: 2 },
+      { id: 3, name: "أحمد بن سعاد", generation: 3 },
+      { id: 4, name: "ليلى بنت أحمد", generation: 4 },
+      { id: 5, name: "سامي بن ليلى", generation: 5 }
+    ];
+
+    // Groupement par génération
+    const generations = {};
+    familyData.forEach(person => {
+      if (!generations[person.generation]) generations[person.generation] = [];
+      generations[person.generation].push(person);
+    });
+
+    const menu = document.getElementById("menu");
+    const content = document.getElementById("content");
+
+    // Génération du menu et du contenu
+    Object.keys(generations).sort((a, b) => a - b).forEach(gen => {
+      const genId = `generation-${gen}`;
+
+      // Menu
+      const li = document.createElement("li");
+      li.innerHTML = `<a href="#${genId}">الجيل ${gen}</a>`;
+      menu.appendChild(li);
+
+      // Section
+      const section = document.createElement("div");
+      section.className = "generation";
+      section.id = genId;
+      section.innerHTML = `<h3>الجيل ${gen}</h3>`;
+      generations[gen].forEach(p => {
+        const pEl = document.createElement("div");
+        pEl.className = "person";
+        pEl.textContent = p.name;
+        section.appendChild(pEl);
+      });
+
+      content.appendChild(section);
+    });
+  </script>
+</body>
+</html>

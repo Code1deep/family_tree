@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Biographie complète de {{ person.first_name }} {{ person.last_name }}</h1>
+
+<div class="row">
+    <div class="col-md-6">
+        <h3>Informations de base</h3>
+        <p><strong>Date de naissance:</strong> {{ person.birth_date or 'Inconnue' }}</p>
+        <p><strong>Lieu de naissance:</strong> {{ person.birth_place or 'Inconnu' }}</p>
+        <p><strong>Profession:</strong> {{ person.profession or 'Non renseignée' }}</p>
+    </div>
+    <div class="col-md-6">
+        <h3>Histoire familiale</h3>
+        {% if person.father %}
+        <p><strong>Père:</strong> <a href="/person/{{ person.father.id }}">{{ person.father.first_name }} {{ person.father.last_name }}</a></p>
+        {% endif %}
+        {% if person.mother_rel %}
+        <p><strong>Mère:</strong> <a href="/person/{{ person.mother_rel.id }}">{{ person.mother_rel.first_name }} {{ person.mother_rel.last_name }}</a></p>
+        {% endif %}
+    </div>
+</div>
+
+<h3>Biographie détaillée</h3>
+<div class="bio-content">
+    {{ person.full_bio or 'Aucune biographie détaillée disponible' }}
+</div>
+
+<a href="/person/{{ person.id }}" class="btn btn-secondary">
+    Retour à la biographie courte
+</a>
+{% endblock %}

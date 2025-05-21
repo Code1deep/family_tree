@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <title>الملف الشخصي</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            direction: rtl;
+            background-color: #f3f4f6;
+            color: #333;
+            padding: 20px;
+        }
+
+        .profile-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            padding: 20px;
+            max-width: 600px;
+            margin: auto;
+        }
+
+        img.profile-photo {
+            max-width: 100%;
+            height: auto;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        ul {
+            padding: 0;
+            list-style: none;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        a {
+            color: #007BFF;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 8px 16px;
+            background: #007BFF;
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+        }
+
+        h1, h3 {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="profile-card">
+        <h1>{{ person[1] }}</h1>
+
+        {% if person[16] %}
+            <img src="{{ person[16] }}" alt="صورة {{ person[1] }}" class="profile-photo">
+        {% endif %}
+
+        <ul>
+            <li><strong>اسم الأم:</strong> {{ person[3] or "غير معروف" }}</li>
+            <li><strong>حي:</strong> {{ "نعم" if person[5] else "لا" }}</li>
+            {% if not person[5] %}
+                <li><strong>سبب الوفاة:</strong> {{ person[6] or "غير معروف" }}</li>
+                <li><strong>توفي في معركة:</strong> {{ "نعم" if person[7] else "لا" }}</li>
+            {% endif %}
+            <li><strong>أعداء معروفون:</strong> {{ person[8] or "لا يوجد" }}</li>
+            <li><strong>الفتن:</strong> {{ person[9] or "لا يوجد" }}</li>
+            <li><strong>ملاحظات:</strong> {{ person[10] or "لا شيء" }}</li>
+            <li><strong>تاريخ الميلاد:</strong> {{ person[11] or "غير معروف" }}</li>
+            <li><strong>تاريخ الوفاة:</strong> {{ person[12] or "غير معروف" }}</li>
+            <li><strong>مكان الولادة:</strong> {{ person[13] or "غير معروف" }}</li>
+            <li><strong>مكان الإقامة:</strong> {{ person[14] or "غير معروف" }}</li>
+            {% if person[15] %}
+                <li><a href="{{ person[15] }}" target="_blank">رابط خارجي للمزيد</a></li>
+            {% endif %}
+        </ul>
+
+        {% if children %}
+            <h3>الأبناء:</h3>
+            <ul>
+                {% for child in children %}
+                    <li><a href="/person/{{ child[0] }}">{{ child[1] }}</a></li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        {% if siblings %}
+            <h3>الإخوة والأخوات:</h3>
+            <ul>
+                {% for sibling in siblings %}
+                    <li><a href="/person/{{ sibling[0] }}">{{ sibling[1] }}</a></li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <a href="/tree" class="btn">↩ العودة إلى الشجرة</a>
+    </div>
+</body>
+</html>

@@ -1,0 +1,61 @@
+[
+  {
+    "id": 1,
+    "name": "Ali Ibn Abi Talib",
+    "gender": "male",
+    "father_id": 2,
+    "mother_id": 3,
+    "birth_date": null,
+    "death_date": null,
+    "children": [
+      4,
+      5
+    ]
+  },
+  {
+    "id": 2,
+    "name": "Abu Talib Ibn Abd al-Muttalib",
+    "gender": "male",
+    "father_id": null,
+    "mother_id": null,
+    "birth_date": null,
+    "death_date": null,
+    "children": [
+      1
+    ]
+  },
+  {
+    "id": 3,
+    "name": "Fatima Bint Asad",
+    "gender": "female",
+    "father_id": null,
+    "mother_id": null,
+    "birth_date": null,
+    "death_date": null,
+    "children": [
+      1,
+      4,
+      5
+    ]
+  },
+  {
+    "id": 4,
+    "name": "Hasan Ibn Ali",
+    "gender": "male",
+    "father_id": 1,
+    "mother_id": 3,
+    "birth_date": null,
+    "death_date": null,
+    "children": []
+  },
+  {
+    "id": 5,
+    "name": "Hussein Ibn Ali",
+    "gender": "male",
+    "father_id": 1,
+    "mother_id": 3,
+    "birth_date": null,
+    "death_date": null,
+    "children": []
+  }
+]

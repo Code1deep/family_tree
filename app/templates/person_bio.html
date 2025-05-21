@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>السيرة الذاتية - {{ person.first_name }} {{ person.last_name }}</title>
+    <style>
+        .bio-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 30px;
+            font-family: Arial, sans-serif;
+            background: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+        
+        .bio-header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 20px;
+        }
+        
+        .bio-header h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .bio-section {
+            margin-bottom: 25px;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 5px;
+        }
+        
+        .bio-section h2 {
+            color: #3498db;
+            margin-top: 0;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #3498db;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .children-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .child-card {
+            padding: 10px;
+            background: #e6f7ff;
+            border-radius: 5px;
+            min-width: 200px;
+        }
+    </style>
+</head>
+<body>
+    <div class="bio-container">
+        <a href="/tree" class="back-link">← العودة إلى شجرة العائلة</a>
+        
+        <div class="bio-header">
+            <h1>{{ person.first_name }} {{ person.last_name }}</h1>
+            {% if person.birth_date %}
+                <p>تاريخ الميلاد: {{ person.birth_date }} (العمر: {{ person.age }} سنة)</p>
+            {% endif %}
+        </div>
+        
+        <div class="bio-section">
+            <h2>المعلومات الأساسية</h2>
+            <p><strong>الأب:</strong> {{ person.father_name or "غير معروف" }}</p>
+            <p><strong>الأم:</strong> {{ person.mother_name or "غير معروفة" }}</p>
+            <p><strong>مكان الميلاد:</strong> {{ person.birth_place or "غير معروف" }}</p>
+            {% if person.death_date %}
+                <p><strong>تاريخ الوفاة:</strong> {{ person.death_date }}</p>
+                <p><strong>سبب الوفاة:</strong> {{ person.death_reason or "غير معروف" }}</p>
+            {% endif %}
+        </div>
+        
+        {% if person.residence %}
+        <div class="bio-section">
+            <h2>مكان الإقامة</h2>
+            <p>{{ person.residence }}</p>
+        </div>
+        {% endif %}
+        
+        {% if children %}
+        <div class="bio-section">
+            <h2>الأبناء</h2>
+            <div class="children-list">
+                {% for child in children %}
+                    <div class="child-card">
+                        <a href="/person/{{ child.id }}" style="font-weight: bold;">
+                            {{ child.first_name }} {{ child.last_name }}
+                        </a>
+                        {% if child.birth_date %}
+                            <p>تاريخ الميلاد: {{ child.birth_date }}</p>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        
+        {% if person.notes %}
+        <div class="bio-section">
+            <h2>السيرة الذاتية</h2>
+            <p style="white-space: pre-line;">{{ person.notes }}</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <a href="/person_details/{{ person.id }}" class="btn">عرض التفاصيل الكاملة</a>
+
+</body>
+</html>

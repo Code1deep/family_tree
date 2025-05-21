@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>إضافة شخص جديد</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+        }
+        .form-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #34495e;
+        }
+        input[type="text"],
+        input[type="date"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .checkbox-group input {
+            margin-left: 10px;
+        }
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .btn-primary {
+            background-color: #3498db;
+            color: white;
+        }
+        .btn-secondary {
+            background-color: #95a5a6;
+            color: white;
+        }
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .form-section {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        .form-section h2 {
+            color: #3498db;
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h1>إضافة شخص جديد إلى شجرة العائلة</h1>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST" enctype="multipart/form-data">
+            <div class="form-section">
+                <h2>المعلومات الأساسية</h2>
+                
+                <div class="form-group">
+                    <label for="first_name">الاسم الأول:</label>
+                    <input type="text" id="first_name" name="first_name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="last_name">اسم العائلة:</label>
+                    <input type="text" id="last_name" name="last_name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="friends_name">الاسم المستعار (إن وجد):</label>
+                    <input type="text" id="friends_name" name="friends_name">
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>معلومات الأبوين</h2>
+                
+                <div class="form-group">
+                    <label for="father_id">الأب:</label>
+                    <select id="father_id" name="father_id">
+                        <option value="">-- اختر الأب --</option>
+                        {% for person in all_persons %}
+                            <option value="{{ person.id }}">{{ person.first_name }} {{ person.last_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="mother_id">الأم:</label>
+                    <select id="mother_id" name="mother_id">
+                        <option value="">-- اختر الأم --</option>
+                        {% for person in all_persons %}
+                            <option value="{{ person.id }}">{{ person.first_name }} {{ person.last_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>معلومات الميلاد والوفاة</h2>
+                
+                <div class="form-group">
+                    <label for="birth_date">تاريخ الميلاد:</label>
+                    <input type="date" id="birth_date" name="birth_date">
+                </div>
+                
+                <div class="form-group">
+                    <label for="birth_place">مكان الميلاد:</label>
+                    <input type="text" id="birth_place" name="birth_place">
+                </div>
+                
+                <div class="form-group">
+                    <label for="death_date">تاريخ الوفاة:</label>
+                    <input type="date" id="death_date" name="death_date">
+                </div>
+                
+                <div class="checkbox-group">
+                    <input type="checkbox" id="alive" name="alive" checked>
+                    <label for="alive">على قيد الحياة</label>
+                </div>
+                
+                <div class="form-group">
+                    <label for="death_reason">سبب الوفاة:</label>
+                    <input type="text" id="death_reason" name="death_reason">
+                </div>
+                
+                <div class="checkbox-group">
+                    <input type="checkbox" id="died_in_battle" name="died_in_battle">
+                    <label for="died_in_battle">توفي في معركة</label>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>معلومات إضافية</h2>
+                
+                <div class="form-group">
+                    <label for="residence">مكان الإقامة:</label>
+                    <input type="text" id="residence" name="residence">
+                </div>
+                
+                <div class="checkbox-group">
+                    <input type="checkbox" id="has_offspring" name="has_offspring">
+                    <label for="has_offspring">لديه أبناء</label>
+                </div>
+                
+                <div class="form-group">
+                    <label for="known_enemies">الأعداء المعروفون:</label>
+                    <input type="text" id="known_enemies" name="known_enemies">
+                </div>
+                
+                <div class="form-group">
+                    <label for="fitan">الفتن:</label>
+                    <input type="text" id="fitan" name="fitan">
+                </div>
+                
+                <div class="form-group">
+                    <label for="external_link">رابط خارجي:</label>
+                    <input type="text" id="external_link" name="external_link">
+                </div>
+                
+                <div class="form-group">
+                    <label for="notes">ملاحظات:</label>
+                    <textarea id="notes" name="notes" rows="4"></textarea>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>الصور والوسائط</h2>
+                
+                <div class="form-group">
+                    <label for="image_url">رابط الصورة:</label>
+                    <input type="text" id="image_url" name="image_url">
+                </div>
+                
+                <div class="form-group">
+                    <label for="photo_url">رابط الصورة الشخصية:</label>
+                    <input type="text" id="photo_url" name="photo_url">
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>الأمان</h2>
+                <div class="form-group">
+                    <label for="password">كلمة المرور:</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">حفظ المعلومات</button>
+                <a href="/tree" class="btn btn-secondary">إلغاء والعودة للشجرة</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
