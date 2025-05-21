@@ -1,3 +1,4 @@
+LICENSE
 MANIFEST.in
 README.md
 setup.py
@@ -56,22 +57,3 @@ interfaces/api/serializers/person_serializer.py
 static/__init__.py
 static/family_tree.png
 static/js/tree.js
-tests/__init__.py
-tests/conftest.py
-tests/conftest_debug.py
-tests/conftest_essai.py
-tests/test_api_person.py
-tests/test_basic.py
-tests/test_crud.py
-tests/test_familytree.py
-tests/test_models.py
-tests/test_models_person.py
-tests/test_person_repo.py
-tests/test_person_serializer.py
-tests/test_person_service.py
-tests/test_person_service_complement.py
-tests/test_person_service_extended.py
-tests/test_person_service_unit.py
-tests/test_tree_resource.py
-tests/test_tree_visualizer.py
-tests/test_visualizer.py
