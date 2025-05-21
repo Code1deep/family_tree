@@ -1,33 +1,30 @@
-﻿# Environnements Python
+﻿# Environnements virtuels
 venv/
 .venv*/
 .venv_clean/
 venv_clean/
 
-# Fichiers compilés
+# Fichiers Python
 __pycache__/
 *.py[cod]
 *.pyo
 *.pyd
 
-# Configuration locale
+# Dossier tests complet
+/tests/
+
+# Configuration
 instance/
 config.py
 *.db
 *.sqlite
 
-# Outils de développement
+# Outils
 .idea/
 .vscode/
 .DS_Store
 
-# Tests et couverture
+# Couverture de test
 .coverage
 htmlcov/
 .pytest_cache/
-tests/
-
-# Fichiers temporaires
-*.log
-*.tmp
-*.swp
