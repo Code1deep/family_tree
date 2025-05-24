@@ -1,6 +1,5 @@
 # C:\family_tree\wsgi.py
-#from setup_path import setup_sys_path
-#setup_sys_path(__file__)
+
 import sys
 from pathlib import Path
 
