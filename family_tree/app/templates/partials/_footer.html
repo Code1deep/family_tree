@@ -1,0 +1,61 @@
+<!-- partials/_footer.html -->
+
+<footer class="site-footer">
+    <style>
+        .site-footer {
+            background-color: #212529;
+            color: white;
+            padding: 2rem 0;
+            margin-top: 2rem;
+        }
+        .site-footer a {
+            color: rgba(255,255,255,0.5);
+            text-decoration: none;
+        }
+        .site-footer a:hover {
+            color: white;
+        }
+        .site-footer .social-icons a {
+            font-size: 1.25rem;
+            margin-left: 0.5rem;
+        }
+        .site-footer hr {
+            border-color: rgba(255,255,255,0.1);
+        }
+        .site-footer small {
+            font-size: 0.875em;
+        }
+    </style>
+    
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <h5>عن المنصة</h5>
+                <p>نظام متكامل لإدارة شجرة العائلة وتوثيق الأنساب والأحداث العائلية المهمة.</p>
+            </div>
+            <div class="col-md-4 mb-3">
+                <h5>روابط مهمة</h5>
+                <ul class="list-unstyled">
+                    <li><a href="/privacy" class="text-white-50">سياسة الخصوصية</a></li>
+                    <li><a href="/terms" class="text-white-50">شروط الاستخدام</a></li>
+                    <li><a href="/contact" class="text-white-50">اتصل بنا</a></li>
+                </ul>
+            </div>
+            <div class="col-md-4 mb-3">
+                <h5>تواصل معنا</h5>
+                <div class="social-icons">
+                    <a href="#" class="text-white me-2"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="text-white me-2"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="text-white me-2"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="text-white"><i class="fab fa-whatsapp"></i></a>
+                </div>
+                <p class="mt-2 mb-0 small">البريد الإلكتروني: info@familytree.com</p>
+            </div>
+        </div>
+        <hr class="my-3 bg-secondary">
+        <div class="text-center small">
+            <p class="mb-0">جميع الحقوق محفوظة &copy; 2025 مؤسسة صديق عند الرحمن الوظيفي</p>
+            <p class="mb-0">الإصدار 2.5.0 | آخر تحديث: {{ current_year }}</p>
+        </div>
+    </div>
+</footer>

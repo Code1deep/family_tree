@@ -1,11 +1,8 @@
 # C:\family_tree\domain\models\person.py
-from setup_path import setup_sys_path
-setup_sys_path(__file__)
-
 from datetime import datetime
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy import or_
-from app.extensions import db
+from family_tree.app.extensions import db
 from sqlalchemy import Column, Integer, String, Date, ForeignKey
 from sqlalchemy.orm import relationship
 

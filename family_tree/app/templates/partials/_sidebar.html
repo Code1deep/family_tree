@@ -1,0 +1,80 @@
+<!-- partials/_sidebar.html -->
+
+<aside class="sidebar">
+    <style>
+        .sidebar .card {
+            margin-bottom: 1rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075);
+        }
+        .sidebar .card-header {
+            background: white;
+            border-bottom: 1px solid rgba(0,0,0,.125);
+            padding: 0.75rem 1.25rem;
+        }
+        .sidebar .list-group-item {
+            border-left: none;
+            border-right: none;
+            padding: 0.75rem 1.25rem;
+        }
+        .sidebar .badge {
+            font-size: 0.75em;
+        }
+        .sidebar canvas {
+            width: 100% !important;
+            height: 200px !important;
+        }
+    </style>
+
+</aside>
+<div class="card shadow-sm mb-4">
+    <div class="card-header bg-white">
+        <h5 class="mb-0"><i class="fas fa-link me-2"></i>روابط سريعة</h5>
+    </div>
+    <div class="card-body">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <a href="/support" class="text-decoration-none">الدعم الفني</a>
+                <span class="badge bg-primary rounded-pill">جديد</span>
+            </li>
+            <li class="list-group-item">
+                <a href="/documents" class="text-decoration-none">مكتبة الوثائق</a>
+            </li>
+            <li class="list-group-item">
+                <a href="/family-events" class="text-decoration-none">أحداث العائلة</a>
+            </li>
+            <li class="list-group-item">
+                <a href="/announcements" class="text-decoration-none">الإعلانات</a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<div class="card shadow-sm mb-4">
+    <div class="card-header bg-white">
+        <h5 class="mb-0"><i class="fas fa-birthday-cake me-2"></i>مناسبات هذا الشهر</h5>
+    </div>
+    <div class="card-body">
+        <ul class="list-group list-group-flush">
+            {% for event in this_month_events %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <h6 class="mb-0">{{ event.name }}</h6>
+                    <small class="text-muted">{{ event.date.strftime('%d/%m') }}</small>
+                </div>
+                <span class="badge bg-{{ 'danger' if event.type == 'birthday' else 'success' }} rounded-pill">
+                    {{ 'عيد ميلاد' if event.type == 'birthday' else 'مناسبة' }}
+                </span>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-header bg-white">
+        <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>إحصائيات سريعة</h5>
+    </div>
+    <div class="card-body">
+        <canvas id="quickStatsChart" height="200"></canvas>
+    </div>
+</div>

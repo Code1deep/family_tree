@@ -1,9 +1,7 @@
 # C:\family_tree\run.py
-from setup_path import setup_sys_path
-setup_sys_path(__file__)
 
 import argparse
-from app.factory import create_app
+from family_tree.app.factory import create_app
 
 def main():
     parser = argparse.ArgumentParser(description="Lancement de l'application Family Tree")

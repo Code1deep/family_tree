@@ -1,0 +1,74 @@
+<!-- partials/_header.html -->
+
+<header class="header-container">
+    <style>
+        .header-container {
+            background: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 1rem 0;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .header-container .dropdown-menu {
+            left: auto !important;
+            right: 0 !important;
+        }
+        .header-container img {
+            height: 50px;
+            margin-left: 1rem;
+        }
+        .header-container h1 {
+            color: #0d6efd;
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-bottom: 0;
+        }
+        .header-container .text-muted {
+            font-size: 0.875rem;
+        }
+        .form-select-sm {
+            padding: 0.25rem 1.75rem 0.25rem 0.75rem;
+            font-size: 0.875rem;
+        }
+    </style>
+
+    <div class="container d-flex justify-content-between align-items-center flex-wrap">
+        <!-- Contenu du header inchangé -->
+        <div class="d-flex align-items-center">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="me-3">
+            <div>
+                <h1 class="text-primary fs-4 fw-bold mb-0">مؤسسة صديق عند الرحمن الوظيفي</h1>
+                <p class="text-muted mb-0 small">منصة شجرة العائلة الذكية</p>
+            </div>
+        </div>
+        
+        <div class="d-flex align-items-center">
+            {% if current_user and current_user.is_authenticated %}
+            <div class="dropdown me-3">
+                <button class="btn btn-outline-primary dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown">
+                    <i class="fas fa-user-circle me-1"></i>
+                    {{ current_user.username or "User" }}
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="/profile"><i class="fas fa-user me-2"></i>الملف الشخصي</a></li>
+                    <li><a class="dropdown-item" href="/settings"><i class="fas fa-cog me-2"></i>الإعدادات</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="/logout"><i class="fas fa-sign-out-alt me-2"></i>تسجيل الخروج</a></li>
+                </ul>
+            </div>
+            {% else %}
+            <a href="/login" class="btn btn-outline-primary me-2"><i class="fas fa-sign-in-alt me-1"></i>تسجيل الدخول</a>
+            <a href="/register" class="btn btn-primary"><i class="fas fa-user-plus me-1"></i>تسجيل جديد</a>
+            {% endif %}
+
+            <!-- Sélecteur de langue -->
+            <div class="ms-3">
+                <select class="form-select form-select-sm" id="languageSelector">
+                    <option value="ar" selected>العربية</option>
+                    <option value="fr">Français</option>
+                    <option value="en">English</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</header>

@@ -1,13 +1,10 @@
 # infrastructure/persistence/repositories/person_repo.py
 
-from setup_path import setup_sys_path
-setup_sys_path(__file__)
-
-from domain.models.person import Person
-from app.extensions import db
+from family_tree.domain.models.person import Person
+from family_tree.app.extensions import db
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy.exc import SQLAlchemyError
-from domain.services.tree_service import TreeService
+from family_tree.domain.services.tree_service import TreeService
 from typing import Dict, List, Optional
 import logging
 

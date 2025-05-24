@@ -1,8 +1,6 @@
 # domain/services/tree_service.py
-from setup_path import setup_sys_path
-setup_sys_path(__file__)
 
-from domain.models.person import Person
+from family_tree.domain.models.person import Person
 
 class TreeService:
     """Service pour les opérations sur l'arbre généalogique"""

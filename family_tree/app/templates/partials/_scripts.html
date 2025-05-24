@@ -1,0 +1,70 @@
+<!-- partials/_scripts.html -->
+
+<!-- JavaScript Libraries -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- Custom JS -->
+<script src="{{ url_for('static', filename='js/tree.js') }}"></script>
+
+<script>
+// Fonction principale encapsulée
+(function() {
+    'use strict';
+    
+    // Initialisation du graphique
+    function initChart() {
+        const chartEl = document.getElementById('quickStatsChart');
+        if (!chartEl) return;
+
+        fetch('/api/stats')
+            .then(response => response.json())
+            .then(stats => {
+                new Chart(chartEl.getContext('2d'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['ذكور', 'إناث', 'أحياء', 'متوفون'],
+                        datasets: [{
+                            data: [stats.males, stats.females, stats.living, stats.deceased],
+                            backgroundColor: ['#3498db', '#e83e8c', '#28a745', '#6c757d'],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: { legend: { position: 'bottom', rtl: true } }
+                    }
+                });
+            })
+            .catch(console.error);
+    }
+
+    // Gestion du sélecteur de langue
+    function initLanguageSelector() {
+        const selector = document.getElementById('languageSelector');
+        if (!selector) return;
+
+        selector.addEventListener('change', function() {
+            fetch('/change-language', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content
+                },
+                body: JSON.stringify({ language: this.value })
+            })
+            .then(response => response.ok && window.location.reload())
+            .catch(console.error);
+        });
+    }
+
+    // Initialisation
+    document.addEventListener('DOMContentLoaded', () => {
+        initChart();
+        initLanguageSelector();
+    });
+})();
+</script>

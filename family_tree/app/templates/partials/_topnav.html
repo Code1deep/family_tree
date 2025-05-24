@@ -1,0 +1,70 @@
+<!-- partials/_topnav.html -->
+
+<nav class="primary-nav">
+    <style>
+        .primary-nav {
+            background-color: #0d6efd;
+            padding: 0.5rem 0;
+            margin-bottom: 1rem;
+        }
+        .primary-nav .navbar-nav {
+            flex-direction: row;
+        }
+        .primary-nav .nav-link {
+            color: rgba(255,255,255,0.8);
+            padding: 0.5rem 1rem;
+        }
+        .primary-nav .nav-link:hover {
+            color: white;
+        }
+        .primary-nav .dropdown-menu {
+            position: absolute;
+        }
+        .primary-nav .input-group {
+            width: 250px;
+        }
+        @media (max-width: 992px) {
+            .primary-nav .navbar-nav {
+                flex-direction: column;
+            }
+            .primary-nav .input-group {
+                width: 100%;
+                margin-top: 0.5rem;
+            }
+        }
+    </style>
+
+    <div class="container">
+        <!-- Contenu de la navigation inchangé -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <div class="collapse navbar-collapse" id="navbarNav">
+           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item"><a class="nav-link" href="/"><i class="fas fa-home me-1"></i>الرئيسية</a></li>
+                <li class="nav-item"><a class="nav-link" href="/tree"><i class="fas fa-tree me-1"></i>عرض الشجرة</a></li>
+                <li class="nav-item"><a class="nav-link" href="/add"><i class="fas fa-user-plus me-1"></i>إضافة شخص</a></li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="reportsDropdown" data-bs-toggle="dropdown">
+                        <i class="fas fa-chart-bar me-1"></i>التقارير
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="/reports/members">تقرير الأعضاء</a></li>
+                        <li><a class="dropdown-item" href="/reports/generations">تقرير الأجيال</a></li>
+                        <li><a class="dropdown-item" href="/reports/statistics">الإحصائيات</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item"><a class="nav-link" href="/support"><i class="fas fa-hands-helping me-1"></i>الدعم العائلي</a></li>
+                <li class="nav-item"><a class="nav-link" href="/activities"><i class="fas fa-calendar-alt me-1"></i>الأنشطة</a></li>
+            </ul>
+            
+            <form class="d-flex" action="/search" method="GET">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="بحث..." name="q">
+                    <button class="btn btn-light" type="submit"><i class="fas fa-search"></i></button>
+                </div>
+            </form>
+        </div>
+    </div>
+</nav>

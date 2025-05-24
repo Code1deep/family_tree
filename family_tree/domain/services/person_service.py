@@ -1,12 +1,9 @@
 # domain/services/person_service.py
 
 from typing import Optional
-from infrastructure.persistence.repositories.person_repo import PersonRepository
-from setup_path import setup_sys_path
-setup_sys_path(__file__)
-
-from app.extensions import db
-from domain.models.person import Person
+from family_tree.infrastructure.persistence.repositories.person_repo import PersonRepository
+from family_tree.app.extensions import db
+from family_tree.domain.models.person import Person
 
 class PersonService:
     def __init__(self, repo: Optional[PersonRepository] = None):

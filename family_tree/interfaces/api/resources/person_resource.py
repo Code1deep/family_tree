@@ -6,23 +6,21 @@ from datetime import datetime
 
 from flask import Blueprint, current_app, render_template, request, jsonify, abort
 
-from setup_path import setup_sys_path
-setup_sys_path(__file__)
 
-from app.extensions import db
-from domain.models.person import Person
-from domain.services.person_service import PersonService
-from interfaces.api.serializers.person_serializer import PersonSerializer
-from infrastructure.visualization.tree_visualizer import FamilyTreeVisualizer
-from infrastructure.persistence.repositories.person_repo import PersonRepository
-from infrastructure.visualization.tree_visualizer import get_visualizer
+from family_tree.app.extensions import db
+from family_tree.domain.models.person import Person
+from family_tree.domain.services.person_service import PersonService
+from family_tree.interfaces.api.serializers.person_serializer import PersonSerializer
+from family_tree.infrastructure.visualization.tree_visualizer import FamilyTreeVisualizer
+from family_tree.infrastructure.persistence.repositories.person_repo import PersonRepository
+from family_tree.infrastructure.visualization.tree_visualizer import get_visualizer
 
 person_api = Blueprint('person_api', __name__)
 person_service = None
 
 def init_resources(db_session):
     global person_service
-    from infrastructure.persistence.repositories.person_repo import PersonRepository
+    from family_tree.infrastructure.persistence.repositories.person_repo import PersonRepository
     repo = PersonRepository(db_session)
     person_service = PersonService(repo)
 

@@ -1,9 +1,8 @@
 # interfaces\api\resources\tree_resource.py
-from setup_path import setup_sys_path
-setup_sys_path(__file__)
 
 from flask import Blueprint, current_app, jsonify, request
-from domain.services.tree_service import TreeService
+from family_tree.domain.services.tree_service import TreeService
+from family_tree.infrastructure.visualization.tree_visualizer import get_visualizer
 
 def create_tree_api(person_service):
     """

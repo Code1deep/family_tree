@@ -1,9 +1,8 @@
 # infrastructure/persistence/db.py
-from setup_path import setup_sys_path
-setup_sys_path(__file__)
+
 
 import os
-from app.extensions import db
+from family_tree.app.extensions import db
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session, declarative_base
 
