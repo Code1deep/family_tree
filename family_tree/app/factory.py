@@ -109,7 +109,7 @@ def create_app(config_object='config.Config', testing=False):
 
             # Enregistrement des blueprints
             try:
-                from family_tree.interfaces.api.resources.person_resource import person_api
+                from family_tree.interfaces.api.resources.person import person_api
                 from family_tree.interfaces.api.resources.tree_resource import create_tree_api
                 
                 app.register_blueprint(person_api, url_prefix='/api/persons')
