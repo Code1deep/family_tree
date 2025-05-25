@@ -1,4 +1,4 @@
-#  routes_tree_api.py
+#  interfaces/api/resources/tree/routes_tree_api.py
 
 from flask import Blueprint, jsonify, request, render_template
 from family_tree.interfaces.api.serializers.person_serializer import PersonSerializer
