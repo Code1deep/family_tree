@@ -1,7 +1,7 @@
  # interfaces/api/resources/person/routes_tree.py
 from .routes_crud import person_api  
 from flask import jsonify, render_template
-from .init_person_service import person_service
+from family_tree.interfaces.api.resources.person.init_person_service import person_service
 from family_tree.interfaces.api.serializers.person_serializer import PersonSerializer
 
 def register_tree_routes(person_api):
