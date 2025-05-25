@@ -2,8 +2,10 @@
 
 from family_tree.domain.services.person_service import PersonService
 from family_tree.infrastructure.persistence.repositories.person_repo import PersonRepository
+from family_tree.app.extensions import db
 
 person_service = None
+init_resources(db.session)
 
 def init_resources(db_session):
     global person_service
