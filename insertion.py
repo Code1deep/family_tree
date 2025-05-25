@@ -30,19 +30,11 @@ def print_all_persons(msg="📋 Contenu actuel de la base"):
     for p in persons:
         print(f"  - {p.id}: {p.full_name} (gender: {p.gender})")
 
-def initialize_data():
-    with app.app_context():
-        try:
-            print(f"\n🔧 Préparation de la base à: {DB_PATH}")
+def initialize_data(db):
+    if db.session.query(Person).count() > 0:
+        return
 
-            if DB_PATH.exists():
-                print("🧹 Suppression de l'ancienne base...")
-                DB_PATH.unlink()
-
-            db.create_all()
-            print_all_persons("🕵️‍♂️ Juste après création")
-
-            family_members = [
+    family_members = [
                 {'id': 2, 'first_name': 'Abu Talib', 'last_name': 'Ibn Abd al-Muttalib', 'gender': 'male'},
                 {'id': 3, 'first_name': 'Fatima', 'last_name': 'bint Asad', 'gender': 'female'},
                 {'id': 1, 'first_name': 'Ali', 'last_name': 'Ibn Abi Talib', 'gender': 'male',
