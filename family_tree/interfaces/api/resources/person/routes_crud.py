@@ -53,7 +53,7 @@ def register_crud_routes(person_api):
             return jsonify({'error': 'Internal server error'}), 500
 
     @person_api.route('/persons/<int:person_id>', methods=['GET'])
-    def get_person(person_id):
+    def get_person__(person_id):
         """Récupérer une personne par ID via /persons"""
         person = person_service.get_person_by_id(person_id)
         if not person:
