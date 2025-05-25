@@ -19,7 +19,7 @@ def register_api_routes(person_api):
         return jsonify([PersonSerializer.serialize_basic(c) for c in children])
 
     @person_api.route('/api/person')
-    def get_person():
+    def get_person_query():
         person_id = request.args.get('id', type=int)
         if not person_id:
             abort(400, "Missing person id")
