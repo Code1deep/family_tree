@@ -1,13 +1,16 @@
 # family_tree/insertion.py
+
 import os
 from pathlib import Path
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
+# 📌 Chemin de la base de données
 BASE_DIR = Path(__file__).parent
 DB_PATH = BASE_DIR / "instance" / "family.db"
-os.makedirs(BASE_DIR / "instance", exist_ok=True)
+os.makedirs(DB_PATH.parent, exist_ok=True)
 
+# 📦 App Flask temporaire pour initialiser le contexte
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_PATH}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -19,10 +22,11 @@ app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
     }
 }
 
-# Import APRÈS la configuration de l'app
-from app.extensions import db
+# 🔁 Import après configuration
+from family_tree.app.extensions import db
+from family_tree.domain.models.person import Person
+
 db.init_app(app)
-from domain.models.person import Person
 
 def print_all_persons(msg="📋 Contenu actuel de la base"):
     persons = Person.query.all()
@@ -30,11 +34,14 @@ def print_all_persons(msg="📋 Contenu actuel de la base"):
     for p in persons:
         print(f"  - {p.id}: {p.full_name} (gender: {p.gender})")
 
-def initialize_data(db):
-    if db.session.query(Person).count() > 0:
-        return
+def initialize_data():
+    with app.app_context():
+        try:
+            if db.session.query(Person).count() > 0:
+                print("ℹ️ Base déjà peuplée.")
+                return
 
-    family_members = [
+            family_members = [
                 {'id': 2, 'first_name': 'Abu Talib', 'last_name': 'Ibn Abd al-Muttalib', 'gender': 'male'},
                 {'id': 3, 'first_name': 'Fatima', 'last_name': 'bint Asad', 'gender': 'female'},
                 {'id': 1, 'first_name': 'Ali', 'last_name': 'Ibn Abi Talib', 'gender': 'male',
