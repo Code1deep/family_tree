@@ -96,7 +96,7 @@ def create_app(config_object='config.Config', testing=False):
             except Exception as e:
                 print(f"❌ Erreur accès templates: {str(e)}")
             from family_tree.domain.models.person import Person   
-            if Person.query.count() == 0:
+            
                 from family_tree.insertion import initialize_data
                 initialize_data()
             
