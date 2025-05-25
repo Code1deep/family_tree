@@ -1,7 +1,8 @@
-#init_person_service.py
+# interfaces/api/resources/person/init_person_service.py
 
+from family_tree.domain.services.person_service import PersonService
+from family_tree.infrastructure.persistence.repositories.person_repo import PersonRepository
 
-# person_api = Blueprint('person_api', __name__)
 person_service = None
 
 def init_resources(db_session):
