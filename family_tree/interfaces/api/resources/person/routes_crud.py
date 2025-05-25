@@ -3,7 +3,7 @@
 from flask import request, jsonify
 from family_tree.app.extensions import db
 from family_tree.interfaces.api.serializers.person_serializer import PersonSerializer
-from .init_person_service import person_service
+from family_tree.interfaces.api.resources.person.init_person_service import person_service
 
 def register_crud_routes(person_api):
     @person_api.route('/persons', methods=['POST'])
