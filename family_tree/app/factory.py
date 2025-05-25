@@ -95,7 +95,11 @@ def create_app(config_object='config.Config', testing=False):
                     print("✓ Template tree.html trouvé")
             except Exception as e:
                 print(f"❌ Erreur accès templates: {str(e)}")
-
+                
+            if Person.query.count() == 0:
+                from family_tree.insertion import initialize_data
+                initialize_data()
+            
             # Initialisation des services
             try:
                 from family_tree.domain.services.person_service import PersonService
