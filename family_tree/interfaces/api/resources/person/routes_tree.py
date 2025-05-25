@@ -7,16 +7,20 @@ from family_tree.interfaces.api.serializers.person_serializer import PersonSeria
 def register_tree_routes(person_api):
     @person_api.route("/api/visualize/tree/root")
     def get_root_tree():
-     try:
-         from family_tree.infrastructure.persistence.repositories.person_repo import PersonRepository
-         visualizer = FamilyTreeVisualizer(current_app, PersonRepository(db.session))
-         root_person_id = 1
-         tree_data = visualizer.generate_familytree_data()  # Pas besoin de None ici
-         return jsonify(tree_data)
-     except Exception as e:
-         traceback.print_exc()
-         current_app.logger.error(f"Visualization root error: {str(e)}")
-         return jsonify({'error': 'Server error'}), 500
+        try:
+            from family_tree.infrastructure.persistence.repositories.person_repo import PersonRepository
+            visualizer = FamilyTreeVisualizer(current_app, PersonRepository(db.session))
+
+            root_person_id = 1 
+            tree_data = visualizer.generate_familytree_data(root_person_id)  
+
+            return jsonify(tree_data)
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            current_app.logger.error(f"Visualization root error: {str(e)}")
+            return jsonify({'error': 'Server error'}), 500
+
      
    @person_api.route('/tree')
    def show_tree():
