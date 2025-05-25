@@ -10,6 +10,7 @@ def register_tree_routes(person_api):
      try:
          from family_tree.infrastructure.persistence.repositories.person_repo import PersonRepository
          visualizer = FamilyTreeVisualizer(current_app, PersonRepository(db.session))
+         root_person_id = 1
          tree_data = visualizer.generate_familytree_data()  # Pas besoin de None ici
          return jsonify(tree_data)
      except Exception as e:
