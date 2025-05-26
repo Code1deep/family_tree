@@ -6,7 +6,7 @@ import os
 import sys
 from pathlib import Path
 from flask import Flask, request  
-
+from family_tree.interfaces.api.resources.person import person_api
 
 # Configuration des chemins
 BASE_DIR = Path(__file__).parent.parent
