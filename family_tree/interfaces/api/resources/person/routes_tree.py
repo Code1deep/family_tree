@@ -25,7 +25,7 @@ def register_tree_routes(person_api):
     @person_api.route('/tree')
     def show_tree():
         visualizer = FamilyTreeVisualizer(current_app, PersonRepository(db.session))
-        tree_data = visualizer.generate_familytree_data()
+        tree_data = visualizer.generate_familytree_data(root_person_id=1)
         return render_template('tree.html', nodes=tree_data['nodes'], edges=tree_data['edges'])
 
     @person_api.route('/api/visualize/tree/<int:person_id>')
