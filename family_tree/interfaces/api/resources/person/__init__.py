@@ -1,5 +1,6 @@
 # interfaces/api/resources/person/__init__.py
-from .init_person_service import init_person_resources
+from family_tree.interfaces.api.resources.person.init_person_service import init_person_resources, create_person_api
+
 
 from flask import Blueprint
 from family_tree.interfaces.api.resources.person.routes_crud import register_crud_routes
