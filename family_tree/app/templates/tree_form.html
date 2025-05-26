@@ -6,40 +6,47 @@
 <body>
     <h1>Créer une Personne</h1>
 
-    <form method="POST">
-        {{ form.hidden_tag() }}
+    <form method="POST" action="{{ url_for('person_api.create_person') }}">
+  {{ form.hidden_tag() }}
 
-        <p>
-            {{ form.first_name.label }}<br>
-            {{ form.first_name(size=32) }}
-        </p>
-        <p>
-            {{ form.last_name.label }}<br>
-            {{ form.last_name(size=32) }}
-        </p>
-        <p>
-            {{ form.gender.label }}<br>
-            {{ form.gender() }}
-        </p>
-        <p>
-            {{ form.birth_date.label }}<br>
-            {{ form.birth_date() }}
-        </p>
-        <p>
-            {{ form.death_date.label }}<br>
-            {{ form.death_date() }}
-        </p>
-        <p>
-            {{ form.mother_id.label }}<br>
-            {{ form.mother_id() }}
-        </p>
-        <p>
-            {{ form.father_id.label }}<br>
-            {{ form.father_id() }}
-        </p>
+  <div class="mb-3">
+    {{ form.first_name.label(class="form-label") }}
+    {{ form.first_name(class="form-control") }}
+  </div>
 
-        <p><input type="submit" value="Soumettre"></p>
-    </form>
+  <div class="mb-3">
+    {{ form.last_name.label(class="form-label") }}
+    {{ form.last_name(class="form-control") }}
+  </div>
+
+  <div class="mb-3">
+    {{ form.gender.label(class="form-label") }}
+    {{ form.gender(class="form-select") }}
+  </div>
+
+  <div class="mb-3">
+    {{ form.birth_date.label(class="form-label") }}
+    {{ form.birth_date(class="form-control", type="date") }}
+  </div>
+
+  <div class="mb-3">
+    {{ form.death_date.label(class="form-label") }}
+    {{ form.death_date(class="form-control", type="date") }}
+  </div>
+
+  <div class="mb-3">
+    {{ form.mother_id.label(class="form-label") }}
+    {{ form.mother_id(class="form-control") }}
+  </div>
+
+  <div class="mb-3">
+    {{ form.father_id.label(class="form-label") }}
+    {{ form.father_id(class="form-control") }}
+  </div>
+
+  <button type="submit" class="btn btn-success">Enregistrer</button>
+</form>
+
 
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
