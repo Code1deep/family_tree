@@ -14,3 +14,5 @@ register_api_routes(person_api)
 register_tree_routes(person_api)
 register_misc_routes(person_api)
 
+# Export explicite des fonctions nécessaires
+__all__ = ['person_api', 'init_person_resources']
