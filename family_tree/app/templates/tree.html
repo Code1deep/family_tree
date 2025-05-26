@@ -1,15 +1,36 @@
 <!-- app/templates/tree.html -->
-
 {% extends "base_template.html" %}
 
 {% block content %}
-<div id="tree-container" class="family-tree"></div>
-<a href="{{ url_for('person_api.tree_form') }}" class="btn btn-primary">Créer une personne</a>
+<!-- Bouton pour ouvrir le modal -->
+<button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#personModal">
+  Créer une personne
+</button>
 
+<!-- Conteneur de l'arbre généalogique -->
+<div id="tree-container" class="family-tree"></div>
+
+<!-- Modal Bootstrap contenant le formulaire -->
+<div class="modal fade" id="personModal" tabindex="-1" aria-labelledby="personModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="personModalLabel">Créer une personne</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+      </div>
+      <div class="modal-body">
+        {% include "tree_form.html" %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Script FamilyTree.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/familytree.js/2.1.2/familytree.min.js"></script>
 
 <script>
 console.log("Script 2 chargé");
+
 document.addEventListener('DOMContentLoaded', function () {
     fetch("/api/visualize/tree/root")
         .then(response => response.json())
@@ -38,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             tree.on('expand', function (node) {
                 if (!node.childrenLoaded) {
-                    fetch(`/api/visualize/tree/${node.id}`) // ✅ corrigé
+                    fetch(`/api/visualize/tree/${node.id}`)
                         .then(response => response.json())
                         .then(data => {
                             tree.add(data.nodes);
@@ -60,23 +81,23 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 
 <style>
-    .family-tree {
-        width: 100%;
-        height: 80vh;
-        border: 1px solid #eee;
-    }
+.family-tree {
+    width: 100%;
+    height: 80vh;
+    border: 1px solid #eee;
+}
 
-    .ft-node {
-        border-radius: 5px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
+.ft-node {
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
 
-    .ft-gener-0 { background-color: #6a0dad; }
-    .ft-gener-1 { background-color: #1e90ff; }
-    .ft-gener-2 { background-color: #32cd32; }
-    .ft-gener-3 { background-color: #ff8c00; }
-    .ft-gener-4 { background-color: #ff1493; }
+.ft-gener-0 { background-color: #6a0dad; }
+.ft-gener-1 { background-color: #1e90ff; }
+.ft-gener-2 { background-color: #32cd32; }
+.ft-gener-3 { background-color: #ff8c00; }
+.ft-gener-4 { background-color: #ff1493; }
 </style>
 {% endblock %}
 
-            
+       
