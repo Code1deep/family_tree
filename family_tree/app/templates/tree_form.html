@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Formulaire Personne</title>
+</head>
+<body>
+    <h1>Créer une Personne</h1>
+
+    <form method="POST">
+        {{ form.hidden_tag() }}
+
+        <p>
+            {{ form.first_name.label }}<br>
+            {{ form.first_name(size=32) }}
+        </p>
+        <p>
+            {{ form.last_name.label }}<br>
+            {{ form.last_name(size=32) }}
+        </p>
+        <p>
+            {{ form.gender.label }}<br>
+            {{ form.gender() }}
+        </p>
+        <p>
+            {{ form.birth_date.label }}<br>
+            {{ form.birth_date() }}
+        </p>
+        <p>
+            {{ form.death_date.label }}<br>
+            {{ form.death_date() }}
+        </p>
+        <p>
+            {{ form.mother_id.label }}<br>
+            {{ form.mother_id() }}
+        </p>
+        <p>
+            {{ form.father_id.label }}<br>
+            {{ form.father_id() }}
+        </p>
+
+        <p><input type="submit" value="Soumettre"></p>
+    </form>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ul>
+          {% for category, message in messages %}
+            <li><strong>{{ category }}:</strong> {{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+</body>
+</html>
