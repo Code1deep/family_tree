@@ -17,5 +17,4 @@ def create_person_api(service):
     person_service = service
     return person_api
 
-# ⚠️ Cet appel doit venir *après* la définition
 init_resources(db.session)
