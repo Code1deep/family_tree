@@ -18,8 +18,11 @@ class FamilyTreeVisualizer:
         self.app = app
         self.person_repo = person_repo
 
-    def generate_familytree_data(self, root_person_id: int):
+    def generate_familytree_data(self, root_person_id: Optional[int] = None):
         try:
+            if root_person_id is None:
+                root_person_id = 1  # Valeur par défaut pour éviter plantage
+
             person = self.person_repo.get_person_with_relatives(root_person_id)
             if not person:
                 return {"nodes": [], "edges": []}
