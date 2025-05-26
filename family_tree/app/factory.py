@@ -7,6 +7,7 @@ import sys
 from pathlib import Path
 from flask import Flask, request  
 from family_tree.interfaces.api.resources.person import person_api
+from flask_wtf.csrf import CSRFProtect
 
 # Configuration des chemins
 BASE_DIR = Path(__file__).parent.parent
@@ -64,6 +65,8 @@ def create_app(config_object='config.Config', testing=False):
         print(f"Static folder exists: {os.path.exists(app.static_folder)}")
 
         # Initialisation des extensions
+        csrf = CSRFProtect()
+        csrf.init_app(app)
         db.init_app(app)
         babel.init_app(app)
         login_manager.init_app(app)
