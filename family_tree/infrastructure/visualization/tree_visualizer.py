@@ -1,6 +1,6 @@
 # infrastructure/visualization/tree_visualizer.py
 from platform import node
-
+from typing import Optional
 from family_tree.app.factory import db
 from family_tree.infrastructure.persistence.repositories.person_repo import PersonRepository 
 
