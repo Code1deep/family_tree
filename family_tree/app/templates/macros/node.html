@@ -1,0 +1,128 @@
+{% macro render_node(node) %}
+<style>
+    .generation-{{ node.level }} {
+        --bg-color: {{ [
+            '#e6f7ff', '#e6ffe6', '#fff2e6', '#f9e6ff', '#ffe6f7',
+            '#e0d4fd', '#d1f5d3', '#ffe0b3', '#fcdada', '#d0e7f9'
+        ][node.level % 10] }};
+    }
+
+    .generation-label {
+        text-align: center;
+        margin: 20px 0 10px;
+        font-weight: bold;
+        color: #7f8c8d;
+        font-size: 1.2em;
+    }
+
+    .generation {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 30px;
+    }
+
+    .sibling-group {
+        display: flex;
+        position: relative;
+        margin: 0 15px;
+    }
+
+    .sibling-group::before {
+        content: "";
+        position: absolute;
+        top: -20px;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background-color: #e74c3c;
+        z-index: 1;
+    }
+
+    .person-card {
+        margin: 10px;
+        padding: 15px;
+        border-radius: 8px;
+        min-width: 220px;
+        position: relative;
+        box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+        transition: all 0.3s;
+        background-color: var(--bg-color);
+    }
+
+    .person-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    .vertical-connector {
+        position: absolute;
+        top: -20px;
+        left: 50%;
+        height: 20px;
+        width: 2px;
+        background-color: #3498db;
+        transform: translateX(-50%);
+        z-index: 2;
+    }
+
+    .person-name {
+        font-weight: bold;
+        font-size: 1.1em;
+        color: #2c3e50;
+        margin-bottom: 8px;
+    }
+
+    .person-details div {
+        margin: 4px 0;
+        font-size: 0.9em;
+        color: #555;
+    }
+
+    .view-more {
+        display: inline-block;
+        margin-top: 10px;
+        color: #3498db;
+        text-decoration: none;
+        font-size: 0.85em;
+    }
+</style>
+
+<div class="generation-label">الجيل {{ node.level + 1 }}</div>
+
+<div class="generation generation-{{ node.level }}">
+    {% for sibling_group in node.sibling_groups %}
+        <div class="sibling-group">
+            {% for person in sibling_group %}
+                <div style="position: relative;">
+                    {% if person.level > 0 %}
+                        <div class="vertical-connector"></div>
+                    {% endif %}
+                    
+                    <div class="person-card">
+                        <div class="person-name">
+                            {{ person.first_name }} {{ person.last_name }}
+                        </div>
+                        
+                        <div class="person-details">
+                            <div>ابن/ابنة: {{ person.mother_name or "غير معروفة" }}</div>
+                            <div>تاريخ الميلاد: {{ person.birth_date or "غير معروف" }}</div>
+                            <div>مكان الميلاد: {{ person.birth_place or "غير معروف" }}</div>
+                            {% if person.age %}
+                                <div>العمر: {{ person.age }} سنة</div>
+                            {% endif %}
+                        </div>
+                        
+                        <a href="/person/{{ person.id }}" class="view-more">المزيد من التفاصيل →</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endfor %}
+</div>
+
+{% for sibling_group in node.sibling_groups %}
+    {% for person in sibling_group if person.children %}
+        {{ render_node(person) }}
+    {% endfor %}
+{% endfor %}
+{% endmacro %}
