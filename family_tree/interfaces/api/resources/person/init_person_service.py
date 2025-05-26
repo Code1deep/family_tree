@@ -6,7 +6,7 @@ from family_tree.app.extensions import db
 
 person_service = None
 
-def init_resources(db_session):
+def init_person_resources(db_session):
     global person_service
     repo = PersonRepository(db_session)
     person_service = PersonService(repo)
@@ -17,4 +17,5 @@ def create_person_api(service):
     person_service = service
     return person_api
 
-init_resources(db.session)
+init_person_resources(db.session)
+
