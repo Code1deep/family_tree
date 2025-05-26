@@ -6,9 +6,6 @@ import os
 import sys
 from pathlib import Path
 from flask import Flask, request  
-from family_tree.interfaces.api.resources.person import person_api
-from family_tree.interfaces.api.resources.tree.init_tree_service import init_tree_resources
-from family_tree.interfaces.api.resources.tree import tree_api
 from flask_wtf.csrf import CSRFProtect
 
 # Configuration des chemins
@@ -110,6 +107,7 @@ def create_app(config_object='config.Config', testing=False):
                 from family_tree.domain.services.person_service import PersonService
                 from family_tree.infrastructure.persistence.repositories.person_repo import PersonRepository
                 from family_tree.interfaces.api.resources.person import init_person_resources
+                from family_tree.interfaces.api.resources.tree.init_tree_service import init_tree_resources
                 init_person_resources(app)
                 init_tree_resources(app) 
                 repo = PersonRepository(db.session)
@@ -122,8 +120,9 @@ def create_app(config_object='config.Config', testing=False):
             # Enregistrement des blueprints
             try:
                 from family_tree.interfaces.api.resources.tree.init_tree_service import create_tree_api
-                from family_tree.interfaces.api.resources.person.init_person_service import create_person_api
-                
+                #from family_tree.interfaces.api.resources.person.init_person_service import create_person_api
+                from family_tree.interfaces.api.resources.person import person_api
+
                 app.register_blueprint(person_api, url_prefix='/api/persons')
                 app.register_blueprint(create_tree_api(person_service), url_prefix='/api/tree')
                 
@@ -151,3 +150,4 @@ def create_app(config_object='config.Config', testing=False):
         import traceback
         traceback.print_exc()
         raise
+
