@@ -120,9 +120,8 @@ def create_app(config_object='config.Config', testing=False):
 
             # Enregistrement des blueprints
             try:
-                from family_tree.interfaces.api.resources.person import person_api
+                
                 app.register_blueprint(create_person_api(), url_prefix='/api/persons')
-                app.register_blueprint(person_api, url_prefix='/api/persons')
                 app.register_blueprint(create_tree_api(person_service), url_prefix='/api/tree')
 
                 print("✓ Blueprints enregistrés")
