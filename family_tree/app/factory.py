@@ -114,8 +114,8 @@ def create_app(config_object='config.Config', testing=False):
                 person_service = PersonService(repo)
 
                 # 2. Initialisation des routes avec service prêt
-                init_person_resources(app, person_service)
-                init_tree_resources(app, person_service)
+                init_person_resources(app)
+                init_tree_resources(app)
 
                 print("✓ Services initialisés")
 
