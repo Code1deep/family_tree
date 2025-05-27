@@ -4,6 +4,9 @@ from flask import request, jsonify, abort
 from family_tree.interfaces.api.resources.person.init_person_service import person_service
 from family_tree.interfaces.api.serializers.person_serializer import PersonSerializer
 from family_tree.domain.models import Person  # ← Nécessaire pour les requêtes dans search_persons()
+from flask import Blueprint
+
+person_api = Blueprint("person_api", __name__)
 
 def register_api_routes(person_api):
     @person_api.route('/api/person/<int:person_id>')
