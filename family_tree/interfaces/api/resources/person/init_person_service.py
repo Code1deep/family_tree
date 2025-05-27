@@ -2,18 +2,15 @@
 
 from family_tree.domain.services.person_service import PersonService
 from family_tree.infrastructure.persistence.repositories.person_repo import PersonRepository
-from family_tree.app.extensions import db
-from family_tree.interfaces.api.resources.person.routes_api import person_api  # ✅ plus de boucle
-
-person_service = None
+from family_tree.interfaces.api.resources.person.routes_api import inject_service
+from family_tree.interfaces.api.resources.person.blueprint import person_api
 
 def init_person_resources(db_session):
-    global person_service
     repo = PersonRepository(db_session)
-    person_service = PersonService(repo)
+    service = PersonService(repo)
+    inject_service(service)
 
-def create_person_api(service):
-    global person_service
-    person_service = service
+def create_person_api():
     return person_api
+
 
