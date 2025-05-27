@@ -1,13 +1,13 @@
 #  interfaces/api/resources/tree/routes_tree_api.py
-
-from flask import Blueprint, jsonify, request, render_template
+from flask import Blueprint, jsonify, request, render_template, current_app
 from family_tree.interfaces.api.serializers.person_serializer import PersonSerializer
+from family_tree.domain.services.tree_service import TreeService
 
 def create_tree_api(person_service):
     tree_api_bp = Blueprint('tree_api', __name__)
 
-        @tree_api_bp.route('/tree/<person_id>')
-        def get_tree(person_id):
+    @tree_api_bp.route('/tree/<person_id>')
+    def get_tree(person_id):
         """
         Endpoint unifié gérant tous les cas de test :
         - IDs invalides
@@ -16,25 +16,25 @@ def create_tree_api(person_service):
         - Grandes familles
         - Photos
         """
-            try:
-                person_id = int(person_id)
-            except ValueError:
-                return jsonify({'error': 'Invalid person ID'}), 400
+        try:
+            person_id = int(person_id)
+        except ValueError:
+            return jsonify({'error': 'Invalid person ID'}), 400
 
-            if person_id <= 0:
-                return jsonify({'error': 'Invalid person ID'}), 400
+        if person_id <= 0:
+            return jsonify({'error': 'Invalid person ID'}), 400
 
-            try:
-                tree_service = TreeService(person_service)
-                tree = tree_service.generate_tree(person_id)
+        try:
+            tree_service = TreeService(person_service)
+            tree = tree_service.generate_tree(person_id)
 
-                if not tree.get('nodes'):
-                    return jsonify({'error': 'Person not found'}), 404
-                print(tree)
-                return jsonify(tree), 200
+            if not tree.get('nodes'):
+                return jsonify({'error': 'Person not found'}), 404
+            print(tree)
+            return jsonify(tree), 200
 
-            except Exception as e:
-                current_app.logger.error(f"Error generating tree: {str(e)}")
-                return jsonify({'error': 'Internal server error'}), 500
+        except Exception as e:
+            current_app.logger.error(f"Error generating tree: {str(e)}")
+            return jsonify({'error': 'Internal server error'}), 500
 
-return tree_api_bp
+    return tree_api_bp
