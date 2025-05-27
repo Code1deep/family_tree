@@ -3,6 +3,7 @@
 from family_tree.domain.services.person_service import PersonService
 from family_tree.infrastructure.persistence.repositories.person_repo import PersonRepository
 from family_tree.app.extensions import db
+from family_tree.interfaces.api.resources.person import person_api 
 
 person_service = None
 
