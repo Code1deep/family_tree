@@ -12,12 +12,12 @@ def inject_service(service):
     person_service = service
 
 def register_tree_routes(person_api):
+    from family_tree.interfaces.forms.person_form import PersonForm
     @person_api.route('/tree')
     def get_family_tree():
         data = person_service.generate_familytree_data()
         return jsonify(data)
 
-def register_tree_routes(person_api):
     @person_api.route("/api/visualize/tree/root")
     def get_root_tree():
         try:
@@ -34,7 +34,6 @@ def register_tree_routes(person_api):
     def show_tree():
         visualizer = FamilyTreeVisualizer(current_app, PersonRepository(db.session))
         tree_data = visualizer.generate_familytree_data(root_person_id=1)
-        from family_tree.interfaces.forms.person_form import PersonForm
         form = PersonForm()
         return render_template(
             'tree.html',
@@ -63,7 +62,6 @@ def register_tree_routes(person_api):
     def show_tree_by_id(person_id):
         visualizer = FamilyTreeVisualizer(current_app, PersonRepository(db.session))
         tree_data = visualizer.generate_familytree_data(root_person_id=person_id)
-        from family_tree.interfaces.forms.person_form import PersonForm
         form = PersonForm()  
         if current_app.config.get('TESTING'):
             return jsonify(tree_data)
