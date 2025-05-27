@@ -7,11 +7,13 @@ from family_tree.interfaces.api.resources.person.routes_tree import register_tre
 
 def init_tree_resources(app, person_service):
     """
-    Initialise les ressources de l'arbre :
-    - Un blueprint pour les routes HTML (interface utilisateur)
-    - Un blueprint pour les routes API JSON (backend)
+    Initialisation des ressources sans modification des noms existants.
+    Solution technique pour éviter le conflit de blueprints.
     """
-    inject_service(person_service)  # Injecte le service dans routes_tree
+    # Injection du service (conservé tel quel)
+    inject_service(person_service)
+    
+    # Blueprint principal (nom original conservé)
     tree_api = Blueprint('tree_api', __name__)
     register_tree_routes(tree_api)
     app.register_blueprint(tree_api)
@@ -25,4 +27,3 @@ def init_tree_resources(app, person_service):
     tree_api_bp = Blueprint("tree_api", __name__)
     register_tree_api_routes(tree_api_bp, person_service)
     app.register_blueprint(tree_api_bp, url_prefix="/api/tree")
-
