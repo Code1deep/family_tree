@@ -28,6 +28,10 @@ def register_tree_view_routes(bp):
         tree_data = visualizer.generate_familytree_data(root_person_id=person_id)
         from family_tree.interfaces.forms.person_form import PersonForm
         form = PersonForm()
+        
         return render_template(
-            'tree.html', form=form
+            'tree.html', form=form,
+            nodes=tree_data['nodes'],
+            edges=tree_data['edges']
         )
+
