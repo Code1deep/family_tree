@@ -35,8 +35,8 @@ def init_tree_resources(app, person_service):
     tree_views = Blueprint('tree_views', __name__)
     register_tree_view_routes(tree_views)
     
-    # Ajout de la nouvelle route /tree_form
-    @tree_views.route('/form')
+    # la nouvelle route /tree_form
+    @tree_views.route('/tree_form')
     def show_tree_form():
         return render_template('tree_form.html')
     
