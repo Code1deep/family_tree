@@ -1,11 +1,7 @@
 # interfaces/api/resources/person/routes_tree.py
-
 from flask import jsonify, render_template, abort, current_app
-#from family_tree.interfaces.api.resources.person.init_person_service import person_service
-#from family_tree.interfaces.api.serializers.person_serializer import PersonSerializer
 from family_tree.infrastructure.persistence.repositories.person_repo import PersonRepository
 from family_tree.infrastructure.visualization.tree_visualizer import FamilyTreeVisualizer
-
 from family_tree.app.extensions import db
 import traceback
 
