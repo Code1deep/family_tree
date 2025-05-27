@@ -13,7 +13,7 @@ def create_tree_api(person_service):
     register_tree_api_routes(tree_api, person_service)
 
     # Enregistre les routes vues (HTML)
-    register_tree_views(tree_api)
+    register_tree_view_routes(tree_api)
 
     return tree_api
 
