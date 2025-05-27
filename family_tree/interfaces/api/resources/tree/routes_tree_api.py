@@ -10,7 +10,7 @@ def register_tree_api_routes(tree_api_bp, person_service):
     Enregistre les routes API JSON liées à l'arbre généalogique.
     """
     @tree_api_bp.route('/<int:person_id>')
-    def get_tree(person_id):
+   def get_tree(person_id):
         """
         Endpoint unifié pour générer un arbre généalogique.
         Gère les cas d'erreurs : ID invalide, personne non trouvée, etc.
@@ -31,8 +31,8 @@ def register_tree_api_routes(tree_api_bp, person_service):
             current_app.logger.error(f"Error generating tree: {str(e)}")
             return jsonify({'error': 'Internal server error'}), 500
 
-    @tree_api_bp.route('/tree/<person_id>')
-    def get_tree(person_id):
+    @tree_api_bp.route('/<person_id>')
+    def get_tree_json(person_id):
             """
             Endpoint unifié gérant tous les cas de test :
             - IDs invalides
