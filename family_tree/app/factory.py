@@ -126,6 +126,7 @@ def create_app(config_object='config.Config', testing=False):
             # Enregistrement des blueprints
             try:
                 from family_tree.interfaces.api.resources.tree.init_tree_service import create_tree_api
+                create_tree_api(app, person_service)
                 #from family_tree.interfaces.api.resources.person.init_person_service import create_person_api
                 from family_tree.interfaces.api.resources.person import person_api
 
