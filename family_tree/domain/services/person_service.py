@@ -12,6 +12,25 @@ class PersonService:
     def get_by_id(self, person_id: int) -> Optional[Person]:
         return self.repo.get_by_id(person_id)
     
+    def count_persons(self):
+        """Retourne le nombre total de personnes"""
+        return self.repo.count_persons()
+    
+    def get_tree_depth(self):
+        """Calcule la profondeur maximale de l'arbre"""
+        return self.repo.get_max_generation()
+    
+    def count_living(self):
+        """Compte les personnes vivantes"""
+        return self.repo.count_by_status(alive=True)
+    
+    def count_by_gender(self):
+        """Retourne les comptes par genre"""
+        return {
+            'male': self.repo.count_by_gender('male'),
+            'female': self.repo.count_by_gender('female')
+        }
+       
     def get_children(self, person_id):
         """
         Renvoie les enfants (objets Person) pour un parent donné.
