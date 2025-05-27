@@ -107,9 +107,9 @@ def create_app(config_object='config.Config', testing=False):
                 from family_tree.domain.services.person_service import PersonService
                 from family_tree.infrastructure.persistence.repositories.person_repo import PersonRepository
                 from family_tree.interfaces.api.resources.person import init_person_resources
-                from family_tree.interfaces.api.resources.tree.init_tree_service import init_tree_resources
+                from family_tree.interfaces.api.resources.tree import init_tree_resources
                 init_person_resources(app)
-                init_tree_resources(app) 
+                init_tree_resources(app, person_service)
                 repo = PersonRepository(db.session)
                 person_service = PersonService(repo)
                 print("✓ Services initialisés")
