@@ -34,7 +34,15 @@ def register_tree_routes(person_api):
     def show_tree():
         visualizer = FamilyTreeVisualizer(current_app, PersonRepository(db.session))
         tree_data = visualizer.generate_familytree_data(root_person_id=1)
-        return render_template('tree.html', nodes=tree_data['nodes'], edges=tree_data['edges'])
+        from family_tree.interfaces.forms.person_form import PersonForm
+        form = PersonForm()
+        return render_template(
+            'tree.html',
+            form=form,
+            nodes=tree_data['nodes'],
+            edges=tree_data['edges'],
+            person_id=1
+        )
 
     @person_api.route('/api/visualize/tree/<int:person_id>')
     def visualize_tree(person_id):
@@ -57,7 +65,6 @@ def register_tree_routes(person_api):
         tree_data = visualizer.generate_familytree_data(root_person_id=person_id)
         from family_tree.interfaces.forms.person_form import PersonForm
         form = PersonForm()  
-        
         if current_app.config.get('TESTING'):
             return jsonify(tree_data)
         else:
@@ -68,3 +75,4 @@ def register_tree_routes(person_api):
             edges=tree_data['edges'],
             person_id=person_id
         )
+
