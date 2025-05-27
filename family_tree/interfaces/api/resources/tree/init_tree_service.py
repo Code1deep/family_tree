@@ -2,7 +2,7 @@
 
 from flask import Blueprint
 from .routes_tree_api import register_tree_api_routes
-from .routes_tree_views import register_tree_views
+from .routes_tree_views import register_tree_view_routes
 
 
 def create_tree_api(person_service):
