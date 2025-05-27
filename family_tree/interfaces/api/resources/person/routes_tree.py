@@ -15,8 +15,14 @@ def register_tree_routes(person_api):
     from family_tree.interfaces.forms.person_form import PersonForm
     @person_api.route('/tree')
     def get_family_tree():
-        data = person_service.generate_familytree_data()
-        return jsonify(data)
+        try:
+            visualizer = FamilyTreeVisualizer(current_app, PersonRepository(db.session))
+            tree_data = visualizer.generate_familytree_data(root_person_id=1)
+            return jsonify(tree_data)
+        except Exception as e:
+            current_app.logger.error(f"get_family_tree error: {str(e)}")
+            return jsonify({"error": "Internal server error"}), 500
+
 
     @person_api.route("/api/visualize/tree/root")
     def get_root_tree():
