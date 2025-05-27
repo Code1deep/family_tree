@@ -5,6 +5,9 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 instance_path = os.path.join(os.path.dirname(basedir), 'instance')
 
 class Config:
+    SECRET_KEY = 'dev'  # ou os.environ.get("SECRET_KEY")
+    WTF_CSRF_ENABLED = False  # désactive CSRF pour les tests
+    
     """Configuration de base commune à tous les environnements."""
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
         f"sqlite:///{os.path.join(instance_path, 'family.db')}"
