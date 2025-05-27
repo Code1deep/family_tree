@@ -7,7 +7,7 @@ from family_tree.interfaces.api.resources.person.routes_crud import register_cru
 from family_tree.interfaces.api.resources.person.routes_api import register_api_routes
 from family_tree.interfaces.api.resources.person.routes_tree import register_tree_routes
 from family_tree.interfaces.api.resources.person.routes_misc import register_misc_routes
-from family_tree.interfaces.api.resources.person.init_person_service import init_resources, create_person_api
+from family_tree.interfaces.api.resources.person.init_person_service import init_person_resources, create_person_api
 
 person_api = Blueprint('person_api', __name__)
 
