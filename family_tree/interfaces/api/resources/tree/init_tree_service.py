@@ -43,13 +43,13 @@ def init_tree_resources(app, person_service):
     app.register_blueprint(tree_views, url_prefix='/tree')
 
     # 3️⃣ Blueprint complémentaire (optionnel)
-    tree_viz = Blueprint('tree_visualization', __name__)
+    tree_viz = Blueprint('tree_visualization_api', __name__)  
     tree_viz.add_url_rule('/visualize/<int:person_id>', 'visualize', 
-                         lambda person_id: jsonify(person_service.get_tree_data(person_id)))
+                        lambda person_id: jsonify(person_service.get_tree_data(person_id)))
     app.register_blueprint(tree_viz, url_prefix='/api')
 
     # ✅ Blueprint pour les routes de visualisation (ex: /tree/<id>, /api/visualize/tree/<id>)
-    visualize_bp = Blueprint('tree_visualization', __name__)
+    visualize_bp = Blueprint('tree_visualization_html', __name__) 
     register_tree_routes(visualize_bp)
     app.register_blueprint(visualize_bp)
 
@@ -62,4 +62,3 @@ def init_tree_resources(app, person_service):
     tree_api_bp = Blueprint("tree_api_json", __name__)
     register_tree_api_routes(tree_api_bp, person_service)
     app.register_blueprint(tree_api_bp, url_prefix="/api/tree")
-
