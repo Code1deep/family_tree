@@ -7,23 +7,27 @@ from family_tree.interfaces.api.resources.person.routes_tree import register_tre
 
 def init_tree_resources(app, person_service):
     """
-    Initialisation des ressources sans modification des noms existants.
-    Solution technique pour éviter le conflit de blueprints.
+    Initialise les différentes routes liées à l'arbre généalogique :
+    - Vue HTML (ex: /tree/, /tree/1)
+    - API JSON (ex: /api/tree/1)
+    - API de visualisation (ex: /api/visualize/tree/1)
     """
-    # Injection du service (conservé tel quel)
+
+    # ✅ Injection du service dans routes_tree
     inject_service(person_service)
     
-    # Blueprint principal (nom original conservé)
-    tree_api = Blueprint('tree_api', __name__)
-    register_tree_routes(tree_api)
-    app.register_blueprint(tree_api)
+    # ✅ Blueprint pour les routes de visualisation (ex: /tree/<id>, /api/visualize/tree/<id>)
+    visualize_bp = Blueprint('tree_visualization', __name__)
+    register_tree_routes(visualize_bp)
+    app.register_blueprint(visualize_bp)
 
-    # 🧩 Blueprint pour les vues HTML (ex : /tree/, /tree/1)
+    # ✅ Blueprint pour les vues HTML classiques (ex: /tree/, /tree/1)
     tree_html_bp = Blueprint("tree_html", __name__)
     register_tree_view_routes(tree_html_bp)
     app.register_blueprint(tree_html_bp, url_prefix="/tree")
 
-    # 🧩 Blueprint pour les routes API JSON (ex : /api/tree/1)
-    tree_api_bp = Blueprint("tree_api", __name__)
+    # ✅ Blueprint pour les API spécifiques à l'arbre (si différentes, sinon inutile)
+    tree_api_bp = Blueprint("tree_api_json", __name__)
     register_tree_api_routes(tree_api_bp, person_service)
     app.register_blueprint(tree_api_bp, url_prefix="/api/tree")
+
