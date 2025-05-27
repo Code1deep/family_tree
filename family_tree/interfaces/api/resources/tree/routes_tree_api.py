@@ -1,20 +1,18 @@
 # family_tree/interfaces/api/resources/tree/routes_tree_api.py
 
-from flask import Blueprint, jsonify, current_app
+from flask import jsonify, current_app
 from family_tree.domain.services.tree_service import TreeService
 
-def register_tree_api_routes(tree_api_bp, person_service):
+
+def register_tree_api_routes(bp, person_service):
     """
     Enregistre la route API JSON de génération d'arbre généalogique.
     """
 
-    @tree_api_bp.route('/<int:person_id>')
+    @bp.route('/api/<int:person_id>', methods=['GET'])
     def get_tree_json(person_id):
         """
-        Endpoint JSON unifié pour générer un arbre généalogique :
-        - IDs invalides
-        - Personnes non trouvées
-        - Partenaires, familles, photos
+        Endpoint JSON unifié pour générer un arbre généalogique.
         """
         if person_id <= 0:
             return jsonify({'error': 'Invalid person ID'}), 400
@@ -31,6 +29,3 @@ def register_tree_api_routes(tree_api_bp, person_service):
         except Exception as e:
             current_app.logger.error(f"Error generating tree: {str(e)}")
             return jsonify({'error': 'Internal server error'}), 500
-
-    return tree_api_bp
-
