@@ -32,7 +32,7 @@
 console.log("Script 2 chargé");
 
 document.addEventListener('DOMContentLoaded', function () {
-    fetch("/api/visualize/tree/root")
+    fetch(`/api/visualize/tree/{{ person_id }}`)
         .then(response => response.json())
         .then(data => {
             const tree = new FamilyTree(document.getElementById("tree-container"), {
@@ -78,6 +78,7 @@ document.addEventListener('DOMContentLoaded', function () {
             console.error("Erreur de chargement des données racine :", error);
         });
 });
+console.log("person_id: {{ person_id }}");
 </script>
 
 <style>
@@ -99,5 +100,3 @@ document.addEventListener('DOMContentLoaded', function () {
 .ft-gener-4 { background-color: #ff1493; }
 </style>
 {% endblock %}
-
-       
