@@ -10,6 +10,6 @@ from . import routes_tree_api
 from . import init_tree_service
 
 # Initialisation des routes
-routes_tree_api.register_routes(tree_api)
+# routes_tree_api.register_routes(tree_api)
 
 
