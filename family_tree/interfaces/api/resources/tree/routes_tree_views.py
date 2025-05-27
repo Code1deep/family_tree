@@ -32,6 +32,6 @@ def register_tree_view_routes(bp):
         return render_template(
             'tree.html', form=form,
             nodes=tree_data['nodes'],
-            edges=tree_data['edges']
+            edges=tree_data['edges'],
+            person_id=person_id
         )
-
