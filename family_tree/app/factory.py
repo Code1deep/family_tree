@@ -107,15 +107,14 @@ def create_app(config_object='config.Config', testing=False):
                 from family_tree.domain.services.person_service import PersonService
                 from family_tree.infrastructure.persistence.repositories.person_repo import PersonRepository
                 from family_tree.interfaces.api.resources.person import init_person_resources
-                from family_tree.interfaces.api.resources.tree import init_tree_resources
+                # ⚠️ Supprime init_tree_resources ici
+                from family_tree.interfaces.api.resources.tree.init_tree_service import create_tree_api
 
-                # 1. Initialisation du service
                 repo = PersonRepository(db.session)
                 person_service = PersonService(repo)
 
-                # 2. Initialisation des routes avec service prêt
-                init_person_resources(app)
-                init_tree_resources(app, person_service)
+                init_person_resources(app, person_service)
+                # ❌ supprime init_tree_resources(app, person_service)
 
                 print("✓ Services initialisés")
 
@@ -125,15 +124,11 @@ def create_app(config_object='config.Config', testing=False):
 
             # Enregistrement des blueprints
             try:
-                from family_tree.interfaces.api.resources.tree.init_tree_service import create_tree_api
-                init_tree_resources(app, person_service)
-                #from family_tree.interfaces.api.resources.person.init_person_service import create_person_api
                 from family_tree.interfaces.api.resources.person import person_api
 
                 app.register_blueprint(person_api, url_prefix='/api/persons')
                 app.register_blueprint(create_tree_api(person_service), url_prefix='/api/tree')
-                
-                # Debug des routes enregistrées
+
                 print("✓ Blueprints enregistrés")
                 print("Routes disponibles:")
                 for rule in app.url_map.iter_rules():
