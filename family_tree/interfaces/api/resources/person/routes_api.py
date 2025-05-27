@@ -54,7 +54,7 @@ def register_api_routes(person_api):
         return jsonify([p.to_dict() for p in persons])
 
 
-    @bp.route('/api/persons', methods=['GET'])
+    @person_api.route('/api/persons', methods=['GET'])
     def search_persons():
         name = request.args.get('name')
         gender = request.args.get('gender')
