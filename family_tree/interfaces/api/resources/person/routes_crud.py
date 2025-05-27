@@ -2,12 +2,25 @@
 
 import logging
 from datetime import datetime
-from flask import request, jsonify
+from flask import request, jsonify, abort
 from family_tree.app.extensions import db
 from family_tree.interfaces.api.serializers.person_serializer import PersonSerializer
-from family_tree.interfaces.api.resources.person.init_person_service import person_service
+#from family_tree.interfaces.api.resources.person.init_person_service import person_service
+
+
+person_service = None
+
+def inject_service(service):
+    global person_service
+    person_service = service
 
 def register_crud_routes(person_api):
+    @person_api.route('/crud/person/<int:person_id>', methods=['DELETE'])
+    def delete_person(person_id):
+        if person_service.delete(person_id):
+            return jsonify({'success': True}), 204
+        abort(404, "Person not found")
+
     @person_api.route('/persons', methods=['POST'])
     def create_person():
         """Endpoint POST /persons - Création personne"""
@@ -98,6 +111,6 @@ def register_crud_routes(person_api):
                 return jsonify({'error': 'Person not found'}), 404
             return '', 204
         except Exception as e:
-            person_service.repo.rollback()  # Assure-toi que rollback() existe dans le repo
+            person_service.repo.rollback()  
             logging.error(f"Error deleting person: {str(e)}")
             return jsonify({'error': 'Internal server error'}), 500
