@@ -53,25 +53,6 @@ def register_api_routes(person_api):
         persons = query.all()
         return jsonify([p.to_dict() for p in persons])
 
-
-    @person_api.route('/api/persons', methods=['GET'])
-    def search_persons():
-        name = request.args.get('name')
-        gender = request.args.get('gender')
-
-        query = Person.query
-        if name and name.strip() != '':
-            query = query.filter(
-                (Person.first_name.ilike(f"%{name}%")) |
-                (Person.last_name.ilike(f"%{name}%"))
-            )
-        if gender:
-            query = query.filter(Person.gender.ilike(gender))
-
-        persons = query.all()
-        return jsonify([p.to_dict() for p in persons]), 200
-
 def inject_service(service):
     global person_service
     person_service = service
-
