@@ -115,7 +115,7 @@ def create_app(config_object='config.Config', testing=False):
 
                 # 2. Initialisation des routes avec service prêt
                 init_person_resources(app)
-                init_tree_resources(app)
+                init_tree_resources(app, person_service)
 
                 print("✓ Services initialisés")
 
