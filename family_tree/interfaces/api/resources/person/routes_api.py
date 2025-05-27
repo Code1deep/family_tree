@@ -8,6 +8,7 @@ from flask import Blueprint
 
 person_api = Blueprint("person_api", __name__)
 
+
 def register_api_routes(person_api):
     @person_api.route('/api/person/<int:person_id>')
     def get_person_by_id(person_id):
