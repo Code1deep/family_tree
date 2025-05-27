@@ -4,21 +4,20 @@ from flask import Blueprint
 from .routes_tree_api import register_tree_api_routes
 from .routes_tree_views import register_tree_view_routes
 
-
-def create_tree_api(person_service):
-    """Crée et configure le blueprint tree_api avec les routes liées à l'arbre"""
-    tree_api = Blueprint("tree_api", __name__)
-
-    # Routes API JSON
-    register_tree_api_routes(tree_api, person_service)
-
-    # Routes UI HTML
-    register_tree_view_routes(tree_api)
-
-    return tree_api
-
-
 def init_tree_resources(app, person_service):
-    """Initialise les ressources de l'arbre avec service injecté"""
-    tree_api = create_tree_api(person_service)
-    app.register_blueprint(tree_api, url_prefix="/tree")
+    """
+    Initialise les ressources de l'arbre :
+    - Un blueprint pour les routes HTML (interface utilisateur)
+    - Un blueprint pour les routes API JSON (backend)
+    """
+
+    # 🧩 Blueprint pour les vues HTML (ex : /tree/, /tree/1)
+    tree_html_bp = Blueprint("tree_html", __name__)
+    register_tree_view_routes(tree_html_bp)
+    app.register_blueprint(tree_html_bp, url_prefix="/tree")
+
+    # 🧩 Blueprint pour les routes API JSON (ex : /api/tree/1)
+    tree_api_bp = Blueprint("tree_api", __name__)
+    register_tree_api_routes(tree_api_bp, person_service)
+    app.register_blueprint(tree_api_bp, url_prefix="/api/tree")
+
