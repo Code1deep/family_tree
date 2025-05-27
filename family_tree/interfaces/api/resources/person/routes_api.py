@@ -36,7 +36,7 @@ def register_api_routes(person_api):
         except ValueError as e:
             abort(404, str(e))
 
-    @person_api.route('/api/persons', methods=['GET'])
+    @person_api.route('/api/persons', methods=['GET'], endpoint='search_persons')
     def search_persons():
         name = request.args.get('name')
         gender = request.args.get('gender')
