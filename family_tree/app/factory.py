@@ -108,11 +108,17 @@ def create_app(config_object='config.Config', testing=False):
                 from family_tree.infrastructure.persistence.repositories.person_repo import PersonRepository
                 from family_tree.interfaces.api.resources.person import init_person_resources
                 from family_tree.interfaces.api.resources.tree import init_tree_resources
-                init_person_resources(app, person_service)
-                init_tree_resources(app, person_service)
+
+                # 1. Initialisation du service
                 repo = PersonRepository(db.session)
                 person_service = PersonService(repo)
+
+                # 2. Initialisation des routes avec service prêt
+                init_person_resources(app, person_service)
+                init_tree_resources(app, person_service)
+
                 print("✓ Services initialisés")
+
             except Exception as e:
                 print(f"❌ Erreur initialisation services: {str(e)}")
                 raise
@@ -150,4 +156,3 @@ def create_app(config_object='config.Config', testing=False):
         import traceback
         traceback.print_exc()
         raise
-
