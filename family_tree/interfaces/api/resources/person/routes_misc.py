@@ -2,7 +2,17 @@
 
 from flask import jsonify, request
 
+person_service = None
+
+def inject_service(service):
+    global person_service
+    person_service = service
+
 def register_misc_routes(person_api):
+    @person_api.route('/health')
+    def health_check():
+        return jsonify({'status': 'ok'})
+     
     @person_api.route('/api/debug', methods=['POST'])
     def debug_endpoint():
         data = request.get_json()
