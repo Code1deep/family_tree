@@ -27,8 +27,6 @@ export function initD3Tree(data) {
         svgContainer.call(zoom);
     }
 
-    console.log("Initialisation de l'arbre D3 avec :", treeData);
-    
     function drawTree(data) {
         initSvg();
         
