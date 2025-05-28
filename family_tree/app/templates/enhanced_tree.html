@@ -82,10 +82,11 @@
     function renderPersonNode(person) {
         const container = document.createElement('div');
         container.className = 'person-node';
-
+        // L’arbre est affiché sous forme imbriquée avec les enfants sous leurs parents.
         const header = document.createElement('div');
         header.className = 'person-header';
-        header.textContent = `${person.name} (${person.birthDate || "?"})`;
+        header.textContent = `${person.name} (${person.birthDate || "?"})`; // Chaque personne a : Son nom Sa date de naissance
+
         container.appendChild(header);
 
         if (person.children && person.children.length > 0) {
@@ -103,9 +104,9 @@
 
     document.addEventListener('DOMContentLoaded', async () => {
         try {
-            const treeData = await initTree();
+            const treeData = await initTree(); // Charge les données avec l'ID racine 1
             const treeContainer = document.getElementById('familyTree');
-            treeContainer.innerHTML = '';  // Clear before rendering
+            treeContainer.innerHTML = '';  // Clear before rendering // Nettoyage avant rendu Render
 
             treeData.forEach(root => {
                 const node = renderPersonNode(root);
