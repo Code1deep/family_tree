@@ -32,7 +32,7 @@
 console.log("Script 2 chargé");
 
 document.addEventListener('DOMContentLoaded', function () {
-    fetch(`/api/persons/api/visualize/tree/{{ person_id }}`)
+    fetch(`/api/visualize/tree/{{ person_id }}`)
         .then(response => response.json())
         .then(data => {
             const tree = new FamilyTree(document.getElementById("tree-container"), {
@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             tree.on('expand', function (node) {
                 if (!node.childrenLoaded) {
-                    fetch(`/api/persons/api/visualize/tree/${node.id}`)
+                    fetch(`/api/visualize/tree/${node.id}`)
                         .then(response => response.json())
                         .then(data => {
                             tree.add(data.nodes);
