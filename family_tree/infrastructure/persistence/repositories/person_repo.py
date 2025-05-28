@@ -23,11 +23,6 @@ class PersonRepository:
     def rollback(self):
         self.session.rollback()
 
-    def get_children(self, parent_id):
-        return Person.query.filter(
-            (Person.father_id == parent_id) | (Person.mother_id == parent_id)
-        ).all()
-
     def get(self, person_id):
         print(f">>> DEBUG: appel à get({person_id}) dans PersonRepository")
         return self.session.get(Person, person_id)
@@ -112,8 +107,10 @@ class PersonRepository:
                 formatted_node = {
                     'id': node.get('id'),
                     'pids': node.get('partner_ids', []),
-                    'img': node.get('photo_url')
+                    'img': node.get('photo_url'),
+                    'name': f"{node.get('first_name', '')} {node.get('last_name', '')}".strip()
                 }
+
                 nodes.append(formatted_node)
 
             return {
@@ -151,4 +148,3 @@ class PersonRepository:
         if gender:
             query = query.filter(Person.gender.ilike(gender))  # insensible à la casse
         return query.all()
-
