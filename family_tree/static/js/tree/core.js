@@ -2,6 +2,7 @@
 export async function loadTreeData(rootId = 1) {
     const response = await fetch(`/api/visualize/tree/${rootId}`);
     if (!response.ok) throw new Error("Erreur de chargement des données");
+    console.log("Données reçues:", data); // Debug
     return processTreeData(await response.json());
 }
 
