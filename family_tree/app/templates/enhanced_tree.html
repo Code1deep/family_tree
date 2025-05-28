@@ -51,5 +51,20 @@
 
     <script src="{{ url_for('static', filename='js/tree.js') }}"></script>
     <script src="{{ url_for('static', filename='js/modal.js') }}"></script>
+
+    <script type="module">
+    import { initTree } from "{{ url_for('static', filename='js/tree/core.js') }}";
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        try {
+            const treeData = await initTree();
+            console.log("Arbre chargé :", treeData);
+            // 👉 Affichage réel à ajouter ici selon ta logique de visualisation
+        } catch (err) {
+            console.error("Erreur lors du chargement de l'arbre :", err);
+        }
+    });
+    </script>
+
 </body>
 </html>
