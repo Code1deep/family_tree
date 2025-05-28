@@ -5,6 +5,15 @@ export async function loadTreeData(rootId = 1) {
     return processTreeData(await response.json());
 }
 
+export async function initTree(rootId = 1) {
+    try {
+        return await loadTreeData(rootId);
+    } catch (error) {
+        console.error("Erreur dans initTree:", error);
+        throw error;
+    }
+}
+
 export function processTreeData(data) {
     const nodes = [];
     
