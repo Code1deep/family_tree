@@ -1,6 +1,6 @@
 // static/js/tree/core.js
 export async function initTree() {
-    const response = await fetch("/api/tree");
+    const response = await fetch("/api/visualize/tree/1");
     if (!response.ok) throw new Error("Network response was not ok");
     const data = await response.json();
     return processTreeData(data);
