@@ -62,9 +62,13 @@ class PersonRepository:
         return self.get_all()
 
     def get_children(self, parent_id):
+        if isinstance(parent_id, Person):
+            parent_id = parent_id.id
+
         return self.session.query(Person).filter(
             (Person.father_id == parent_id) | (Person.mother_id == parent_id)
         ).all()
+
 
     def get_parents(self, person):
         parents = []
