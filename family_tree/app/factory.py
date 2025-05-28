@@ -124,7 +124,7 @@ def create_app(config_object='config.Config', testing=False):
             # Enregistrement des blueprints
             try:
                 
-                app.register_blueprint(create_person_api(), url_prefix='/api/persons')
+                app.register_blueprint(create_person_api(), url_prefix='/api/person')
 
                 print("✓ Blueprints enregistrés")
                 print("Routes disponibles:")
