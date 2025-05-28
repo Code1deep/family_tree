@@ -1,5 +1,4 @@
  # interfaces/api/resources/person/routes_misc.py
-
 from flask import jsonify, request
 
 person_service = None
@@ -21,3 +20,4 @@ def register_misc_routes(person_api):
     @person_api.route('/test')
     def test():
         return 'OK'
+
