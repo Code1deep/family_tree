@@ -1,70 +1,41 @@
-<!-- app/templates/enhanced_tree.html -->
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <title>شجرة العائلة الحسنة</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
-            padding: 20px;
-        }
-        .tree-container {
-            text-align: center;
-            margin-top: 20px;
-        }
-        .header-actions {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .add-person-btn {
-            margin: 0 10px;
-            padding: 8px 15px;
-            background: #4CAF50;
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
-            display: inline-block;
-        }
-    </style>
-</head>
+<script type="module">
+import { initTree } from "{{ url_for('static', filename='js/tree/core.js') }}";
 
-<body>
-    <h1 style="text-align: center;">شجرة العائلة</h1>
-    
-    <div class="header-actions">
-        <a href="/add" class="add-person-btn">
-            ➕ إضافة فرد جديد
-        </a>
-    </div>
+function renderPersonNode(person) {
+    const container = document.createElement('div');
+    container.className = 'person-node';
 
-    <div class="tree-container">
-        {% include 'macros/node.html' %}
-        
-        {% for root in tree %}
-            {{ render_node(root) }}
-        {% endfor %}
-    </div>
+    const header = document.createElement('div');
+    header.className = 'person-header';
+    header.textContent = `${person.name} (${person.birthDate || "?"})`;
+    container.appendChild(header);
 
-    {% include 'partials/modal.html' %}
+    if (person.children && person.children.length > 0) {
+        const childrenContainer = document.createElement('div');
+        childrenContainer.className = 'children-container';
+        person.children.forEach(child => {
+            const childNode = renderPersonNode(child);
+            childrenContainer.appendChild(childNode);
+        });
+        container.appendChild(childrenContainer);
+    }
 
-    <script src="{{ url_for('static', filename='js/tree.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/modal.js') }}"></script>
+    return container;
+}
 
-    <script type="module">
-    import { initTree } from "{{ url_for('static', filename='js/tree/core.js') }}";
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        const treeData = await initTree();
+        const treeContainer = document.getElementById('familyTree');
+        treeContainer.innerHTML = '';  // Clear before rendering
 
-    document.addEventListener('DOMContentLoaded', async () => {
-        try {
-            const treeData = await initTree();
-            console.log("Arbre chargé :", treeData);
-            // 👉 Affichage réel à ajouter ici selon ta logique de visualisation
-        } catch (err) {
-            console.error("Erreur lors du chargement de l'arbre :", err);
-        }
-    });
-    </script>
+        treeData.forEach(root => {
+            const node = renderPersonNode(root);
+            treeContainer.appendChild(node);
+        });
 
-</body>
-</html>
+    } catch (err) {
+        console.error("Erreur lors du chargement de l'arbre :", err);
+    }
+});
+</script>
