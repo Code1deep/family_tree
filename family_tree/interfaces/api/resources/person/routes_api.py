@@ -52,7 +52,3 @@ def register_api_routes(person_api):
 
         persons = query.all()
         return jsonify([p.to_dict() for p in persons])
-
-def inject_service(service):
-    global person_service
-    person_service = service
