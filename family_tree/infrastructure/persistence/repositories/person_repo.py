@@ -62,13 +62,23 @@ class PersonRepository:
         return self.get_all()
 
     def get_children(self, parent_id):
-        if isinstance(parent_id, Person):
-            parent_id = parent_id.id
+        """
+        Renvoie les enfants pour un parent donné.
+        parent_id peut être un entier ou un tuple/list contenant un entier.
+        """
+        try:
+            # Si parent_id est un tuple ou une liste, en extraire le premier élément
+            if isinstance(parent_id, (list, tuple)):
+                parent_id = parent_id[0]
+            else:
+                # Forcer la conversion au cas où
+                parent_id = int(parent_id)
+        except Exception as e:
+            raise ValueError(f"parent_id doit être convertible en entier, obtenu : {parent_id}")
 
         return self.session.query(Person).filter(
             (Person.father_id == parent_id) | (Person.mother_id == parent_id)
         ).all()
-
 
     def get_parents(self, person):
         parents = []
