@@ -2,8 +2,9 @@
 export async function loadTreeData(rootId = 1) {
     const response = await fetch(`/api/visualize/tree/${rootId}`);
     if (!response.ok) throw new Error("Erreur de chargement des données");
-    console.log("Données reçues:", data); // Debug
-    return processTreeData(await response.json());
+    const jsonData = await response.json();
+    console.log("Données reçues:", jsonData); 
+    return processTreeData(jsonData);
 }
 
 export async function initTree(rootId = 1) {
