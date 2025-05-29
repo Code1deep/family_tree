@@ -62,7 +62,7 @@ export function initD3Tree(data) {
             .join("g")
             .attr("class", "node")
             // ✅ Correction : template string avec backticks
-            .attr("transform", d => `translate(${d.y},${d.x})`)
+            .attr("transform", d => `translate(${d.x},${d.y})`)
             .style("cursor", "pointer");
 
         node.append("circle")
