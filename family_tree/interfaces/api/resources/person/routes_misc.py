@@ -20,4 +20,13 @@ def register_misc_routes(person_api):
     @person_api.route('/test')
     def test():
         return 'OK'
-
+    
+    @person_api.route('/api/stats')
+    def get_stats():
+        stats = {
+            'males': 10,
+            'females': 12,
+            'living': 15,
+            'deceased': 7
+        }
+        return jsonify(stats)
