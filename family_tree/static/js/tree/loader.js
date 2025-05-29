@@ -1,4 +1,4 @@
-<!-- static/js/tree/loader.js -->
+// static/js/tree/loader.js
 import { initTree } from './core.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
