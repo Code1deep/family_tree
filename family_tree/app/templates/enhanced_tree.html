@@ -48,10 +48,6 @@
     <!-- Ajouter D3.js -->
     <script src="https://d3js.org/d3.v7.min.js"></script>
 
-    <!-- Script principal -->
-    <script type="module" src="{{ url_for('static', filename='js/tree.js') }}"></script>
-
-
     <!-- ❌ Désactivé : rendu serveur Jinja2 -->
     {# 
     {% include 'macros/node.html' %}
@@ -112,5 +108,8 @@
     <!-- Modal encore incluse si tu veux l'utiliser -->
     {% include 'partials/modal.html' %}
     <script src="{{ url_for('static', filename='js/modal.js') }}"></script>
+
+        <!-- Script principal -->
+    <script type="module" src="{{ url_for('static', filename='js/tree.js') }}"></script>
 </body>
 </html>
