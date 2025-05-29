@@ -1,20 +1,5 @@
-// static/js/tree/loader.js
+//static/js/tree/loader.js 
 import { initTree } from './core.js';
-
-document.addEventListener('DOMContentLoaded', async () => {
-    try {
-        const treeData = await initTree();
-        const treeContainer = document.getElementById('familyTree');
-        treeContainer.innerHTML = '';
-
-        treeData.forEach(root => {
-            const node = renderPersonNode(root); // ⚠️ à définir ici ou importer
-            treeContainer.appendChild(node);
-        });
-    } catch (err) {
-        console.error("Erreur lors du chargement de l'arbre :", err);
-    }
-});
 
 function renderPersonNode(person) {
     const container = document.createElement('div');
@@ -22,7 +7,6 @@ function renderPersonNode(person) {
     const header = document.createElement('div');
     header.className = 'person-header';
     header.textContent = `${person.name} (${person.birthDate || "?"})`;
-
     container.appendChild(header);
 
     if (person.children && person.children.length > 0) {
@@ -37,3 +21,17 @@ function renderPersonNode(person) {
 
     return container;
 }
+
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        const treeData = await initTree(); // ← appelle core.js + transforme en arbre
+        const treeContainer = document.getElementById('familyTree');
+        treeContainer.innerHTML = '';
+        treeData.forEach(root => {
+            const node = renderPersonNode(root);
+            treeContainer.appendChild(node);
+        });
+    } catch (err) {
+        console.error("Erreur lors du chargement de l'arbre :", err);
+    }
+});
