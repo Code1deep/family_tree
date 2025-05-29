@@ -45,6 +45,13 @@
     <!-- Seul script actif : affichage via D3.js -->
     <script type="module" src="{{ url_for('static', filename='js/tree/tree.js') }}"></script>
 
+    <!-- Ajouter D3.js -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+
+    <!-- Script principal -->
+    <script type="module" src="{{ url_for('static', filename='js/tree.js') }}"></script>
+
+
     <!-- ❌ Désactivé : rendu serveur Jinja2 -->
     {# 
     {% include 'macros/node.html' %}
