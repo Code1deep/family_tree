@@ -40,7 +40,7 @@ export function initD3Tree(data) {
         const treeData = buildTreeFromEdges(data.nodes, data.edges);
         const root = d3.hierarchy(treeData);
 
-        d3.tree().size([height - margin.top - margin.bottom, width - margin.left - margin.right])(root);
+        d3.tree().size([width - margin.left - margin.right, height - margin.top - margin.bottom])(root);
 
         // Styles et couleurs
         const colorScale = d3.scaleOrdinal()
@@ -52,7 +52,7 @@ export function initD3Tree(data) {
             .data(root.links())
             .join("path")
             .attr("class", "link")
-            .attr("d", d3.linkHorizontal().x(d => d.y).y(d => d.x))
+            .attr("d", d3.linkVertical().x(d => d.x).y(d => d.y))
             .attr("stroke", "#999")
             .attr("fill", "none");
 
