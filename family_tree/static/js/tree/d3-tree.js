@@ -2,7 +2,7 @@
 import { initControls } from './controls.js';
 import { centerTree, exportAsPNG, exportAsSVG, toggleFullscreen } from './utils.js';
 
-export function renderFamilyTree(data) {
+export function initD3Tree(data) {
     console.log("Rendering tree with data:", data);
     const container = document.getElementById("tree-container");
     const margin = { top: 50, right: 90, bottom: 30, left: 90 };
