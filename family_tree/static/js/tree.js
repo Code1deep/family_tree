@@ -1,5 +1,4 @@
 // static/js/tree.js
-<script src="https://balkan.app/js/OrgChart.js"></script>
 
 import { loadTreeData } from './tree/core.js';
 import { initD3Tree } from './tree/d3-tree.js';
