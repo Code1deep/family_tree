@@ -1,4 +1,6 @@
 // static/js/tree.js
+<script src="https://balkan.app/js/OrgChart.js"></script>
+
 import { loadTreeData } from './tree/core.js';
 import { renderFamilyTree } from './tree/d3-tree.js';
 
