@@ -16,9 +16,11 @@ export function initD3Tree(data) {
         svgContainer = d3.select("#tree-container")
             .append("svg")
             .attr("preserveAspectRatio", "xMidYMid meet")
+            // ✅ Correction : template string avec backticks (``)
             .attr("viewBox", `0 0 ${container.clientWidth} ${window.innerHeight * 0.8}`);
         
         svg = svgContainer.append("g")
+            // ✅ Correction : template string avec backticks
             .attr("transform", `translate(${margin.left},${margin.top})`);
 
         zoom = d3.zoom()
@@ -33,7 +35,10 @@ export function initD3Tree(data) {
         
         const width = container.clientWidth;
         const height = window.innerHeight * 0.8;
-        const root = d3.hierarchy(data[0]); // Prend le premier arbre
+
+        // ✅ Reconstruire l’arbre imbriqué
+        const treeData = buildTreeFromEdges(data.nodes, data.edges);
+        const root = d3.hierarchy(treeData);
 
         d3.tree().size([height - margin.top - margin.bottom, width - margin.left - margin.right])(root);
 
@@ -56,6 +61,7 @@ export function initD3Tree(data) {
             .data(root.descendants())
             .join("g")
             .attr("class", "node")
+            // ✅ Correction : template string avec backticks
             .attr("transform", d => `translate(${d.y},${d.x})`)
             .style("cursor", "pointer");
 
@@ -76,6 +82,7 @@ export function initD3Tree(data) {
         }).on("mouseout", function() {
             d3.select(this).select("circle").transition().attr("r", 10);
         }).on("click", function(event, d) {
+            // ✅ Correction : template string avec backticks
             window.location.href = `/person/${d.data.id}`;
         });
 
