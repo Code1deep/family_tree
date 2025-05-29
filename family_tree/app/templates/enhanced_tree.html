@@ -75,9 +75,8 @@
 
     <script src="{{ url_for('static', filename='js/tree.js') }}"></script>
     <script src="{{ url_for('static', filename='js/modal.js') }}"></script>
-
-    <script type="module">
-    import { initTree } from "{{ url_for('static', filename='js/tree/core.js') }}";
+    
+    <script type="module" src="{{ url_for('static', filename='js/tree/loader.js') }}">
 
     function renderPersonNode(person) {
         const container = document.createElement('div');
