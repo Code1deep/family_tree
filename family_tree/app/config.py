@@ -24,3 +24,22 @@ class TestingConfig(Config):
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = f"sqlite:///{os.path.join(instance_path, 'family.db')}"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+LOGGING_CONFIG = {
+    "version": 1,
+    "formatters": {
+        "default": {
+            "format": "[%(asctime)s] %(levelname)s in %(module)s: %(message)s",
+        }
+    },
+    "handlers": {
+        "wsgi": {
+            "class": "logging.StreamHandler",
+            "formatter": "default"
+        }
+    },
+    "root": {
+        "level": "INFO",  # Peut être DEBUG pour plus de détails
+        "handlers": ["wsgi"]
+    }
+}
