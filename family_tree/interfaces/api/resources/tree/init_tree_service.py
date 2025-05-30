@@ -32,6 +32,6 @@ def init_tree_resources(app, person_service):
     app.register_blueprint(html_bp, url_prefix="/tree")
 
     # ✅ 3. API pour la visualisation (utilisé par D3.js)
-    viz_bp = Blueprint("tree_visualization_api", __name__)
-    register_tree_routes(viz_bp)
-    app.register_blueprint(viz_bp)
+    #viz_bp = Blueprint("tree_visualization_api", __name__)
+    #register_tree_routes(viz_bp)
+    #app.register_blueprint(viz_bp)
