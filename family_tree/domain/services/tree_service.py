@@ -1,5 +1,6 @@
 # domain/services/tree_service.py
 
+from venv import logger
 from family_tree.domain.models.person import Person
 
 class TreeService:
@@ -8,6 +9,7 @@ class TreeService:
         self.person_service = person_service
 
     def generate_tree(self, person_id):
+        logger.info(f"[METHOD] generate_tree({person_id})")
         person = self.person_service.get_by_id(person_id)
         if not person:
             return {'nodes': [], 'edges': []}
@@ -70,7 +72,8 @@ class TreeService:
             'edges': edges
         }
 
-    def _get_name_by_id(self, person_id): 
+    def _get_name_by_id(self, person_id):
+        logger.info(f"[METHOD] get_name_by_id({person_id})") 
         """Renvoie le nom complet d'une personne via son ID"""
         if not person_id:
             return ""
