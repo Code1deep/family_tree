@@ -1,4 +1,5 @@
 # interfaces/api/resources/person/routes_api.py
+from venv import logger
 from flask import request, jsonify, abort
 from family_tree.interfaces.api.serializers.person_serializer import PersonSerializer
 from family_tree.domain.models import Person
@@ -12,6 +13,7 @@ def inject_service(service):
 def register_api_routes(person_api):
     @person_api.route('/api/person/<int:person_id>')
     def get_person_by_id(person_id):
+        logger.info(f"[METHOD] get_person_by_id({person_id})")
         person = person_service.get_by_id(person_id)
         if not person:
             abort(404, "Person not found")
@@ -19,6 +21,7 @@ def register_api_routes(person_api):
 
     @person_api.route('/api/person/<int:person_id>/children')
     def get_person_children(person_id):
+        logger.info(f"[METHOD] get_person_children({person_id})")
         children = person_service.get_children(person_id)
         return jsonify([PersonSerializer.serialize_basic(c) for c in children])
 
