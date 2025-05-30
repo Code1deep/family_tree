@@ -12,7 +12,7 @@ def register_misc_routes(person_api):
     def health_check():
         return jsonify({'status': 'ok'})
      
-    @person_api.route('/api/debug', methods=['POST'])
+    @person_api.route('/debug', methods=['POST'])
     def debug_endpoint():
         data = request.get_json()
         return jsonify({"message": "Debug successful", "data": data}), 200
