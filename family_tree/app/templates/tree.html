@@ -1,7 +1,4 @@
 <!-- app/templates/tree.html -->
-
-<!-- DEBUG: Rendu par tree.html -->
-
 {% extends "base_template.html" %}
 
 {% block content %}
@@ -62,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             tree.on('expand', function (node) {
                 if (!node.childrenLoaded) {
-                    fetch(`/api/visualize/tree/${node.id}`)
+                    fetch(`/api/person/visualize/tree/${node.id}`)
                         .then(response => response.json())
                         .then(data => {
                             tree.add(data.nodes);
