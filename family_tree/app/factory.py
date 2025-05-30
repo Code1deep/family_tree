@@ -77,17 +77,15 @@ def create_app(config_object='config.Config', testing=False):
         @app.before_request
         def log_request_info():
             current_app.logger.info(f"[ROUTE] {request.method} {request.path}")
-            if request.json:
-                current_app.logger.info(f"[BODY] {request.json}")
+    
+            if request.is_json:
+                current_app.logger.info(f"[BODY] {request.get_json()}")
+    
             if request.args:
                 current_app.logger.info(f"[ARGS] {request.args}")
+    
             if request.form:
                 current_app.logger.info(f"[FORM] {request.form}")
-
-        @app.after_request
-        def log_response_info(response):
-            current_app.logger.info(f"[RESPONSE] {response.status} {response.content_type}")
-            return response
     
         # Route de base
         @app.route('/')
