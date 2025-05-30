@@ -21,7 +21,7 @@ def register_misc_routes(person_api):
     def test():
         return 'OK'
     
-    @person_api.route('/api/stats')
+    @person_api.route('/stats')
     def get_stats():
         stats = {
             'males': 10,
