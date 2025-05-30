@@ -13,14 +13,14 @@ def inject_service(service):
 
 def register_tree_routes(person_api):
     from family_tree.interfaces.forms.person_form import PersonForm
-    @person_api.route('/tree', endpoint="person_get_family_tree")
-    def get_family_tree():
+    @person_api.route("/visualize/tree/<int:person_id>", endpoint="visualize_tree_by_id")
+    def person_get_family_tree():
         try:
             visualizer = FamilyTreeVisualizer(current_app, PersonRepository(db.session))
             tree_data = visualizer.generate_familytree_data(root_person_id=1)
             return jsonify(tree_data)
         except Exception as e:
-            current_app.logger.error(f"get_family_tree error: {str(e)}")
+            current_app.logger.error(f"person_get_family_tree error: {str(e)}")
             return jsonify({"error": "Internal server error"}), 500
 
 
@@ -91,3 +91,4 @@ def register_tree_routes(person_api):
             traceback.print_exc()
             current_app.logger.error(f"API /tree error: {str(e)}")
             return jsonify({'error': 'Server error'}), 500
+
