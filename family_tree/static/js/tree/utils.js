@@ -50,3 +50,23 @@ function downloadFile(url, filename) {
     a.download = filename;
     a.click();
 }
+
+export function buildTreeFromEdges(nodes, edges) {
+    // Dictionnaire des nœuds par ID
+    const nodeMap = new Map(nodes.map(node => [node.id, { ...node, children: [] }]));
+
+    // Créer les relations parent → enfant
+    edges.forEach(edge => {
+        const parent = nodeMap.get(edge.source);
+        const child = nodeMap.get(edge.target);
+        if (parent && child) {
+            parent.children.push(child);
+        }
+    });
+
+    // Identifier la racine (nœud qui n’est enfant de personne)
+    const childIds = new Set(edges.map(e => e.target));
+    const rootNode = nodes.find(node => !childIds.has(node.id));
+
+    return nodeMap.get(rootNode.id);
+}
