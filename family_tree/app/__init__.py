@@ -1,5 +1,5 @@
 # family_tree/app/__init__.py
-from flask import app, current_app, request
+from flask import Flask, current_app, request
 from .factory import create_app
 import logging.config
 from family_tree.config import LOGGING_CONFIG
