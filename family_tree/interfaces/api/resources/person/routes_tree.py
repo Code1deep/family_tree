@@ -14,7 +14,7 @@ def inject_service(service):
 def register_tree_routes(person_api):
     from family_tree.interfaces.forms.person_form import PersonForm
     @person_api.route("/visualize/tree/<int:person_id>", endpoint="visualize_tree_by_id")
-    def person_get_family_tree():
+    def person_get_family_tree(person_id):
         try:
             visualizer = FamilyTreeVisualizer(current_app, PersonRepository(db.session))
             tree_data = visualizer.generate_familytree_data(root_person_id=1)
