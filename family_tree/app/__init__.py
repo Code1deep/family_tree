@@ -1,2 +1,12 @@
 # family_tree/app/__init__.py
+from flask import app, current_app, request
 from .factory import create_app
+@app.before_request
+def log_request_info():
+    current_app.logger.info(f"[ROUTE] {request.method} {request.path}")
+    if request.json:
+        current_app.logger.info(f"[BODY] {request.json}")
+    if request.args:
+        current_app.logger.info(f"[ARGS] {request.args}")
+    if request.form:
+        current_app.logger.info(f"[FORM] {request.form}")
