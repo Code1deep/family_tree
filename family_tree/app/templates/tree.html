@@ -32,7 +32,7 @@
 console.log("Script 2 chargé");
 
 document.addEventListener('DOMContentLoaded', function () {
-    fetch(`/api/visualize/tree/{{ person_id }}`)
+    fetch(`/api/person/visualize/tree/{{ person_id }}`)
         .then(response => response.json())
         .then(data => {
             const tree = new FamilyTree(document.getElementById("tree-container"), {
