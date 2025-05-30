@@ -13,7 +13,7 @@ def inject_service(service):
 
 def register_tree_routes(person_api):
     from family_tree.interfaces.forms.person_form import PersonForm
-    @person_api.route('/tree')
+    @person_api.route('/tree', endpoint="person_get_family_tree")
     def get_family_tree():
         try:
             visualizer = FamilyTreeVisualizer(current_app, PersonRepository(db.session))
