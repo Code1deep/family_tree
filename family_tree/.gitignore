@@ -4,6 +4,8 @@ venv/
 .venv_clean/
 venv_clean/
 
+*.egg-info/
+
 # Fichiers Python
 __pycache__/
 *.py[cod]
