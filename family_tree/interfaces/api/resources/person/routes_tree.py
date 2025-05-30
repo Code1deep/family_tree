@@ -80,7 +80,7 @@ def register_tree_routes(person_api):
             person_id=person_id
         )
 
-    @person_api.route('/api/tree')
+    @person_api.route('/tree')
     def api_tree_default():
         try:
             visualizer = FamilyTreeVisualizer(current_app, PersonRepository(db.session))
@@ -89,6 +89,5 @@ def register_tree_routes(person_api):
             return jsonify(tree_data)
         except Exception as e:
             traceback.print_exc()
-            current_app.logger.error(f"API /api/tree error: {str(e)}")
+            current_app.logger.error(f"API /tree error: {str(e)}")
             return jsonify({'error': 'Server error'}), 500
-
