@@ -1,5 +1,7 @@
 // static/js/tree/utils.js
+console.log("✅ utils.js chargé");
 export function centerTree(svg, container) {
+    console.log("✅ centerTree exécuté");
     // centrage automatique de l’arbre
     const bbox = svg.node().getBBox();
     const x = bbox.x + bbox.width / 2;
@@ -15,6 +17,7 @@ export function centerTree(svg, container) {
 }
 
 export function toggleFullscreen(container) {
+    console.log("✅ toggleFullscreen exécuté");
     if (!document.fullscreenElement) {
         container.requestFullscreen();
     } else {
@@ -23,14 +26,17 @@ export function toggleFullscreen(container) {
 }
 
 export function exportAsPNG(containerId) {
+    console.log("✅ exportAsPNG exécuté");
     console.warn("TODO: implémenter export PNG");
 }
 
 export function exportAsSVG(containerId) {
+    console.log("✅ exportAsSVG exécuté");
     console.warn("TODO: implémenter export SVG");
 }
 
 export function buildTreeFromEdges(nodes, edges) {
+    console.log("✅ buildTreeFromEdges exécuté");
     const nodeMap = new Map(nodes.map(node => [node.id, { ...node, children: [] }]));
     edges.forEach(edge => {
         const parent = nodeMap.get(edge.source);
