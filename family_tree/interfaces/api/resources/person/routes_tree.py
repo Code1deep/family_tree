@@ -49,7 +49,7 @@ def register_tree_routes(person_api):
             person_id=1
         )
 
-    @person_api.route('/api/visualize/tree/<int:person_id>')
+    @person_api.route('/visualize/tree/<int:person_id>')
     def visualize_tree(person_id):
         try:
             if person_id <= 0:
@@ -79,4 +79,16 @@ def register_tree_routes(person_api):
             edges=tree_data['edges'],
             person_id=person_id
         )
+
+    @person_api.route('/api/tree')
+    def api_tree_default():
+        try:
+            visualizer = FamilyTreeVisualizer(current_app, PersonRepository(db.session))
+            root_person_id = 1
+            tree_data = visualizer.generate_familytree_data(root_person_id)
+            return jsonify(tree_data)
+        except Exception as e:
+            traceback.print_exc()
+            current_app.logger.error(f"API /api/tree error: {str(e)}")
+            return jsonify({'error': 'Server error'}), 500
 
