@@ -1,12 +1,14 @@
 # C:\family_tree\app\factory.py
-
-from family_tree.app.extensions import db, babel, login_manager
 from family_tree.infrastructure.persistence.db import db_session
 import os
 import sys
 from pathlib import Path
-from flask import Flask, request  
 from flask_wtf.csrf import CSRFProtect
+# family_tree/app/factory.py
+from flask import Flask, request, current_app
+from family_tree.app.extensions import db, babel, login_manager
+import logging.config
+from family_tree.app.config import LOGGING_CONFIG
 
 # Configuration des chemins
 BASE_DIR = Path(__file__).parent.parent
@@ -71,6 +73,22 @@ def create_app(config_object='config.Config', testing=False):
         login_manager.init_app(app)
         login_manager.login_view = 'auth.login'
 
+        # Middleware logging
+        @app.before_request
+        def log_request_info():
+            current_app.logger.info(f"[ROUTE] {request.method} {request.path}")
+            if request.json:
+                current_app.logger.info(f"[BODY] {request.json}")
+            if request.args:
+                current_app.logger.info(f"[ARGS] {request.args}")
+            if request.form:
+                current_app.logger.info(f"[FORM] {request.form}")
+
+        @app.after_request
+        def log_response_info(response):
+            current_app.logger.info(f"[RESPONSE] {response.status} {response.content_type}")
+            return response
+    
         # Route de base
         @app.route('/')
         def home():
@@ -99,8 +117,8 @@ def create_app(config_object='config.Config', testing=False):
                 print(f"❌ Erreur accès templates: {str(e)}")
             from family_tree.domain.models.person import Person   
             
-            from family_tree.insertion import initialize_data
-            initialize_data()
+            # from family_tree.insertion import initialize_data
+            # initialize_data()
             
             # Initialisation des services
             try:
