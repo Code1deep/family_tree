@@ -14,3 +14,8 @@ def log_request_info():
         current_app.logger.info(f"[ARGS] {request.args}")
     if request.form:
         current_app.logger.info(f"[FORM] {request.form}")
+
+@app.after_request
+def log_response_info(response):
+    current_app.logger.info(f"[RESPONSE] {response.status} {response.content_type}")
+    return response
