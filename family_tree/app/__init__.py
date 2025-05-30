@@ -2,7 +2,7 @@
 from flask import app, current_app, request
 from .factory import create_app
 import logging.config
-from config import LOGGING_CONFIG
+from family_tree.config import LOGGING_CONFIG
 logging.config.dictConfig(LOGGING_CONFIG)
 
 @app.before_request
