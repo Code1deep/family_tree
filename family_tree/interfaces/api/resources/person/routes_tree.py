@@ -24,7 +24,7 @@ def register_tree_routes(person_api):
             return jsonify({"error": "Internal server error"}), 500
 
 
-    @person_api.route("/api/visualize/tree/root")
+    @person_api.route("/visualize/tree/root")
     def get_root_tree():
         try:
             visualizer = FamilyTreeVisualizer(current_app, PersonRepository(db.session))
