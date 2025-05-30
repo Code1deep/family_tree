@@ -1,6 +1,6 @@
 // static/js/tree/d3-tree.js
 import { initControls } from './controls.js';
-import { centerTree, exportAsPNG, exportAsSVG, toggleFullscreen } from './utils.js';
+import { centerTree, buildTreeFromEdges, exportAsPNG, exportAsSVG, toggleFullscreen } from './utils.js';
 
 export function initD3Tree(data) {
     console.log("Rendering tree with data:", data);
