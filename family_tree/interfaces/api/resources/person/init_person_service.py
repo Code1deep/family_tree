@@ -18,8 +18,4 @@ def init_person_resources(db_session):
     inject_misc(service)
 
 def create_person_api():
-    from family_tree.interfaces.api.resources.person.routes_tree import register_tree_routes
-    print("→ Appel create_person_api()")
-    register_tree_routes(person_api)
     return person_api
-
