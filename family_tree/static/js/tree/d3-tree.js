@@ -1,4 +1,5 @@
 // static/js/tree/d3-tree.js
+console.log("✅ d3-tree.js chargé");
 import { 
   initControls 
 } from './controls.js';
@@ -10,8 +11,9 @@ import {
   exportAsSVG, 
   toggleFullscreen 
 } from './utils.js';
-
+console.log("✅ d3-tree.js – modules importés avec succès");
 export function initD3Tree(data) {
+    console.log("✅ initD3Tree appelé avec data:", data);
     console.log("Rendering tree with data:", data);
     const container = document.getElementById("tree-container");
     const margin = { top: 50, right: 90, bottom: 30, left: 90 };
@@ -42,6 +44,7 @@ export function initD3Tree(data) {
     }
 
     function drawTree(data) {
+        console.log("✅ drawTree appelé avec data:", data);
         initSvg();
 
         const width = container.clientWidth;
