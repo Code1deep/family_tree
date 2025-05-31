@@ -1,5 +1,78 @@
 // static/js/tree/utils.js
 console.log("✅ utils.js chargé");
+export function debounce(func, wait) {
+    let timeout;
+    return function(...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), wait);
+    };
+}
+
+export function throttle(func, limit) {
+    let inThrottle;
+    return function(...args) {
+        if (!inThrottle) {
+            func.apply(this, args);
+            inThrottle = true;
+            setTimeout(() => inThrottle = false, limit);
+        }
+    };
+}
+
+export function exportAsSVG(containerId) {
+    console.log("✅ exportAsSVG exécuté");
+    const svg = document.querySelector(`#${containerId} svg`);
+    if (!svg) {
+        console.error("❌ SVG introuvable pour l’export");
+        return;
+    }
+    const serializer = new XMLSerializer();
+    const source = serializer.serializeToString(svg);
+    const blob = new Blob([source], { type: "image/svg+xml;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    downloadURL(url, "tree-visualization.svg");
+}
+
+export function exportAsPNG(containerId) {
+    console.log("✅ exportAsPNG exécuté");
+    const svg = document.querySelector(`#${containerId} svg`);
+    if (!svg) {
+        console.error("❌ SVG introuvable pour PNG");
+        return;
+    }
+
+    const serializer = new XMLSerializer();
+    const svgString = serializer.serializeToString(svg);
+
+    const canvas = document.createElement("canvas");
+    const bbox = svg.getBBox ? svg.getBBox() : { width: 1200, height: 800 };
+    canvas.width = bbox.width + 200;
+    canvas.height = bbox.height + 200;
+    const ctx = canvas.getContext("2d");
+
+    const img = new Image();
+    const svgBlob = new Blob([svgString], { type: "image/svg+xml;charset=utf-8" });
+    const url = URL.createObjectURL(svgBlob);
+    img.onload = function () {
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 100, 100);
+        URL.revokeObjectURL(url);
+        const imgURI = canvas.toDataURL("image/png").replace("image/png", "octet/stream");
+        downloadURL(imgURI, "tree-visualization.png");
+    };
+    img.src = url;
+}
+
+function downloadURL(dataUrl, filename) {
+    const a = document.createElement("a");
+    a.href = dataUrl;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+}
+
 export function centerTree(svg, container) {
     console.log("✅ centerTree exécuté");
     // centrage automatique de l’arbre
@@ -23,16 +96,6 @@ export function toggleFullscreen(container) {
     } else {
         document.exitFullscreen();
     }
-}
-
-export function exportAsPNG(containerId) {
-    console.log("✅ exportAsPNG exécuté");
-    console.warn("TODO: implémenter export PNG");
-}
-
-export function exportAsSVG(containerId) {
-    console.log("✅ exportAsSVG exécuté");
-    console.warn("TODO: implémenter export SVG");
 }
 
 export function buildTreeFromEdges(nodes, edges) {
