@@ -4,131 +4,186 @@ import { centerTree } from './utils.js';
 import { debounce } from './utils.js';
 
 // Injecte du CSS dans le DOM
-function injectTreeStyles() {
-    const style = document.createElement("style");
-    style.textContent = `
-        .node circle {
-            fill: #fff;
-            stroke: steelblue;
-            stroke-width: 2.5px;
-        }
-        .node text {
-            font: 14px sans-serif;
-        }
-        .node.highlighted circle {
-            fill: orange;
-        }
-        .link {
-            fill: none;
-            stroke: #ccc;
-            stroke-width: 2px;
-        }
-    `;
-    document.head.appendChild(style);
+/** CSS directement intégré */
+const style = document.createElement("style");
+style.innerHTML = `
+.node circle {
+    fill: #fff;
+    stroke: steelblue;
+    stroke-width: 2px;
 }
+.node text {
+    font: 14px sans-serif;
+    pointer-events: none;
+}
+.node--highlight circle {
+    fill: orange;
+}
+.link {
+    fill: none;
+    stroke: #ccc;
+    stroke-width: 2px;
+}
+`;
+document.head.appendChild(style);
 
+/** Fonction principale */
 export function initD3Tree(containerId, data) {
-    injectTreeStyles();
-
+    const container = document.getElementById(containerId);
+    container.innerHTML = ''; // reset
     const margin = { top: 50, right: 120, bottom: 50, left: 120 };
-    const width = 1600 - margin.left - margin.right;
-    const height = 1000 - margin.top - margin.bottom;
+    const width = container.clientWidth - margin.left - margin.right;
+    const height = container.clientHeight - margin.top - margin.bottom;
 
-    const svgRoot = d3.select(`#${containerId}`).append("svg")
+    const svg = d3.select(`#${containerId}`).append("svg")
         .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom);
-
-    const svg = svgRoot
+        .attr("height", height + margin.top + margin.bottom)
         .call(d3.zoom().scaleExtent([0.1, 3]).on("zoom", (event) => {
             g.attr("transform", event.transform);
         }))
         .append("g")
         .attr("transform", `translate(${margin.left},${margin.top})`);
 
+    const g = svg.append("g");
+
     const treeLayout = d3.tree().size([height, width]);
     const root = d3.hierarchy(data);
     treeLayout(root);
 
-    const g = svg.append("g");
-
-    // Liens entre noeuds
     g.selectAll(".link")
         .data(root.links())
-        .join("path")
+        .enter().append("path")
         .attr("class", "link")
         .attr("d", d3.linkHorizontal()
             .x(d => d.y)
             .y(d => d.x));
 
-    // Noeuds
     const node = g.selectAll(".node")
         .data(root.descendants())
-        .join("g")
+        .enter().append("g")
         .attr("class", "node")
         .attr("transform", d => `translate(${d.y},${d.x})`);
 
-    node.append("circle")
-        .attr("r", 6);
-
+    node.append("circle").attr("r", 6);
     node.append("text")
         .attr("dy", 3)
-        .attr("x", d => d.children ? -12 : 12)
+        .attr("x", d => d.children ? -10 : 10)
         .style("text-anchor", d => d.children ? "end" : "start")
         .text(d => d.data.name);
 
-    setupTreeSearch(root);
+    centerTree(svg, container);
+
+    // Setup interactivité
+    setupTreeSearch(root, g);
+    setupExportButtons(containerId);
+    setupFullscreen(container);
 }
 
-function setupTreeSearch(rootNode) {
+/** Recherche */
+function setupTreeSearch(root, g) {
     const input = document.getElementById('tree-search');
     if (!input) return;
-
-    input.addEventListener('input', debounce((e) => {
-        const query = e.target.value.toLowerCase();
-        d3.selectAll(".node")
-            .classed("highlighted", d => d.data.name.toLowerCase().includes(query));
+    input.addEventListener('input', debounce(() => {
+        const query = input.value.trim().toLowerCase();
+        g.selectAll('.node').classed('node--highlight', false);
+        if (query) {
+            g.selectAll('.node')
+                .filter(d => d.data.name.toLowerCase().includes(query))
+                .classed('node--highlight', true);
+        }
     }, 300));
 }
 
-export function exportAsSVG(containerId) {
-    const svgElement = document.querySelector(`#${containerId} svg`);
-    const serializer = new XMLSerializer();
-    const svgData = serializer.serializeToString(svgElement);
-    const blob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "tree_export.svg";
-    a.click();
-    URL.revokeObjectURL(url);
+/** Centrage automatique */
+function centerTree(svg, container) {
+    const g = svg.select('g');
+    const bbox = g.node().getBBox();
+    const x = bbox.x + bbox.width / 2;
+    const y = bbox.y + bbox.height / 2;
+    const containerWidth = container.clientWidth;
+    const containerHeight = container.clientHeight;
+
+    const dx = containerWidth / 2 - x;
+    const dy = containerHeight / 2 - y;
+
+    g.transition().duration(500)
+        .attr("transform", `translate(${dx},${dy})`);
 }
 
-export function exportAsPNG(containerId) {
-    const svgElement = document.querySelector(`#${containerId} svg`);
-    const svgData = new XMLSerializer().serializeToString(svgElement);
-    const svgBlob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
-    const url = URL.createObjectURL(svgBlob);
+/** Export PNG & SVG */
+function setupExportButtons(containerId) {
+    const exportSvgBtn = document.getElementById("export-svg");
+    const exportPngBtn = document.getElementById("export-png");
 
-    const image = new Image();
+    if (exportSvgBtn) {
+        exportSvgBtn.addEventListener("click", () => exportAsSVG(containerId));
+    }
+    if (exportPngBtn) {
+        exportPngBtn.addEventListener("click", () => exportAsPNG(containerId));
+    }
+}
+
+function exportAsSVG(containerId) {
+    const svg = document.querySelector(`#${containerId} svg`);
+    const serializer = new XMLSerializer();
+    let source = serializer.serializeToString(svg);
+    const blob = new Blob([source], { type: "image/svg+xml;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    downloadURL(url, "genealogy-tree.svg");
+}
+
+function exportAsPNG(containerId) {
+    const svg = document.querySelector(`#${containerId} svg`);
+    const serializer = new XMLSerializer();
+    const svgString = serializer.serializeToString(svg);
+
     const canvas = document.createElement("canvas");
-    const bbox = svgElement.getBBox();
-    canvas.width = bbox.width + 100;
-    canvas.height = bbox.height + 100;
+    const bbox = svg.getBBox ? svg.getBBox() : { width: 1200, height: 800 };
+    canvas.width = bbox.width + 200;
+    canvas.height = bbox.height + 200;
     const ctx = canvas.getContext("2d");
 
-    image.onload = () => {
+    const img = new Image();
+    const svgBlob = new Blob([svgString], { type: "image/svg+xml;charset=utf-8" });
+    const url = URL.createObjectURL(svgBlob);
+    img.onload = function () {
         ctx.fillStyle = "#ffffff";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(image, 50, 50);
-        const png = canvas.toDataURL("image/png");
-        const a = document.createElement("a");
-        a.href = png;
-        a.download = "tree_export.png";
-        a.click();
+        ctx.drawImage(img, 100, 100);
         URL.revokeObjectURL(url);
+        const imgURI = canvas.toDataURL("image/png").replace("image/png", "octet/stream");
+        downloadURL(imgURI, "genealogy-tree.png");
     };
-    image.src = url;
+    img.src = url;
 }
+
+/** Plein écran */
+export function toggleFullscreen(container) {
+    if (!document.fullscreenElement) {
+        container.requestFullscreen();
+    } else {
+        document.exitFullscreen();
+    }
+}
+
+/** Utils */
+function downloadURL(data, filename) {
+    const a = document.createElement("a");
+    a.href = data;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+}
+
+function debounce(func, wait) {
+    let timeout;
+    return function (...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), wait);
+    };
+}
+
 
     function update(source) {
         // Logique de mise à jour optimisée
