@@ -1,7 +1,32 @@
 <!-- app/templates/tree.html -->
 {% extends "base_template.html" %}
-
 {% block content %}
+<h1 class="text-center mb-4">شجرة العائلة الحسنة</h1>
+
+<!-- Actions -->
+<div class="header-actions text-center mb-3">
+  <a href="/add" class="btn btn-success me-2">➕ إضافة فرد جديد</a>
+  <button id="fullscreen-btn" class="btn btn-secondary me-2">🖼️ ملء الشاشة</button>
+  <button id="center-btn" class="btn btn-info me-2">🎯 توسيط</button>
+  <button id="export-png" class="btn btn-warning me-2">⬇️ تصدير PNG</button>
+  <button id="export-svg" class="btn btn-warning me-2">⬇️ تصدير SVG</button>
+  <input id="search-box" type="text" class="form-control d-inline-block w-auto" placeholder="🔍 ابحث عن اسم" />
+</div>
+
+<!-- Conteneur de l'arbre -->
+<div id="tree-container" class="tree-container border border-2 rounded bg-white" style="height: 80vh;"></div>
+
+<!-- Modal de création -->
+{% include 'partials/modal.html' %}
+{% endblock %}
+
+{% block extra_js %}
+<!-- D3 & Script personnalisé -->
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script type="module" src="{{ url_for('static', filename='js/tree/tree.js') }}"></script>
+<script src="{{ url_for('static', filename='js/modal.js') }}"></script>
+{% endblock %}
+
 <!-- Bouton pour ouvrir le modal -->
 <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#personModal">
   Créer une personne
@@ -24,12 +49,9 @@
     </div>
   </div>
 </div>
-
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <script src="https://balkan.app/js/OrgChart.js"></script>
 <script src="{{ url_for('static', filename='js/familytree.js') }}"></script>
-
-
 <script>
 console.log("Script 2 chargé");
 
@@ -64,16 +86,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (!node.childrenLoaded) {
                     fetch(`/api/person/visualize/tree/${node.id}`)
                         .then(response => response.json())
-                        .then(data => {
-                            tree.add(data.nodes);
-                            (data.edges || []).forEach(edge => {
-                                tree.addEdge(edge);
-                            });
-                            tree.updateNode(node.id, { childrenLoaded: true });
-                        })
-                        .catch(error => {
-                            console.error('Erreur de chargement des enfants :', error);
-                        });
+                  
                 }
             });
         })
@@ -85,11 +98,18 @@ console.log("person_id:", JSON.parse('{{ person_id|tojson|safe }}'));
 </script>
 
 <style>
-.family-tree {
-    width: 100%;
-    height: 80vh;
-    border: 1px solid #eee;
-    background-color: #f9f9f9; /* TEMP: pour visualiser s'il y a un espace vide */
+.node circle {
+    fill: #999;
+    stroke: steelblue;
+    stroke-width: 2px;
+}
+.node text {
+    font: 12px sans-serif;
+}
+.link {
+    fill: none;
+    stroke: #ccc;
+    stroke-width: 2px;
 }
 
 .ft-node {
