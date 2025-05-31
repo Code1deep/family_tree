@@ -1,6 +1,7 @@
 // static/js/tree.js
 import { loadTreeData } from './tree/core.js';
 import { initD3Tree } from './tree/d3-tree.js';
+import { initTree, zoomIn, zoomOut, centerTree, exportPNG, exportSVG, searchNode, toggleFullscreen } from './core.js';
 
 document.addEventListener("DOMContentLoaded", async () => {
   const treeContainer = document.getElementById("tree-container");
@@ -17,4 +18,13 @@ document.addEventListener("DOMContentLoaded", async () => {
   } catch (err) {
     console.error("❌ Erreur lors du chargement de l’arbre :", err);
   }
+
+  // Événements boutons
+    document.getElementById("zoom-in-btn").addEventListener("click", zoomIn);
+    document.getElementById("zoom-out-btn").addEventListener("click", zoomOut);
+    document.getElementById("center-btn").addEventListener("click", centerTree);
+    document.getElementById("fullscreen-btn").addEventListener("click", () => toggleFullscreen(treeContainer));
+    document.getElementById("export-png-btn").addEventListener("click", () => exportPNG(treeContainer));
+    document.getElementById("export-svg-btn").addEventListener("click", () => exportSVG(treeContainer));
+    document.getElementById("search-input").addEventListener("input", (e) => searchNode(e.target.value));
 });
