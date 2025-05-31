@@ -81,7 +81,7 @@ document.addEventListener('DOMContentLoaded', function () {
             console.error("Erreur de chargement des données racine :", error);
         });
 });
-console.log("person_id: {{ person_id }}");
+console.log("person_id:", JSON.parse('{{ person_id|tojson|safe }}'));
 </script>
 
 <style>
