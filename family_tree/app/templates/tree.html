@@ -35,6 +35,7 @@ document.addEventListener('DOMContentLoaded', function () {
     fetch(`/api/person/visualize/tree/{{ person_id }}`)
         .then(response => response.json())
         .then(data => {
+            console.log("Tree JSON data:", data);
             const tree = new FamilyTree(document.getElementById("tree-container"), {
                 nodes: data.nodes,
                 edges: data.edges,
