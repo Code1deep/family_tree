@@ -195,5 +195,5 @@ function debounce(func, wait) {
 
     // Initial render
     update(root);
-
-    centerTree(svg, document.getElementById(containerId));
+    centerTree(svg, container);
+    //centerTree(svg, document.getElementById(containerId));
