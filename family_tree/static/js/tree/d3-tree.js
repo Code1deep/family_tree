@@ -16,6 +16,7 @@ export function initD3Tree(data) {
     console.log("✅ initD3Tree appelé avec data:", data);
     console.log("Rendering tree with data:", data);
     const container = document.getElementById("tree-container");
+    console.log("Conteneur trouvé ?", !!container);
     const margin = { top: 50, right: 90, bottom: 30, left: 90 };
     
     initControls(container);
