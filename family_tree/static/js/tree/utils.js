@@ -73,7 +73,7 @@ function downloadURL(dataUrl, filename) {
     document.body.removeChild(a);
 }
 
-export function centerTree(svg, container) {
+export function centerTree(svg, container, offsetY = 50) {
     console.log("✅ centerTree exécuté");
     // centrage automatique de l’arbre
     const bbox = svg.node().getBBox();
@@ -83,7 +83,7 @@ export function centerTree(svg, container) {
     const containerHeight = container.clientHeight;
 
     const dx = containerWidth / 2 - x;
-    const dy = 50 - y;
+    const dy = offsetY - y;
 
     svg.transition().duration(500)
         .attr("transform", `translate(${dx},${dy})`);
