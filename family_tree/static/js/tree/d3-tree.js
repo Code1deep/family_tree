@@ -183,6 +183,15 @@ function exportAsPNG(containerId) {
     img.src = url;
 }
 
+/** Plein écran */
+export function toggleFullscreen(container) {
+    if (!document.fullscreenElement) {
+        container.requestFullscreen();
+    } else {
+        document.exitFullscreen();
+    }
+}
+
 /** Utils */
 function downloadURL(data, filename) {
     const a = document.createElement("a");
