@@ -19,7 +19,7 @@ export function throttle(func, limit) {
     };
 }
 
-export function exportAsSVG(containerId) {
+export function exportTreeAsSVG(containerId) {
     console.log("✅ exportAsSVG exécuté");
     const svg = document.querySelector(`#${containerId} svg`);
     if (!svg) {
