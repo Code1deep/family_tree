@@ -32,6 +32,6 @@ def register_misc_routes(person_api):
         return jsonify({
             'males': males,
             'females': females,
-            'living': living,
-            'deceased': deceased
+            #'living': living,
+            #'deceased': deceased
         })
