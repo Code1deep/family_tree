@@ -21,7 +21,7 @@
         const chartEl = document.getElementById('quickStatsChart');
         if (!chartEl) return;
 
-        fetch('/stats')
+        fetch('{{ url_for("person_api.get_stats") }}')
             .then(response => response.json())
             .then(stats => {
                 new Chart(chartEl.getContext('2d'), {
