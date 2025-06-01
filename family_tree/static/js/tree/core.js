@@ -1,7 +1,6 @@
 // static/js/tree/core.js
 import * as d3 from 'https://d3js.org/d3.v7.min.js';
 import { transformDataForD3 } from './d3-tree.js';
-import { centerTree } from './utils.js';
 import { centerTree, exportTreeAsPNG, exportTreeAsSVG, toggleFullscreen } from './utils.js';
 
 let svgGroup, svgRoot, zoomBehavior;
