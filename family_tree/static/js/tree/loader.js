@@ -1,37 +1,18 @@
 //static/js/tree/loader.js 
-import { initTree } from './core.js';
+import { loadTreeData, transformDataForD3 } from './tree/core.js';
+import { initD3Tree } from './d3-tree.js';
 
-function renderPersonNode(person) {
-    const container = document.createElement('div');
-    container.className = 'person-node';
-    const header = document.createElement('div');
-    header.className = 'person-header';
-    header.textContent = `${person.name} (${person.birthDate || "?"})`;
-    container.appendChild(header);
+document.addEventListener("DOMContentLoaded", async () => {
+    const treeContainer = document.getElementById("tree-container");
+    if (!treeContainer) return;
 
-    if (person.children && person.children.length > 0) {
-        const childrenContainer = document.createElement('div');
-        childrenContainer.className = 'children-container';
-        person.children.forEach(child => {
-            const childNode = renderPersonNode(child);
-            childrenContainer.appendChild(childNode);
-        });
-        container.appendChild(childrenContainer);
-    }
-
-    return container;
-}
-
-document.addEventListener('DOMContentLoaded', async () => {
     try {
-        const treeData = await initTree(); // ← appelle core.js + transforme en arbre
-        const treeContainer = document.getElementById('familyTree');
-        treeContainer.innerHTML = '';
-        treeData.forEach(root => {
-            const node = renderPersonNode(root);
-            treeContainer.appendChild(node);
-        });
-    } catch (err) {
-        console.error("Erreur lors du chargement de l'arbre :", err);
+        const rootId = 1; // Ou récupérer depuis le template
+        const rawData = await loadTreeData(rootId);
+        const d3Data = transformDataForD3(rawData);
+        initD3Tree("tree-container", d3Data);
+    } catch (error) {
+        console.error("Failed to initialize tree:", error);
+        treeContainer.innerHTML = `<div class="alert alert-danger">Erreur de chargement de l'arbre</div>`;
     }
 });
