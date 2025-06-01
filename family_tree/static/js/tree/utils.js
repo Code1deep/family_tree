@@ -33,7 +33,7 @@ export function exportAsSVG(containerId) {
     downloadURL(url, "tree-visualization.svg");
 }
 
-export function exportAsPNG(containerId) {
+export function exportTreeAsPNG(containerId) {
     console.log("✅ exportAsPNG exécuté");
     const svg = document.querySelector(`#${containerId} svg`);
     if (!svg) {
