@@ -44,6 +44,28 @@
 <script type="module" src="{{ url_for('static', filename='js/modal.js') }}"></script>
 <script type="module" src="{{ url_for('static', filename='js/tree.js') }}"></script>
 
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const personId = JSON.parse('{{ person_id|tojson|safe }}');
+    console.log("Chargement de l'arbre pour person_id:", personId);
+
+    fetch(`/api/person/visualize/tree/${personId}`)
+        .then(response => {
+            if (!response.ok) throw new Error("Erreur HTTP " + response.status);
+            return response.json();
+        })
+        .then(data => {
+            console.log("Données reçues :", data);
+            // Appel de ta fonction personnalisée D3 dans tree.js
+            window.renderFamilyTree(data, "#tree-container");
+        })
+        .catch(error => {
+            console.error("Erreur de chargement :", error);
+        });
+});
+</script>
+{% endblock %}
+
 <style>
 .node circle {
     fill: #999;
