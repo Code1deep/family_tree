@@ -1,7 +1,7 @@
 // static/js/tree.js
 import { loadTreeData } from './tree/core.js';
 import { initD3Tree } from './tree/d3-tree.js';
-import { initTree, zoomIn, zoomOut, centerTree, exportPNG, exportSVG, searchNode, toggleFullscreen } from './tree/core.js';
+import { initTree, zoomIn, zoomOut, centerTree, exportPNG, exportSVG, searchNode } from './tree/core.js';
 import { openModal } from "/static/js/modal.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
