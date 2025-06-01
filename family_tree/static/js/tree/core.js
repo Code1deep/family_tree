@@ -212,10 +212,6 @@ export function zoomOut() {
     svgRoot.transition().duration(300).call(zoomBehavior.scaleTo, currentScale);
 }
 
-export function centerTree() {
-    centerUtils(svgGroup, svgRoot.node());
-}
-
 export function exportPNG(container) {
     const svgNode = container.querySelector('svg');
     const svgData = new XMLSerializer().serializeToString(svgNode);
