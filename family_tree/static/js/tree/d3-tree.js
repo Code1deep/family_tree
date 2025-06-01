@@ -88,7 +88,7 @@ export function initD3Tree(containerId, data) {
         .text(d => d.data.name);
     
         // Ajoute dans le nœud SVG le bouton
-    nodeEnter.append("text")
+    node.append("text")
         .attr("dy", "2.5em")
         .attr("x", 25)
         .style("cursor", "pointer")
