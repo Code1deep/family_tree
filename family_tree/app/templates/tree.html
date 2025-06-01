@@ -46,7 +46,7 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    const personId = JSON.parse('{{ person_id|tojson|safe }}');
+    const personId = JSON.parse('{{ person_id | tojson | safe }}');
     console.log("Chargement de l'arbre pour person_id:", personId);
 
     fetch(`/api/person/visualize/tree/${personId}`)
@@ -56,14 +56,18 @@ document.addEventListener('DOMContentLoaded', function () {
         })
         .then(data => {
             console.log("Données reçues :", data);
-            // Appel de ta fonction personnalisée D3 dans tree.js
-            window.renderFamilyTree(data, "#tree-container");
+            if (typeof window.initD3Tree === 'function') {
+                window.initD3Tree("#tree-container", data);
+            } else {
+                console.error("Fonction initD3Tree non définie dans tree.js");
+            }
         })
         .catch(error => {
-            console.error("Erreur de chargement :", error);
+            console.error("Erreur de chargement de l’arbre :", error);
         });
 });
 </script>
+
 {% endblock %}
 
 <style>
