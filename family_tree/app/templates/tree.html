@@ -41,53 +41,8 @@
 
 {% block extra_js %}
 <script src="https://d3js.org/d3.v7.min.js"></script>
-<script src="{{ url_for('static', filename='js/familytree.js') }}"></script>
 <script type="module" src="{{ url_for('static', filename='js/modal.js') }}"></script>
 <script type="module" src="{{ url_for('static', filename='js/tree.js') }}"></script>
-
-<script>
-console.log("Script 2 chargé");
-
-document.addEventListener('DOMContentLoaded', function () {
-    fetch(`/api/person/visualize/tree/{{ person_id }}`)
-        .then(response => response.json())
-        .then(data => {
-            console.log("Tree JSON data:", data);
-            const tree = new FamilyTree(document.getElementById("tree-container"), {
-                nodes: data.nodes,
-                edges: data.edges,
-                nodeBinding: {
-                    field_0: "name",
-                    field_1: "data.mother",
-                    field_2: "data.bio",
-                    img_0: "photo"
-                },
-                nodeMenu: {
-                    details: { text: "Voir profil", href: "#{url}" }
-                },
-                zoom: {
-                    speed: 0.5,
-                    smoothness: 0.1
-                },
-                colors: {
-                    male: '#3498db',
-                    female: '#e74c3c'
-                }
-            });
-
-            tree.on('expand', function (node) {
-                if (!node.childrenLoaded) {
-                    fetch(`/api/person/visualize/tree/${node.id}`)
-                        .then(response => response.json())
-                }
-            });
-        })
-        .catch(error => {
-            console.error("Erreur de chargement des données racine :", error);
-        });
-});
-console.log("person_id:", JSON.parse('{{ person_id|tojson|safe }}'));
-</script>
 
 <style>
 .node circle {
