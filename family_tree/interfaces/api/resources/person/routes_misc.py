@@ -21,7 +21,7 @@ def register_misc_routes(person_api):
     def test():
         return 'OK'
     
-    @person_api.route('/stats')
+    @person_api.route('api/person/stats')
     def get_stats():
         from family_tree.domain.models.person import Person
         males = Person.query.filter_by(gender='M').count()
