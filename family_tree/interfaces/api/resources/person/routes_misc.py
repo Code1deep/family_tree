@@ -26,8 +26,8 @@ def register_misc_routes(person_api):
         from family_tree.domain.models.person import Person
         males = Person.query.filter_by(gender='M').count()
         females = Person.query.filter_by(gender='F').count()
-        living = Person.query.filter(Person.death_date == None).count()
-        deceased = Person.query.filter_by(is_alive=False).count()
+        #living = Person.query.filter(Person.death_date == None).count()
+        #deceased = Person.query.filter_by(is_alive=False).count()
 
         return jsonify({
             'males': males,
