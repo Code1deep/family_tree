@@ -12,7 +12,7 @@ def register_misc_routes(person_api):
     def health_check():
         return jsonify({'status': 'ok'})
      
-    @person_api.route('/debug', methods=['POST'])
+    @person_api.route('/api/debug', methods=['POST'])
     def debug_endpoint():
         data = request.get_json()
         return jsonify({"message": "Debug successful", "data": data}), 200
@@ -23,10 +23,15 @@ def register_misc_routes(person_api):
     
     @person_api.route('/stats')
     def get_stats():
-        stats = {
-            'males': 10,
-            'females': 12,
-            'living': 15,
-            'deceased': 7
-        }
-        return jsonify(stats)
+        from family_tree.domain.models.person import Person
+        males = Person.query.filter_by(gender='M').count()
+        females = Person.query.filter_by(gender='F').count()
+        living = Person.query.filter_by(is_alive=True).count()
+        deceased = Person.query.filter_by(is_alive=False).count()
+
+        return jsonify({
+            'males': males,
+            'females': females,
+            'living': living,
+            'deceased': deceased
+        })
