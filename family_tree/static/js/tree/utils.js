@@ -89,6 +89,15 @@ export function centerTree(svg, container, offsetY = 50) {
         .attr("transform", `translate(${dx},${dy})`);
 }
 
+export function toggleFullscreen(container) {
+    console.log("✅ toggleFullscreen exécuté");
+    if (!document.fullscreenElement) {
+        container.requestFullscreen();
+    } else {
+        document.exitFullscreen();
+    }
+}
+
 export function buildTreeFromEdges(nodes, edges) {
     console.log("✅ buildTreeFromEdges exécuté");
     const nodeMap = new Map(nodes.map(node => [node.id, { ...node, children: [] }]));
