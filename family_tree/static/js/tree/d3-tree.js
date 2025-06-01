@@ -1,6 +1,5 @@
 // static/js/tree/d3-tree.js
 import * as d3 from 'https://d3js.org/d3.v7.min.js';
-import { centerTree } from './utils.js';
 import { debounce } from './utils.js';
 import { openModal } from '/static/js/modal.js';
 
