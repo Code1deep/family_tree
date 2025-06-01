@@ -2,6 +2,7 @@
 import * as d3 from 'https://d3js.org/d3.v7.min.js';
 import { centerTree } from './utils.js';
 import { debounce } from './utils.js';
+import { openModal } from '/static/js/modal.js';
 
 // Injecte du CSS dans le DOM
 /** CSS directement intégré */
@@ -26,6 +27,22 @@ style.innerHTML = `
 }
 `;
 document.head.appendChild(style);
+
+function showPersonDetails(d) {
+    const p = d.data;  // Le JSON du nœud
+    const photo = p.photo || "/static/img/default.png";
+    const bio = p.data.bio || "Aucune biographie disponible";
+    const mother = p.data.mother || "Inconnue";
+    const father = p.data.father || "Inconnu";
+
+    const html = `
+        <img src="${photo}" alt="Photo de ${p.name}">
+        <h2>${p.name}</h2>
+        <p><strong>Biographie :</strong> ${bio}</p>
+        <p><strong>Parents :</strong> ${mother} & ${father}</p>
+    `;
+    openModal(html);
+}
 
 /** Fonction principale */
 export function initD3Tree(containerId, data) {
@@ -70,6 +87,16 @@ export function initD3Tree(containerId, data) {
         .attr("x", d => d.children ? -10 : 10)
         .style("text-anchor", d => d.children ? "end" : "start")
         .text(d => d.data.name);
+    
+        // Ajoute dans le nœud SVG le bouton
+    nodeEnter.append("text")
+        .attr("dy", "2.5em")
+        .attr("x", 25)
+        .style("cursor", "pointer")
+        .style("fill", "#007bff")
+        .style("text-decoration", "underline")
+        .text("👁 Voir les détails")
+        .on("click", showPersonDetails);
 
     centerTree(svg, container);
 
@@ -184,14 +211,13 @@ function debounce(func, wait) {
     };
 }
 
+function update(source) {
+    // Logique de mise à jour optimisée
+}
 
-    function update(source) {
-        // Logique de mise à jour optimisée
-    }
-
-    function zoomed(event) {
-        svg.attr("transform", event.transform);
-    }
+function zoomed(event) {
+    svg.attr("transform", event.transform);
+}
 
     // Initial render
     update(root);
