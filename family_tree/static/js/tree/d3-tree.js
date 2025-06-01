@@ -221,5 +221,3 @@ function zoomed(event) {
 
     // Initial render
     update(root);
-    centerTree(svg, container);
-    //centerTree(svg, document.getElementById(containerId));
