@@ -192,6 +192,11 @@ export function toggleFullscreen(container) {
     }
 }
 
+export function transformDataForD3(rawData) {
+    // Exemple de transformation : convertir en hiérarchie
+    return d3.hierarchy(rawData);
+}
+
 /** Utils */
 function downloadURL(data, filename) {
     const a = document.createElement("a");
