@@ -42,8 +42,14 @@ function showPersonDetails(d) {
     openModal(html);
 }
 
-export function initD3Tree(containerId, data) {
+// Fonction utilisée pour afficher un sous-arbre dynamique lors d’un clic sur un nœud
+export function initSubD3Tree(containerId, data) {
     const container = document.getElementById(containerId);
+    if (!container) {
+        console.warn(`⏭️ Conteneur introuvable : #${containerId}`);
+        return;
+    }
+
     container.innerHTML = '';
     const margin = { top: 50, right: 120, bottom: 50, left: 120 };
     let width = container.clientWidth - margin.left - margin.right;
