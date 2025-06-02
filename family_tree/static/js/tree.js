@@ -4,6 +4,10 @@ import { initD3Tree } from './tree/d3-tree.js';
 import { zoomIn, zoomOut, exportPNG, exportSVG, searchNode } from './tree/core.js';
 import { centerTree } from './tree/utils.js'; 
 import { openModal } from "/static/js/modal.js";
+import { initMainD3Tree, initSubD3Tree } from './tree/index.js';
+
+initMainD3Tree("main-tree-container", mainTreeData);
+initSubD3Tree("modal-tree-container", miniTreeData);
 
 window.initD3Tree = initD3Tree;
 
