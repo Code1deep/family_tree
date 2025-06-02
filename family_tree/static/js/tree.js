@@ -16,6 +16,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     const response = await fetch("/api/person/api/visualize/tree/1");
     const treeData = await response.json();
     console.log("✅ Données reçues :", treeData);
+    console.log("tree.js chargé");
+    console.log("tree-container présent ?", document.getElementById("tree-container"));
     initD3Tree(treeData);  // ou ta fonction de rendu
   } catch (err) {
     console.error("❌ Erreur lors du chargement de l’arbre :", err);
