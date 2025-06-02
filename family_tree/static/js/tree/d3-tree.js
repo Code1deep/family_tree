@@ -27,11 +27,11 @@ style.innerHTML = `
 document.head.appendChild(style);
 
 function showPersonDetails(d) {
-    const p = d.data;  // Le JSON du nœud
+    const p = d.data;
     const photo = p.photo || "/static/img/default.png";
-    const bio = p.bio || "Aucune biographie disponible";
-    const mother = p.mother || "Inconnue";
-    const father = p.father || "Inconnu";
+    const bio = p.data.bio || "Aucune biographie disponible";
+    const mother = p.data.mother || "Inconnue";
+    const father = p.data.father || "Inconnu";
 
     const html = `
         <img src="${photo}" alt="Photo de ${p.name}">
@@ -42,25 +42,27 @@ function showPersonDetails(d) {
     openModal(html);
 }
 
-/** Fonction principale */
 export function initD3Tree(containerId, data) {
     const container = document.getElementById(containerId);
-    container.innerHTML = ''; // reset
-
+    container.innerHTML = '';
     const margin = { top: 50, right: 120, bottom: 50, left: 120 };
-    const width = container.clientWidth - margin.left - margin.right;
-    const height = container.clientHeight - margin.top - margin.bottom;
+    let width = container.clientWidth - margin.left - margin.right;
+    let height = container.clientHeight - margin.top - margin.bottom;
 
     const svg = d3.select(`#${containerId}`).append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom);
+        .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
+        .attr("preserveAspectRatio", "xMidYMid meet");
 
-    const g = svg.append("g")
-        .attr("transform", `translate(${margin.left},${margin.top})`);
+    const gZoom = svg.append("g");
+    const g = gZoom.append("g").attr("class", "tree-group");
 
-    svg.call(d3.zoom().scaleExtent([0.1, 3]).on("zoom", (event) => {
-        g.attr("transform", event.transform);
-    }));
+    const zoom = d3.zoom()
+        .scaleExtent([0.1, 3])
+        .on("zoom", event => {
+            g.attr("transform", event.transform);
+        });
+
+    svg.call(zoom);
 
     const treeLayout = d3.tree().size([height, width]);
     const root = d3.hierarchy(data);
@@ -96,10 +98,13 @@ export function initD3Tree(containerId, data) {
         .text("👁 Voir les détails")
         .on("click", showPersonDetails);
 
-    centerTree(svg, container);
+    centerTree(g, container, svg);
+
     setupTreeSearch(root, g);
     setupExportButtons(containerId);
     setupFullscreen(container);
+    setupResizeHandler(() => initD3Tree(containerId, data)); // redessiner
+    setupCenterButton(containerId, g, svg); // bouton manuel
 }
 
 /** Recherche */
@@ -117,20 +122,53 @@ function setupTreeSearch(root, g) {
     }, 300));
 }
 
-/** Centrage automatique */
-function centerTree(svg, container) {
-    const g = svg.select('g');
+/** Centrage avec transition douce */
+function centerTree(g, container, svg) {
     const bbox = g.node().getBBox();
     const x = bbox.x + bbox.width / 2;
     const y = bbox.y + bbox.height / 2;
+    const scale = 1;
     const containerWidth = container.clientWidth;
     const containerHeight = container.clientHeight;
 
     const dx = containerWidth / 2 - x;
     const dy = containerHeight / 2 - y;
 
-    g.transition().duration(500)
-        .attr("transform", `translate(${dx},${dy})`);
+    svg.transition()
+        .duration(750)
+        .call(
+            d3.zoom().transform,
+            d3.zoomIdentity.translate(dx, dy).scale(scale)
+        );
+}
+
+/** Redimensionnement adaptatif */
+function setupResizeHandler(redrawFn) {
+    window.addEventListener("resize", debounce(() => {
+        redrawFn();
+    }, 300));
+}
+
+/** Bouton de recentrage manuel */
+function setupCenterButton(containerId, g, svg) {
+    const btn = document.getElementById('center-tree');
+    if (!btn) return;
+
+    btn.addEventListener("click", () => {
+        const bbox = g.node().getBBox();
+        const x = bbox.x + bbox.width / 2;
+        const y = bbox.y + bbox.height / 2;
+        const container = document.getElementById(containerId);
+        const dx = container.clientWidth / 2 - x;
+        const dy = container.clientHeight / 2 - y;
+
+        svg.transition()
+            .duration(750)
+            .call(
+                d3.zoom().transform,
+                d3.zoomIdentity.translate(dx, dy).scale(1)
+            );
+    });
 }
 
 /** Export PNG & SVG */
@@ -180,7 +218,6 @@ function exportAsPNG(containerId) {
     img.src = url;
 }
 
-/** Plein écran */
 export function toggleFullscreen(container) {
     if (!document.fullscreenElement) {
         container.requestFullscreen();
@@ -193,7 +230,6 @@ export function transformDataForD3(rawData) {
     return d3.hierarchy(rawData);
 }
 
-/** Utils */
 function downloadURL(data, filename) {
     const a = document.createElement("a");
     a.href = data;
@@ -202,6 +238,21 @@ function downloadURL(data, filename) {
     a.click();
     document.body.removeChild(a);
 }
+/** Centrage automatique 
+//function centerTree(svg, container) {
+    //const g = svg.select('g');
+    //const bbox = g.node().getBBox();
+    //const x = bbox.x + bbox.width / 2;
+   // const y = bbox.y + bbox.height / 2;
+    //const containerWidth = container.clientWidth;
+    //const containerHeight = container.clientHeight;
+
+   // const dx = containerWidth / 2 - x;
+   // const dy = containerHeight / 2 - y;
+
+   // g.transition().duration(500)
+      //  .attr("transform", `translate(${dx},${dy})`);
+} 
 
 /* Fonction inutilisée mais conservée si besoin futur */
 function update(source) {
