@@ -251,9 +251,32 @@ export function exportSVG(container) {
     URL.revokeObjectURL(url);
 }
 
+export function toggleFullscreen(el) {
+    if (!document.fullscreenElement) {
+        el.requestFullscreen().catch(err => console.error(err));
+    } else {
+        document.exitFullscreen();
+    }
+}
+
 export function searchNode(query) {
     searchTerm = query.toLowerCase();
     svgGroup.selectAll("g.node").select("text")
         .style("fill", d => d.data.name.toLowerCase().includes(searchTerm) ? "red" : "black")
         .style("font-weight", d => d.data.name.toLowerCase().includes(searchTerm) ? "bold" : "normal");
+}
+
+
+export async function loadTreeData(rootId) {
+    const response = await fetch(`/api/person/api/visualize/tree/${rootId}`);
+    if (!response.ok) throw new Error("Erreur lors du chargement des données");
+    return await response.json();
+}
+
+export function transformDataForD3(data) {
+    // Exemple de transformation basique (à adapter selon ton JSON réel)
+    return {
+        name: data.name,
+        children: data.children ? data.children.map(transformDataForD3) : []
+    };
 }
