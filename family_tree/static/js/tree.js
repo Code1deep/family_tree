@@ -15,16 +15,14 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   try {
-    const response = await fetch("/api/tree/");  // chemin correct et unique
+    const response = await fetch("/api/tree/");
     const treeData = await response.json();
     console.log("✅ Données reçues :", treeData);
-    initD3Tree("#tree-container", treeData);
+    initD3Tree("tree-container", treeData);  // sans #
   } catch (err) {
     console.error("❌ Erreur lors du chargement de l’arbre :", err);
   }
 
-  // Ajoute des vérifications de null pour éviter les erreurs :
-  document.getElementById("center-btn")?.addEventListener("click", () => centerTree());
   document.getElementById("fullscreen-btn")?.addEventListener("click", () => toggleFullscreen(treeContainer));
   document.getElementById("export-png")?.addEventListener("click", () => exportPNG(treeContainer));
   document.getElementById("export-svg")?.addEventListener("click", () => exportSVG(treeContainer));
