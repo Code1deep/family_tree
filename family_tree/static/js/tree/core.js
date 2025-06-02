@@ -65,8 +65,9 @@ export function initMainD3Tree(containerId, data) {
     root.children?.forEach(collapse);
     update(root);
 
-    const tooltip = d3.select("body").append("div")
+    const tooltip = container.append("div")
         .attr("class", "tooltip")
+        .style("position", "absolute")
         .style("opacity", 0);
 
     function update(source) {
@@ -269,3 +270,11 @@ export async function loadTreeData(rootId) {
     if (!response.ok) throw new Error("Erreur lors du chargement des données");
     return await response.json();
 }
+
+//export function transformDataForD3(data) {
+    // Exemple de transformation basique (à adapter selon ton JSON réel)
+    //return {
+        //name: data.name,
+        //children: data.children ? data.children.map(transformDataForD3) : []
+    //};
+//}
