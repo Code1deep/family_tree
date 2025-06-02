@@ -1,15 +1,16 @@
 // static/js/tree.js
 import { loadTreeData } from './tree/core.js';
-import { initD3Tree } from './tree/d3-tree.js';
 import { zoomIn, zoomOut, exportPNG, exportSVG, searchNode } from './tree/core.js';
 import { centerTree } from './tree/utils.js'; 
 import { openModal } from "/static/js/modal.js";
 import { initMainD3Tree, initSubD3Tree } from './tree/index.js';
 
+// Initialisation directe si les données sont déjà disponibles
 initMainD3Tree("main-tree-container", mainTreeData);
 initSubD3Tree("modal-tree-container", miniTreeData);
 
-window.initD3Tree = initD3Tree;
+// Facultatif : exposer pour debug
+window.initD3Tree = initMainD3Tree;
 
 document.addEventListener("DOMContentLoaded", async () => {
   const treeContainer = document.getElementById("tree-container");
@@ -22,7 +23,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const response = await fetch("/api/tree/");
     const treeData = await response.json();
     console.log("✅ Données reçues :", treeData);
-    initD3Tree("tree-container", treeData);  // sans #
+    initMainD3Tree("tree-container", treeData);  // appel mis à jour
   } catch (err) {
     console.error("❌ Erreur lors du chargement de l’arbre :", err);
   }
