@@ -3,7 +3,6 @@ import * as d3 from 'https://d3js.org/d3.v7.min.js';
 import { debounce } from './utils.js';
 import { openModal } from '/static/js/modal.js';
 
-// Injecte du CSS dans le DOM
 /** CSS directement intégré */
 const style = document.createElement("style");
 style.innerHTML = `
@@ -30,9 +29,9 @@ document.head.appendChild(style);
 function showPersonDetails(d) {
     const p = d.data;  // Le JSON du nœud
     const photo = p.photo || "/static/img/default.png";
-    const bio = p.data.bio || "Aucune biographie disponible";
-    const mother = p.data.mother || "Inconnue";
-    const father = p.data.father || "Inconnu";
+    const bio = p.bio || "Aucune biographie disponible";
+    const mother = p.mother || "Inconnue";
+    const father = p.father || "Inconnu";
 
     const html = `
         <img src="${photo}" alt="Photo de ${p.name}">
@@ -47,20 +46,21 @@ function showPersonDetails(d) {
 export function initD3Tree(containerId, data) {
     const container = document.getElementById(containerId);
     container.innerHTML = ''; // reset
+
     const margin = { top: 50, right: 120, bottom: 50, left: 120 };
     const width = container.clientWidth - margin.left - margin.right;
     const height = container.clientHeight - margin.top - margin.bottom;
 
     const svg = d3.select(`#${containerId}`).append("svg")
         .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-        .call(d3.zoom().scaleExtent([0.1, 3]).on("zoom", (event) => {
-            g.attr("transform", event.transform);
-        }))
-        .append("g")
+        .attr("height", height + margin.top + margin.bottom);
+
+    const g = svg.append("g")
         .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    const g = svg.append("g");
+    svg.call(d3.zoom().scaleExtent([0.1, 3]).on("zoom", (event) => {
+        g.attr("transform", event.transform);
+    }));
 
     const treeLayout = d3.tree().size([height, width]);
     const root = d3.hierarchy(data);
@@ -86,8 +86,7 @@ export function initD3Tree(containerId, data) {
         .attr("x", d => d.children ? -10 : 10)
         .style("text-anchor", d => d.children ? "end" : "start")
         .text(d => d.data.name);
-    
-        // Ajoute dans le nœud SVG le bouton
+
     node.append("text")
         .attr("dy", "2.5em")
         .attr("x", 25)
@@ -98,8 +97,6 @@ export function initD3Tree(containerId, data) {
         .on("click", showPersonDetails);
 
     centerTree(svg, container);
-
-    // Setup interactivité
     setupTreeSearch(root, g);
     setupExportButtons(containerId);
     setupFullscreen(container);
@@ -193,7 +190,6 @@ export function toggleFullscreen(container) {
 }
 
 export function transformDataForD3(rawData) {
-    // Exemple de transformation : convertir en hiérarchie
     return d3.hierarchy(rawData);
 }
 
@@ -207,13 +203,11 @@ function downloadURL(data, filename) {
     document.body.removeChild(a);
 }
 
+/* Fonction inutilisée mais conservée si besoin futur */
 function update(source) {
-    // Logique de mise à jour optimisée
+    // Logique de mise à jour optimisée (non utilisée ici)
 }
 
 function zoomed(event) {
-    svg.attr("transform", event.transform);
+    // Inutilisé également, géré directement dans initD3Tree
 }
-
-    // Initial render
-    update(root);
