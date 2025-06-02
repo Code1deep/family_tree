@@ -251,14 +251,6 @@ export function exportSVG(container) {
     URL.revokeObjectURL(url);
 }
 
-export function toggleFullscreen(el) {
-    if (!document.fullscreenElement) {
-        el.requestFullscreen().catch(err => console.error(err));
-    } else {
-        document.exitFullscreen();
-    }
-}
-
 export function searchNode(query) {
     searchTerm = query.toLowerCase();
     svgGroup.selectAll("g.node").select("text")
