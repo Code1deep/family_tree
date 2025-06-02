@@ -6,7 +6,6 @@ import { openModal } from "/static/js/modal.js";
 import { initMainD3Tree, initSubD3Tree } from './tree/index.js';
 
 // Initialisation directe si les données sont déjà disponibles
-initMainD3Tree("main-tree-container", mainTreeData);
 initSubD3Tree("modal-tree-container", miniTreeData);
 
 // Facultatif : exposer pour debug
@@ -21,9 +20,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   try {
     const response = await fetch("/api/tree/");
+    if (!response.ok) throw new Error(`Erreur HTTP ${response.status}`);
     const treeData = await response.json();
     console.log("✅ Données reçues :", treeData);
-    initMainD3Tree("tree-container", treeData);  // appel mis à jour
+    initMainD3Tree("tree-container", treeData);
   } catch (err) {
     console.error("❌ Erreur lors du chargement de l’arbre :", err);
   }
@@ -32,4 +32,5 @@ document.addEventListener("DOMContentLoaded", async () => {
   document.getElementById("export-png")?.addEventListener("click", () => exportPNG(treeContainer));
   document.getElementById("export-svg")?.addEventListener("click", () => exportSVG(treeContainer));
   document.getElementById("search-box")?.addEventListener("input", (e) => searchNode(e.target.value));
+  document.getElementById("center-btn")?.addEventListener("click", () => centerTree());
 });
