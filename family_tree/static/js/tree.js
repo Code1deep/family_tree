@@ -5,6 +5,8 @@ import { zoomIn, zoomOut, exportPNG, exportSVG, searchNode } from './tree/core.j
 import { centerTree } from './tree/utils.js'; 
 import { openModal } from "/static/js/modal.js";
 
+window.initD3Tree = initD3Tree;
+
 document.addEventListener("DOMContentLoaded", async () => {
   const treeContainer = document.getElementById("tree-container");
   if (!treeContainer) {
@@ -13,22 +15,18 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   try {
-    const response = await fetch("/api/person/api/visualize/tree/1");
+    const response = await fetch("/api/tree/");  // chemin correct et unique
     const treeData = await response.json();
     console.log("✅ Données reçues :", treeData);
-    console.log("tree.js chargé");
-    console.log("tree-container présent ?", document.getElementById("tree-container"));
-    initD3Tree(treeData);  // ou ta fonction de rendu
+    initD3Tree("#tree-container", treeData);
   } catch (err) {
     console.error("❌ Erreur lors du chargement de l’arbre :", err);
   }
 
-  // Événements boutons
-    document.getElementById("zoom-in-btn").addEventListener("click", zoomIn);
-    document.getElementById("zoom-out-btn").addEventListener("click", zoomOut);
-    document.getElementById("center-btn").addEventListener("click", centerTree);
-    document.getElementById("fullscreen-btn").addEventListener("click", () => toggleFullscreen(treeContainer));
-    document.getElementById("export-png-btn").addEventListener("click", () => exportPNG(treeContainer));
-    document.getElementById("export-svg-btn").addEventListener("click", () => exportSVG(treeContainer));
-    document.getElementById("search-input").addEventListener("input", (e) => searchNode(e.target.value));
+  // Ajoute des vérifications de null pour éviter les erreurs :
+  document.getElementById("center-btn")?.addEventListener("click", () => centerTree());
+  document.getElementById("fullscreen-btn")?.addEventListener("click", () => toggleFullscreen(treeContainer));
+  document.getElementById("export-png")?.addEventListener("click", () => exportPNG(treeContainer));
+  document.getElementById("export-svg")?.addEventListener("click", () => exportSVG(treeContainer));
+  document.getElementById("search-box")?.addEventListener("input", (e) => searchNode(e.target.value));
 });
