@@ -1,17 +1,19 @@
 # family_tree/interfaces/api/resources/tree/routes_tree_api.py
-
 from flask import jsonify, current_app
 from family_tree.domain.services.tree_service import TreeService
+from family_tree.infrastructure.persistence.repositories.person_repo import PersonRepository
+from family_tree.infrastructure.visualization.tree_visualizer import FamilyTreeVisualizer
+from family_tree.app.extensions import db
 
 def register_tree_api_routes(bp, person_service):
     """
-    Enregistre la route API JSON de génération d'arbre généalogique.
+    Enregistre les routes API JSON pour l’arbre généalogique.
     """
 
-    @bp.route('/api/<int:person_id>', methods=['GET'])
+    @bp.route('/api/tree/<int:person_id>', methods=['GET'])
     def get_tree_json(person_id):
         """
-        Endpoint JSON unifié pour générer un arbre généalogique.
+        Endpoint JSON pour générer un arbre généalogique pour une personne donnée.
         """
         if person_id <= 0:
             return jsonify({'error': 'Invalid person ID'}), 400
@@ -29,11 +31,15 @@ def register_tree_api_routes(bp, person_service):
             current_app.logger.error(f"Error generating tree: {str(e)}")
             return jsonify({'error': 'Internal server error'}), 500
 
-    @bp.route('/tree', methods=['GET'])
-    def get_tree():
-        from family_tree.infrastructure.persistence.repositories.person_repo import PersonRepository
-        from family_tree.infrastructure.visualization.tree_visualizer import FamilyTreeVisualizer
-        from family_tree.infrastructure.persistence import db
-        visualizer = FamilyTreeVisualizer(current_app, PersonRepository(db.session))
-        tree_data = visualizer.generate_familytree_data()
-        return jsonify(tree_data)
+    @bp.route('/api/tree', methods=['GET'])
+    def get_default_tree():
+        """
+        Endpoint JSON pour générer un arbre généalogique global ou par défaut.
+        """
+        try:
+            visualizer = FamilyTreeVisualizer(current_app, PersonRepository(db.session))
+            tree_data = visualizer.generate_familytree_data()
+            return jsonify(tree_data)
+        except Exception as e:
+            current_app.logger.error(f"Error generating default tree: {str(e)}")
+            return jsonify({'error': 'Internal server error'}), 500
