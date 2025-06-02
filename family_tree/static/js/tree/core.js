@@ -7,7 +7,8 @@ let svgGroup, svgRoot, zoomBehavior;
 let currentScale = 1;
 let searchTerm = '';
 
-export function initD3Tree(containerId, data) {
+// Fonction principale d’affichage D3.js avec outils de recherche, zoom, export, etc.
+export function initMainD3Tree(containerId, data) {
     const margin = { top: 50, right: 200, bottom: 50, left: 200 };
     const width = 2000 - margin.left - margin.right;
     const height = 1200 - margin.top - margin.bottom;
@@ -16,15 +17,19 @@ export function initD3Tree(containerId, data) {
     container.selectAll("*").remove(); // Clear previous tree
 
     // Add styles directly in JS
-    d3.select("head").append("style").html(`
-        .node circle { fill: #999; stroke: #555; stroke-width: 1.5px; }
-        .node text { font: 10px sans-serif; }
-        .link { fill: none; stroke: #ccc; stroke-width: 1.5px; }
-        .tooltip { position: absolute; text-align: center; padding: 5px; font: 12px sans-serif; background: lightsteelblue; border: 1px solid #aaa; pointer-events: none; border-radius: 3px; }
-        .tree-controls { margin: 10px 0; display: flex; gap: 10px; }
-        .tree-controls input[type="text"] { padding: 2px 6px; font-size: 14px; }
-        .tree-controls button { padding: 4px 10px; font-size: 14px; }
-    `);
+    if (!document.getElementById("tree-style")) {
+        d3.select("head").append("style")
+            .attr("id", "tree-style")
+            .html(`
+                .node circle { fill: #999; stroke: #555; stroke-width: 1.5px; }
+                .node text { font: 10px sans-serif; }
+                .link { fill: none; stroke: #ccc; stroke-width: 1.5px; }
+                .tooltip { position: absolute; text-align: center; padding: 5px; font: 12px sans-serif; background: lightsteelblue; border: 1px solid #aaa; pointer-events: none; border-radius: 3px; }
+                .tree-controls { margin: 10px 0; display: flex; gap: 10px; }
+                .tree-controls input[type="text"] { padding: 2px 6px; font-size: 14px; }
+                .tree-controls button { padding: 4px 10px; font-size: 14px; }
+        `   );
+    }
 
     container.insert("div", ":first-child").attr("class", "tree-controls").html(`
         <input id="treeSearch" placeholder="Rechercher une personne..." />
