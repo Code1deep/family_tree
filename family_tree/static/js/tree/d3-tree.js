@@ -44,6 +44,16 @@ function showPersonDetails(d) {
 
 // Fonction utilisée pour afficher un sous-arbre dynamique lors d’un clic sur un nœud
 export function initSubD3Tree(containerId, data) {
+    if (!document.getElementById("subtree-style")) {
+    d3.select("head").append("style")
+        .attr("id", "subtree-style")
+        .html(`
+            .link { fill: none; stroke: #ccc; stroke-width: 1.5px; }
+            .node circle { fill: #999; stroke: #555; stroke-width: 1.5px; }
+            .node text { font: 10px sans-serif; }
+        `);
+    }
+    
     const container = document.getElementById(containerId);
     if (!container) {
         console.warn(`⏭️ Conteneur introuvable : #${containerId}`);
@@ -109,7 +119,7 @@ export function initSubD3Tree(containerId, data) {
     setupTreeSearch(root, g);
     setupExportButtons(containerId);
     setupFullscreen(container);
-    setupResizeHandler(() => initD3Tree(containerId, data)); // redessiner
+    setupResizeHandler(() => initSubD3Tree(containerId, data)); // redessiner
     setupCenterButton(containerId, g, svg); // bouton manuel
 }
 
