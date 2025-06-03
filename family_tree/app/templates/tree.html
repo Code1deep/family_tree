@@ -13,7 +13,8 @@
   <input id="search-box" type="text" class="form-control d-inline-block w-auto" placeholder="🔍 ابحث عن اسم" />
 </div>
 
-<div id="tree-container"></div>
+<!-- ✅ L’élément indispensable que les JS cherchent -->
+<div id="tree-container" class="tree-container"></div>
 
 <!-- Bouton pour ouvrir le modal -->
 <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#personModal">
@@ -38,8 +39,9 @@
 
 {% block extra_js %}
 <!-- Modules JavaScript -->
-<script type="module" src="{{ url_for('static', filename='js/modal.js') }}"></script>
-<script type="module" src="{{ url_for('static', filename='js/core.js') }}"></script>
+<script type="module" src="{{ url_for('static', filename='js/tree/utils.js') }}"></script>
+<script type="module" src="{{ url_for('static', filename='js/tree/d3-tree.js') }}"></script>
+<script type="module" src="{{ url_for('static', filename='js/tree/core.js') }}"></script>
 <script type="module" src="{{ url_for('static', filename='js/tree.js') }}"></script>
 
 <!-- CSS intégré pour le rendu D3.js -->
