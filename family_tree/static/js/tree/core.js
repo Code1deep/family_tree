@@ -1,3 +1,4 @@
+// static/js/tree/core.js
 import * as d3 from 'https://d3js.org/d3.v7.min.js';
 import { transformDataForD3 } from './d3-tree.js';
 import { centerTree, exportTreeAsPNG, exportTreeAsSVG, toggleFullscreen } from './utils.js';
@@ -212,3 +213,66 @@ document.addEventListener("DOMContentLoaded", async () => {
         console.error(err);
     }
 });
+
+export function zoomIn() {
+    currentScale = Math.min(currentScale * 1.2, 4);
+    svgRoot.transition().duration(300).call(zoomBehavior.scaleTo, currentScale);
+}
+
+export function zoomOut() {
+    currentScale = Math.max(currentScale / 1.2, 0.05);
+    svgRoot.transition().duration(300).call(zoomBehavior.scaleTo, currentScale);
+}
+
+export function exportPNG(container) {
+    const svgNode = container.querySelector('svg');
+    const svgData = new XMLSerializer().serializeToString(svgNode);
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    const img = new Image();
+    const blob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+
+    canvas.width = svgNode.clientWidth * 2;
+    canvas.height = svgNode.clientHeight * 2;
+    ctx.scale(2, 2);
+
+    img.onload = () => {
+        ctx.drawImage(img, 0, 0);
+        URL.revokeObjectURL(url);
+        const pngUrl = canvas.toDataURL("image/png");
+        const link = document.createElement("a");
+        link.download = "tree.png";
+        link.href = pngUrl;
+        link.click();
+    };
+    img.src = url;
+}
+
+export function exportSVG(container) {
+    const svg = container.querySelector("svg");
+    const serializer = new XMLSerializer();
+    const source = serializer.serializeToString(svg);
+    const blob = new Blob([source], { type: "image/svg+xml;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.download = "tree.svg";
+    link.href = url;
+    link.click();
+    URL.revokeObjectURL(url);
+}
+
+export function searchNode(query) {
+    searchTerm = query.toLowerCase();
+    svgGroup.selectAll("g.node").select("text")
+        .style("fill", d => d.data.name.toLowerCase().includes(searchTerm) ? "red" : "black")
+        .style("font-weight", d => d.data.name.toLowerCase().includes(searchTerm) ? "bold" : "normal");
+}
+
+
+export async function loadTreeData(rootId) {
+    const response = await fetch(`/api/person/api/visualize/tree/${rootId}`);
+    if (!response.ok) throw new Error("Erreur lors du chargement des données");
+    return await response.json();
+}
