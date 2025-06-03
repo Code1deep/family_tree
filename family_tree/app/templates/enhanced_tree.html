@@ -35,7 +35,7 @@
     #custom-modal { display: none; }
 </style>
 </head>
-
+<script src="https://d3js.org/d3.v7.min.js"></script>
 <body>
     <h1 style="text-align: center;">شجرة العائلة</h1>
 
@@ -46,7 +46,6 @@
     </div>
 
     <!-- Ajouter D3.js -->
-    <script src="https://d3js.org/d3.v7.min.js"></script>
     {# 
     {% include 'macros/node.html' %}
     {% for root in tree %}
@@ -60,7 +59,6 @@
     <!-- Script principal -->
     <script type="module" src="{{ url_for('static', filename='js/tree.js') }}"></script>
     <script type="module" src="{{ url_for('static', filename='js/tree/core.js') }}"></script>
-    <script src="https://d3js.org/d3.v7.min.js"></script>
 
 </body>
 </html>
