@@ -200,9 +200,22 @@ export async function initMainD3Tree(containerId, data) {
 }
 
 // Lancement automatique si #tree-container trouvé
-document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener("DOMContentLoaded", () => {
+    console.log("✅ DOM entièrement chargé");
+
     const container = document.getElementById("tree-container");
-    if (!container) return;
+    if (!container) {
+        console.error("❌ tree-container introuvable !");
+        return;
+    }
+
+    console.log("✅ tree-container trouvé");
+
+    // Appel d'une fonction async séparée
+    loadInitialTree();
+});
+
+async function loadInitialTree() {
     try {
         const res = await fetch("/api/tree/tree-data");
         if (!res.ok) throw new Error("Erreur données arbre");
@@ -212,7 +225,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         alert("Erreur chargement arbre.");
         console.error(err);
     }
-});
+}
 
 export function zoomIn() {
     currentScale = Math.min(currentScale * 1.2, 4);
