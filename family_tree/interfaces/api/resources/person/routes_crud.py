@@ -1,9 +1,12 @@
 # interfaces/api/resources/person/routes_crud.py
+
 import logging
 from datetime import datetime
-from flask import request, jsonify, abort
+from flask import render_template, request, jsonify, abort
 from family_tree.app.extensions import db
 from family_tree.interfaces.api.serializers.person_serializer import PersonSerializer
+#from family_tree.interfaces.api.resources.person.init_person_service import person_service
+
 
 person_service = None
 
@@ -12,18 +15,27 @@ def inject_service(service):
     person_service = service
 
 def register_crud_routes(person_api):
+    @person_api.route('/crud/person/<int:person_id>', methods=['DELETE'])
+    def delete_person(person_id):
+        if person_service.delete(person_id):
+            return jsonify({'success': True}), 204
+        abort(404, "Person not found")
+
     @person_api.route('/persons', methods=['POST'])
     def create_person():
+        """Endpoint POST /persons - Création personne"""
         data = request.get_json()
         if not data:
             return jsonify({'error': 'No input data provided'}), 400
 
         try:
+            # Vérification explicite des champs obligatoires
             required_fields = ['first_name', 'last_name', 'gender']
             for field in required_fields:
                 if field not in data:
                     return jsonify({'error': f"Missing required field: {field}"}), 400
 
+            # 🔁 Conversion des dates
             def parse_date(field):
                 value = data.get(field)
                 if value:
@@ -34,7 +46,7 @@ def register_crud_routes(person_api):
                 return None
 
             birth_date = parse_date('birth_date')
-            if isinstance(birth_date, tuple): return birth_date
+            if isinstance(birth_date, tuple): return birth_date  # early return if error
             death_date = parse_date('death_date')
             if isinstance(death_date, tuple): return death_date
 
@@ -53,8 +65,23 @@ def register_crud_routes(person_api):
             logging.error(f"Error creating person: {str(e)}")
             return jsonify({'error': 'Internal server error'}), 500
 
+    @person_api.route('/persons/<int:person_id>', methods=['GET'])
+    def get_person(person_id):
+        """Récupérer une personne par ID via /persons"""
+        person = person_service.get_person_by_id(person_id)
+        if not person:
+            return jsonify({'error': 'Person not found'}), 404
+        return jsonify(person.to_dict()), 200
+
+    @person_api.route('/persons', methods=['GET'])
+    def list_persons():
+        """Lister toutes les personnes"""
+        persons = person_service.get_all_persons()
+        return jsonify([PersonSerializer.serialize_for_api(p) for p in persons])
+
     @person_api.route('/persons/<int:person_id>', methods=['PUT'])
     def update_person_by_service(person_id):
+        """Met à jour une personne via /persons/<id>"""
         data = request.get_json()
         if not data:
             return jsonify({'error': 'No input data provided'}), 400
@@ -77,12 +104,17 @@ def register_crud_routes(person_api):
 
     @person_api.route('/persons/<int:person_id>', methods=['DELETE'])
     def delete_person_by_service(person_id):
+        """Supprimer une personne via /persons/<id>"""
         try:
             success = person_service.delete_person(person_id)
             if not success:
                 return jsonify({'error': 'Person not found'}), 404
             return '', 204
         except Exception as e:
-            person_service.repo.rollback()
+            person_service.repo.rollback()  
             logging.error(f"Error deleting person: {str(e)}")
             return jsonify({'error': 'Internal server error'}), 500
+        
+    @person_api.route('/add')
+    def add_person():
+        return render_template('add_person.html')
