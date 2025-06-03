@@ -3,7 +3,7 @@
 
 {% block content %}
 <h1 class="text-center mb-4">شجرة العائلة الحسنة</h1>
-<script src="https://d3js.org/d3.v7.min.js"></script>
+
 <div class="header-actions text-center mb-3">
   <a href="/add" class="btn btn-success me-2">➕ إضافة فرد جديد</a>
   <button id="fullscreen-btn" class="btn btn-secondary me-2">🖼️ ملء الشاشة</button>
@@ -40,7 +40,9 @@
 {% endblock %}
 
 {% block extra_js %}
+<script src="https://d3js.org/d3.v7.min.js"></script>
 <script type="module" src="{{ url_for('static', filename='js/modal.js') }}"></script>
+<script type="module" src="{{ url_for('static', filename='js/core.js') }}"></script>
 <script type="module" src="{{ url_for('static', filename='js/tree.js') }}"></script>
 
 <style>
