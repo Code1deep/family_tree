@@ -43,3 +43,10 @@ def register_tree_api_routes(bp, person_service):
         except Exception as e:
             current_app.logger.error(f"Error generating default tree: {str(e)}")
             return jsonify({'error': 'Internal server error'}), 500
+
+    @bp.route('/api/tree-data')
+    def get_tree_data():
+        from family_tree.infrastructure.visualization.tree_visualizer import get_visualizer
+        visualizer = get_visualizer()
+        data = visualizer.generate_familytree_data()
+        return jsonify(data)
