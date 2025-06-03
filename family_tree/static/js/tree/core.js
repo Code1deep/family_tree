@@ -208,6 +208,35 @@ export function initMainD3Tree(containerId, data) {
     }, 700);
 }
 
+async function fetchTreeData() {
+    try {
+        const response = await fetch('/api/tree-data');
+        if (!response.ok) throw new Error("Erreur de chargement des données");
+        return await response.json();
+    } catch (err) {
+        console.error("Erreur dans fetchTreeData:", err);
+        alert("Impossible de charger les données de l'arbre.");
+        return null;
+    }
+}
+
+function drawTree(data) {
+    // Ton code D3.js ici : création du svg, hiérarchie, simulation, etc.
+    console.log("Données reçues :", data);
+    // Exemple :
+    const root = d3.hierarchy(data);
+    // suite du code pour créer les noeuds...
+}
+
+// Point d’entrée
+document.addEventListener('DOMContentLoaded', async () => {
+    const data = await fetchTreeData();
+    if (data) {
+        drawTree(data);
+        initControls();  // si tu as des boutons fullscreen/export...
+    }
+});
+
 export function zoomIn() {
     currentScale = Math.min(currentScale * 1.2, 4);
     svgRoot.transition().duration(300).call(zoomBehavior.scaleTo, currentScale);
