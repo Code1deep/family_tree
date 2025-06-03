@@ -1,12 +1,9 @@
 # interfaces/api/resources/person/routes_crud.py
-
 import logging
 from datetime import datetime
 from flask import render_template, request, jsonify, abort
 from family_tree.app.extensions import db
 from family_tree.interfaces.api.serializers.person_serializer import PersonSerializer
-#from family_tree.interfaces.api.resources.person.init_person_service import person_service
-
 
 person_service = None
 
