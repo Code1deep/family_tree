@@ -210,7 +210,7 @@ export function initMainD3Tree(containerId, data) {
 
 async function fetchTreeData() {
     try {
-        const response = await fetch('/api/tree-data');
+        const response = await fetch('/api/tree/tree-data');
         if (!response.ok) throw new Error("Erreur de chargement des données");
         return await response.json();
     } catch (err) {
