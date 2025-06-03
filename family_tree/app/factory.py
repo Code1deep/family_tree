@@ -131,6 +131,7 @@ def create_app(config_object='config.Config', testing=False):
                 
                 init_person_resources(db_session)
                 init_tree_resources(app, person_service)
+                print("✓ init_tree_resources exécuté")
                 print("✓ Services initialisés")
 
             except Exception as e:
