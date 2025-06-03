@@ -3,11 +3,9 @@ import * as d3 from 'https://d3js.org/d3.v7.min.js';
 import { transformDataForD3 } from './d3-tree.js';
 import { centerTree, exportTreeAsPNG, exportTreeAsSVG, toggleFullscreen } from './utils.js';
 
-let svgGroup, svgRoot, zoomBehavior;
 let currentScale = 1;
-let searchTerm = '';
 
-// Fonction principale d’affichage D3.js avec outils de recherche, zoom, export, etc.
+// Fonction principale d’affichage D3.js
 export function initMainD3Tree(containerId, data) {
     const margin = { top: 50, right: 200, bottom: 50, left: 200 };
     const width = 2000 - margin.left - margin.right;
@@ -28,7 +26,7 @@ export function initMainD3Tree(containerId, data) {
                 .tree-controls { margin: 10px 0; display: flex; gap: 10px; }
                 .tree-controls input[type="text"] { padding: 2px 6px; font-size: 14px; }
                 .tree-controls button { padding: 4px 10px; font-size: 14px; }
-        `   );
+        `);
     }
 
     container.insert("div", ":first-child").attr("class", "tree-controls").html(`
@@ -202,11 +200,28 @@ export function initMainD3Tree(containerId, data) {
         });
     });
 
+    // Auto-center après chargement initial
     setTimeout(() => {
         const svgNode = container.select("svg").node();
         centerTree(d3.select(svgNode).select("g"), svgNode.parentElement);
     }, 700);
 }
+
+// Lancement automatique si élément présent
+document.addEventListener('DOMContentLoaded', async () => {
+    const container = document.getElementById("tree-container");
+    if (container) {
+        try {
+            const res = await fetch("/api/tree/tree-data");
+            if (!res.ok) throw new Error("Données arbre introuvables");
+            const data = await res.json();
+            initMainD3Tree("tree-container", data);
+        } catch (err) {
+            alert("Erreur lors du chargement de l’arbre généalogique.");
+            console.error(err);
+        }
+    }
+});
 
 async function fetchTreeData() {
     try {
@@ -299,11 +314,3 @@ export async function loadTreeData(rootId) {
     if (!response.ok) throw new Error("Erreur lors du chargement des données");
     return await response.json();
 }
-
-//export function transformDataForD3(data) {
-    // Exemple de transformation basique (à adapter selon ton JSON réel)
-    //return {
-        //name: data.name,
-        //children: data.children ? data.children.map(transformDataForD3) : []
-    //};
-//}
