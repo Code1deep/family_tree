@@ -5,8 +5,11 @@ import { centerTree } from './tree/utils.js';
 import { openModal } from "/static/js/modal.js";
 import { initMainD3Tree, initSubD3Tree } from './tree/index.js';
 
+console.log('✅ tree.js loaded');
+console.log('treeData:', typeof treeData !== 'undefined' ? treeData : 'NOT DEFINED');
+
 // Initialisation directe si les données sont déjà disponibles
-initSubD3Tree("modal-tree-container", miniTreeData);
+initSubD3Tree("modal-tree-container", treeData);
 
 // Facultatif : exposer pour debug
 window.initD3Tree = initMainD3Tree;
