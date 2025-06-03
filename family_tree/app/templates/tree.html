@@ -15,9 +15,6 @@
 
 <div id="tree-container" class="tree-container border border-2 rounded bg-white" style="height: 80vh;"></div>
 
-<!-- Modal de création -->
-{% include 'partials/modal.html' %}
-
 <!-- Bouton pour ouvrir le modal -->
 <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#personModal">
   Créer une personne
@@ -40,28 +37,32 @@
 {% endblock %}
 
 {% block extra_js %}
-
+<!-- Modules JavaScript -->
 <script type="module" src="{{ url_for('static', filename='js/modal.js') }}"></script>
 <script type="module" src="{{ url_for('static', filename='js/core.js') }}"></script>
 <script type="module" src="{{ url_for('static', filename='js/tree.js') }}"></script>
 
+<!-- CSS intégré pour le rendu D3.js -->
 <style>
+/* Nœuds D3 */
 .node circle {
-    fill: #999;
-    stroke: steelblue;
-    stroke-width: 2px;
+  fill: #999;
+  stroke: steelblue;
+  stroke-width: 2px;
 }
 .node text {
-    font: 12px sans-serif;
+  font: 12px sans-serif;
 }
 .link {
-    fill: none;
-    stroke: #ccc;
-    stroke-width: 2px;
+  fill: none;
+  stroke: #ccc;
+  stroke-width: 2px;
 }
+
+/* Styles supplémentaires pour les blocs de génération */
 .ft-node {
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 .ft-gener-0 { background-color: #6a0dad; }
 .ft-gener-1 { background-color: #1e90ff; }
