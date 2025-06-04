@@ -13,7 +13,7 @@ export const initMainTree = () => {
     const tryInit = async () => {
     const container = document.querySelector("main") || document.body;
 
-    console.log("✅ tree-container trouvé");
+    console.log("✅ Container principal trouvé :", container);
     try {
       const res = await fetch("/api/tree/tree-data");
       if (!res.ok) throw new Error("Erreur lors du chargement des données arbre");
@@ -143,81 +143,85 @@ export async function initMainD3Tree(data) {
   }
 
   function update(source) {
-    const treeData = treeLayout(root);
-    const nodes = treeData.descendants();
-    const links = treeData.links();
+  const treeData = treeLayout(root);
+  const nodes = treeData.descendants();
+  const links = treeData.links();
 
-    nodes.forEach(d => d.y = d.depth * 180);
+  nodes.forEach(d => d.y = d.depth * 180);
 
-    const node = svgRoot.selectAll("g.node")
-      .data(nodes, d => d.data.id);
+  const node = svgRoot.selectAll("g.node")
+    .data(nodes, d => d.data.id);
 
-    const nodeEnter = node.enter().append("g")
-      .attr("class", "node")
-      .attr("transform", d => `translate(${source.y0},${source.x0})`)
-      .on("click", onClick)
-      .on("mouseover", function(event, d) {
-        tooltip.transition().duration(200).style("opacity", .9);
-        tooltip.html(`<strong>${d.data.name}</strong><br>ID: ${d.data.id}`)
-          .style("left", (event.pageX + 10) + "px")
-          .style("top", (event.pageY - 20) + "px");
-      })
-      .on("mouseout", () => tooltip.transition().duration(300).style("opacity", 0));
+  const nodeEnter = node.enter().append("g")
+    .attr("class", "node")
+    .attr("transform", d => `translate(${source.y0},${source.x0})`)
+    .on("click", onClick)
+    .on("mouseover", function (event, d) {
+      tooltip.transition().duration(200).style("opacity", .9);
+      tooltip.html(`<strong>${d.data.name}</strong><br>ID: ${d.data.id}`)
+        .style("left", (event.pageX + 10) + "px")
+        .style("top", (event.pageY - 20) + "px");
+    })
+    .on("mouseout", () => tooltip.transition().duration(300).style("opacity", 0));
 
-    nodeEnter.append("circle")
-      .attr("r", 1e-6)
-      .style("fill", d => d._children ? "#555" : "#999");
+  nodeEnter.append("circle")
+    .attr("r", 1e-6)
+    .style("fill", d => d._children ? "#555" : "#999");
 
-    nodeEnter.append("text")
-      .attr("dy", 3)
-      .attr("x", d => d._children ? -10 : 10)
-      .style("text-anchor", d => d._children ? "end" : "start")
-      .text(d => d.data.name);
+  nodeEnter.append("text")
+    .attr("dy", 3)
+    .attr("x", d => d._children ? -10 : 10)
+    .style("text-anchor", d => d._children ? "end" : "start")
+    .text(d => d.data.name);
 
-    const nodeUpdate = nodeEnter.merge(node);
-    nodeUpdate.transition().duration(500)
-      .attr("transform", d => `translate(${d.y},${d.x})`);
+  const nodeUpdate = nodeEnter.merge(node);
+  nodeUpdate.transition().duration(500)
+    .attr("transform", d => `translate(${d.y},${d.x})`);
 
-    nodeUpdate.select("circle")
-      .attr("r", 4)
-      .style("fill", d => d._children ? "#555" : "#999");
+  nodeUpdate.select("circle")
+    .attr("r", 4)
+    .style("fill", d => d._children ? "#555" : "#999");
 
-    node.exit().transition().duration(500)
-      .attr("transform", d => `translate(${source.y},${source.x})`)
-      .remove()
-      .select("circle").attr("r", 0);
+  node.exit().transition().duration(500)
+    .attr("transform", d => `translate(${source.y},${source.x})`)
+    .remove()
+    .select("circle").attr("r", 0);
 
-    const link = svgRoot.selectAll("path.link")
-      .data(links, d => d.target.data.id);
+  const link = svgRoot.selectAll("path.link")
+    .data(links, d => d.target.data.id);
 
-    link.enter().insert("path", "g")
-      .attr("class", "link")
-      .attr("d", d => diagonal(source, source))
-      .merge(link)
-      .transition().duration(500)
-      .attr("d", d => diagonal(d.source, d.target));
+  link.enter().insert("path", "g")
+    .attr("class", "link")
+    .attr("d", d => diagonal(source, source))
+    .merge(link)
+    .transition().duration(500)
+    .attr("d", d => diagonal(d.source, d.target));
 
-    link.exit().transition().duration(500)
-      .attr("d", d => diagonal(source, source))
-      .remove();
+  link.exit().transition().duration(500)
+    .attr("d", d => diagonal(source, source))
+    .remove();
 
-    nodes.forEach(d => {
-      d.x0 = d.x;
-      d.y0 = d.y;
-    });
-  }
+  nodes.forEach(d => {
+    d.x0 = d.x;
+    d.y0 = d.y;
+  });
+}
 
+// Initialisation des boutons et interactions
+const svgNode = container.select("svg").node();
+if (!svgNode) {
+  console.error("❌ Aucun SVG trouvé pour les actions");
+} else {
   d3.select("#centerBtn").on("click", () => {
-    const svgNode = container.select("svg").node();
     centerTree(svgRoot, svgNode.parentElement);
   });
 
   d3.select("#pngBtn").on("click", () => {
-    exportTreeAsPNG(container.select("svg").node());
+    exportTreeAsPNG(svgNode);
   });
 
   d3.select("#svgBtn").on("click", () => {
-    exportTreeAsSVG(container.select("svg").node());
+    exportTreeAsSVG(svgNode);
   });
 
   d3.select("#fullscreenBtn").on("click", () => {
@@ -231,9 +235,12 @@ export async function initMainD3Tree(data) {
   update(root);
 
   setTimeout(() => {
-    const svgNode = container.select("svg").node();
-    centerTree(svgRoot, svgNode.parentElement);
+    const refreshedSvg = container.select("svg").node();
+    if (refreshedSvg?.parentElement) {
+      centerTree(svgRoot, refreshedSvg.parentElement);
+    }
   }, 700);
+}
 }
 
 export function zoomIn() {
