@@ -69,33 +69,11 @@
 </style>
 
 <script>
-// Attend que la page soit complètement chargée
-window.addEventListener('load', () => {
-    // Charge les scripts dans l'ordre
-    const script1 = document.createElement('script');
-    script1.src = "{{ url_for('static', filename='js/tree/utils.js') }}";
-    script1.type = 'module';
-    
-    const script2 = document.createElement('script');
-    script2.src = "{{ url_for('static', filename='js/tree/d3-tree.js') }}";
-    script2.type = 'module';
-    
-    const script3 = document.createElement('script');
-    script3.src = "{{ url_for('static', filename='js/tree/core.js') }}";
-    script3.type = 'module';
-
-    // Ajoute les scripts au DOM un par un
-    document.body.appendChild(script1);
-    script1.onload = () => {
-        document.body.appendChild(script2);
-        script2.onload = () => {
-            document.body.appendChild(script3);
-        };
-    };
-});
+document.getElementById('tree-container')?.setAttribute('data-ready', 'true');
 </script>
-{% endblock %}
-<!-- Modules JavaScript -->
-<script type="module" src="{{ url_for('static', filename='js/tree.js') }}"></script>
 
+<!-- Chargez vos scripts normalement -->
+<script type="module" src="{{ url_for('static', filename='js/tree/utils.js') }}"></script>
+<script type="module" src="{{ url_for('static', filename='js/tree/d3-tree.js') }}"></script>
+<script type="module" src="{{ url_for('static', filename='js/tree/core.js') }}"></script>
 {% endblock %}
