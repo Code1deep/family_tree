@@ -130,7 +130,11 @@ function setupTreeSearch(root, g) {
 
     input.addEventListener('input', debounce(() => {
         const query = input.value.trim().toLowerCase();
-        g.selectAll('.node').classed('node--highlight', false);
+        g.selectAll('.node')
+        .classed('node--highlight', false)
+        .style('stroke', null)
+        .style('stroke-width', null);
+
         
         if (query) {
             g.selectAll('.node')
@@ -138,7 +142,10 @@ function setupTreeSearch(root, g) {
                     const name = d?.data?.name?.toLowerCase() || '';
                     return name.includes(query);
                 })
-                .classed('node--highlight', true);
+                .classed('node--highlight', true)
+                .style('stroke', 'red')
+                .style('stroke-width', 2);
+
         }
     }, 300));
 }
