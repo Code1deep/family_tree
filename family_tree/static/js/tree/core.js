@@ -2,248 +2,234 @@
 import * as d3 from 'https://d3js.org/d3.v7.min.js';
 import { transformDataForD3 } from './d3-tree.js';
 import { centerTree, exportTreeAsPNG, exportTreeAsSVG, toggleFullscreen } from './utils.js';
+import { initMainD3Tree } from "./tree.js";
 
 let currentScale = 1;
+let svgRoot;
+let zoomBehavior;
 
-// 2. Ajout simplement d'une fonction d'attente
-const waitForContainer = async () => {
-  return new Promise((resolve) => {
-    const check = () => {
-      const container = document.getElementById("tree-container");
-      if (container) return resolve(container);
-      setTimeout(check, 50);
-    };
-    check();
-  });
+export const initMainTree = () => {
+  console.log("🌳 Initialisation arbre principal D3");
+  const tryInit = async () => {
+    const container = document.getElementById("tree-container");
+    if (!container) {
+      setTimeout(tryInit, 100);
+      return;
+    }
+
+    console.log("✅ tree-container trouvé");
+    try {
+      const res = await fetch("/api/tree/tree-data");
+      if (!res.ok) throw new Error("Erreur lors du chargement des données arbre");
+      const data = await res.json();
+      initMainD3Tree("tree-container", data);
+    } catch (err) {
+      console.error("❌ Erreur de chargement de l'arbre :", err);
+    }
+  };
+
+  tryInit();
 };
 
-// Vérification initiale (à ajouter au tout début de votre code exécutable)
-const containerCheck = () => {
-  const container = document.getElementById('tree-container');
-  if (!container?.hasAttribute('data-ready')) {
-    setTimeout(containerCheck, 100);
-    return false;
-  }
-  return true;
-};
-
-if (!containerCheck()) {
-  // Si le container n'est pas prêt, on sort de l'exécution
-  // Le setTimeout dans containerCheck gérera la réessaye
-  return;
+export function searchNode(query) {
+  const searchTerm = query.toLowerCase();
+  if (!svgRoot) return;
+  svgRoot.selectAll("g.node text")
+    .style("fill", d => d.data.name.toLowerCase().includes(searchTerm) ? "red" : "black")
+    .style("font-weight", d => d.data.name.toLowerCase().includes(searchTerm) ? "bold" : "normal");
 }
 
-// Lancement automatique si #tree-container trouvé
-document.addEventListener("DOMContentLoaded", async () => {
-    console.log("✅ DOM entièrement chargé");
-
-    try {
-    const container = await waitForContainer(); // Attend le container
-    console.log("✅ tree-container trouvé");
-
-    const response = await fetch("/api/tree/tree-data");
-    if (!response.ok) throw new Error(`Erreur HTTP ${response.status}`);
-    
-    const treeData = await response.json();
-    initMainD3Tree("tree-container", treeData); // Votre fonction existante
-
-  } catch (err) {
-    console.error("Erreur:", err);
-  }
-});
-
 export async function initMainD3Tree(containerId, data) {
-    const margin = { top: 50, right: 200, bottom: 50, left: 200 };
-    const width = 2000 - margin.left - margin.right;
-    const height = 1200 - margin.top - margin.bottom;
+  const margin = { top: 50, right: 200, bottom: 50, left: 200 };
+  const width = 2000 - margin.left - margin.right;
+  const height = 1200 - margin.top - margin.bottom;
 
-    const container = d3.select(`#${containerId}`);
-    container.selectAll("*").remove();
+  const container = d3.select(`#${containerId}`);
+  container.selectAll("*").remove();
 
-    // Inject styles une seule fois
-    if (!document.getElementById("tree-style")) {
-        d3.select("head").append("style")
-            .attr("id", "tree-style")
-            .html(`
-                .node circle { fill: #999; stroke: #555; stroke-width: 1.5px; }
-                .node text { font: 10px sans-serif; }
-                .link { fill: none; stroke: #ccc; stroke-width: 1.5px; }
-                .tooltip { position: absolute; text-align: center; padding: 5px; font: 12px sans-serif; background: lightsteelblue; border: 1px solid #aaa; pointer-events: none; border-radius: 3px; }
-                .tree-controls { margin: 10px 0; display: flex; gap: 10px; }
-                .tree-controls input[type="text"] { padding: 2px 6px; font-size: 14px; }
-                .tree-controls button { padding: 4px 10px; font-size: 14px; }
-        `);
-    }
-
-    // Ajout des contrôles
-    container.insert("div", ":first-child").attr("class", "tree-controls").html(`
-        <input id="treeSearch" placeholder="Rechercher une personne..." />
-        <button id="centerBtn">Centrer</button>
-        <button id="pngBtn">Export PNG</button>
-        <button id="svgBtn">Export SVG</button>
-        <button id="fullscreenBtn">Plein écran</button>
+  if (!document.getElementById("tree-style")) {
+    d3.select("head").append("style")
+      .attr("id", "tree-style")
+      .html(`
+        .node circle { fill: #999; stroke: #555; stroke-width: 1.5px; }
+        .node text { font: 10px sans-serif; }
+        .link { fill: none; stroke: #ccc; stroke-width: 1.5px; }
+        .tooltip {
+          position: absolute; text-align: center; padding: 5px;
+          font: 12px sans-serif; background: lightsteelblue;
+          border: 1px solid #aaa; pointer-events: none; border-radius: 3px;
+        }
+        .tree-controls {
+          margin: 10px 0; display: flex; gap: 10px;
+        }
+        .tree-controls input[type="text"],
+        .tree-controls button {
+          padding: 4px 10px; font-size: 14px;
+        }
     `);
+  }
 
-    const svgRoot = container.append("svg")
-        .attr("viewBox", [0, 0, width + margin.left + margin.right, height + margin.top + margin.bottom])
-        .style("width", "100%")
-        .style("height", "90vh")
-        .style("border", "1px solid #ccc")
-        .call(d3.zoom().scaleExtent([0.05, 4]).on("zoom", zoomed))
-        .append("g")
-        .attr("transform", `translate(${margin.left},${margin.top})`);
+  container.insert("div", ":first-child").attr("class", "tree-controls").html(`
+    <input id="treeSearch" placeholder="Rechercher une personne..." />
+    <button id="centerBtn">Centrer</button>
+    <button id="pngBtn">Export PNG</button>
+    <button id="svgBtn">Export SVG</button>
+    <button id="fullscreenBtn">Plein écran</button>
+  `);
 
-    const treeLayout = d3.tree().nodeSize([30, 300]);
-    const root = d3.hierarchy(data, d => d.children || d._children);
-    root.x0 = 0;
-    root.y0 = 0;
+  const svg = container.append("svg")
+    .attr("viewBox", [0, 0, width + margin.left + margin.right, height + margin.top + margin.bottom])
+    .style("width", "100%")
+    .style("height", "90vh")
+    .style("border", "1px solid #ccc");
 
-    function collapse(d) {
-        if (d.children) {
-            d._children = d.children;
-            d._children.forEach(collapse);
-            d.children = null;
-        }
+  zoomBehavior = d3.zoom().scaleExtent([0.05, 4]).on("zoom", (event) => {
+    svgRoot.attr("transform", event.transform);
+    currentScale = event.transform.k;
+  });
+
+  svg.call(zoomBehavior);
+
+  svgRoot = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+
+  const treeLayout = d3.tree().nodeSize([30, 300]);
+  const root = d3.hierarchy(data, d => d.children || d._children);
+  root.x0 = 0;
+  root.y0 = 0;
+
+  root.children?.forEach(collapse);
+
+  const tooltip = container.append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 0);
+
+  function collapse(d) {
+    if (d.children) {
+      d._children = d.children;
+      d._children.forEach(collapse);
+      d.children = null;
     }
-    root.children?.forEach(collapse);
+  }
 
-    const tooltip = container.append("div")
-        .attr("class", "tooltip")
-        .style("opacity", 0);
+  function diagonal(s, d) {
+    return `M ${s.y} ${s.x}
+            C ${(s.y + d.y) / 2} ${s.x},
+              ${(s.y + d.y) / 2} ${d.x},
+              ${d.y} ${d.x}`;
+  }
 
-    function update(source) {
-        const treeData = treeLayout(root);
-        const nodes = treeData.descendants();
-        const links = treeData.links();
-
-        nodes.forEach(d => d.y = d.depth * 180);
-
-        const node = svgRoot.selectAll('g.node')
-            .data(nodes, d => d.data.id);
-
-        const nodeEnter = node.enter().append('g')
-            .attr('class', 'node')
-            .attr("transform", d => `translate(${source.y0},${source.x0})`)
-            .on('click', onClick)
-            .on('mouseover', function(event, d) {
-                tooltip.transition().duration(200).style("opacity", .9);
-                tooltip.html(`<strong>${d.data.name}</strong><br>ID: ${d.data.id}`)
-                    .style("left", (event.pageX + 10) + "px")
-                    .style("top", (event.pageY - 20) + "px");
-            })
-            .on('mouseout', () => tooltip.transition().duration(300).style("opacity", 0));
-
-        nodeEnter.append('circle')
-            .attr('r', 1e-6)
-            .style('fill', d => d._children ? "#555" : "#999");
-
-        nodeEnter.append('text')
-            .attr("dy", 3)
-            .attr("x", d => d._children ? -10 : 10)
-            .style("text-anchor", d => d._children ? "end" : "start")
-            .text(d => d.data.name);
-
-        const nodeUpdate = nodeEnter.merge(node);
-        nodeUpdate.transition().duration(500)
-            .attr("transform", d => `translate(${d.y},${d.x})`);
-
-        nodeUpdate.select('circle')
-            .attr('r', 4)
-            .style('fill', d => d._children ? "#555" : "#999");
-
-        const nodeExit = node.exit().transition().duration(500)
-            .attr("transform", d => `translate(${source.y},${source.x})`)
-            .remove();
-        nodeExit.select('circle').attr('r', 0);
-        nodeExit.select('text').style('fill-opacity', 0);
-
-        const link = svgRoot.selectAll('path.link')
-            .data(links, d => d.target.data.id);
-
-        const linkEnter = link.enter().insert('path', "g")
-            .attr("class", "link")
-            .attr('d', d => {
-                const o = { x: source.x0, y: source.y0 };
-                return diagonal(o, o);
-            });
-
-        linkEnter.merge(link)
-            .transition().duration(500)
-            .attr('d', d => diagonal(d.source, d.target));
-
-        link.exit().transition().duration(500)
-            .attr('d', d => {
-                const o = { x: source.x, y: source.y };
-                return diagonal(o, o);
-            }).remove();
-
-        nodes.forEach(d => {
-            d.x0 = d.x;
-            d.y0 = d.y;
-        });
+  async function onClick(event, d) {
+    if (d.children) {
+      d._children = d.children;
+      d.children = null;
+    } else if (d._children) {
+      d.children = d._children;
+      d._children = null;
+    } else {
+      try {
+        const res = await fetch(`/api/person/visualize/tree/${d.data.id}`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const newData = await res.json();
+        d.children = newData.children.map(transformDataForD3).map(c => d3.hierarchy(c));
+      } catch (err) {
+        console.error("❌ Erreur chargement enfants :", err);
+      }
     }
+    update(d);
+  }
 
-    function diagonal(s, d) {
-        return `M ${s.y} ${s.x}
-                C ${(s.y + d.y) / 2} ${s.x},
-                  ${(s.y + d.y) / 2} ${d.x},
-                  ${d.y} ${d.x}`;
-    }
+  function update(source) {
+    const treeData = treeLayout(root);
+    const nodes = treeData.descendants();
+    const links = treeData.links();
 
-    async function onClick(event, d) {
-        if (d.children) {
-            d._children = d.children;
-            d.children = null;
-        } else if (d._children) {
-            d.children = d._children;
-            d._children = null;
-        } else {
-            try {
-                const res = await fetch(`/api/person/visualize/tree/${d.data.id}`);
-                if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                const newData = await res.json();
-                const newChildren = newData.children.map(transformDataForD3).map(c => d3.hierarchy(c));
-                d.children = newChildren;
-            } catch (err) {
-                console.error("Erreur chargement enfants :", err);
-            }
-        }
-        update(d);
-    }
+    nodes.forEach(d => d.y = d.depth * 180);
 
-    function zoomed(event) {
-        svgRoot.attr("transform", event.transform);
-    }
+    const node = svgRoot.selectAll("g.node")
+      .data(nodes, d => d.data.id);
 
-    d3.select("#centerBtn").on("click", () => {
-        const svgNode = container.select("svg").node();
-        centerTree(d3.select(svgNode).select("g"), svgNode.parentElement);
+    const nodeEnter = node.enter().append("g")
+      .attr("class", "node")
+      .attr("transform", d => `translate(${source.y0},${source.x0})`)
+      .on("click", onClick)
+      .on("mouseover", function(event, d) {
+        tooltip.transition().duration(200).style("opacity", .9);
+        tooltip.html(`<strong>${d.data.name}</strong><br>ID: ${d.data.id}`)
+          .style("left", (event.pageX + 10) + "px")
+          .style("top", (event.pageY - 20) + "px");
+      })
+      .on("mouseout", () => tooltip.transition().duration(300).style("opacity", 0));
+
+    nodeEnter.append("circle")
+      .attr("r", 1e-6)
+      .style("fill", d => d._children ? "#555" : "#999");
+
+    nodeEnter.append("text")
+      .attr("dy", 3)
+      .attr("x", d => d._children ? -10 : 10)
+      .style("text-anchor", d => d._children ? "end" : "start")
+      .text(d => d.data.name);
+
+    const nodeUpdate = nodeEnter.merge(node);
+    nodeUpdate.transition().duration(500)
+      .attr("transform", d => `translate(${d.y},${d.x})`);
+
+    nodeUpdate.select("circle")
+      .attr("r", 4)
+      .style("fill", d => d._children ? "#555" : "#999");
+
+    node.exit().transition().duration(500)
+      .attr("transform", d => `translate(${source.y},${source.x})`)
+      .remove()
+      .select("circle").attr("r", 0);
+
+    const link = svgRoot.selectAll("path.link")
+      .data(links, d => d.target.data.id);
+
+    link.enter().insert("path", "g")
+      .attr("class", "link")
+      .attr("d", d => diagonal(source, source))
+      .merge(link)
+      .transition().duration(500)
+      .attr("d", d => diagonal(d.source, d.target));
+
+    link.exit().transition().duration(500)
+      .attr("d", d => diagonal(source, source))
+      .remove();
+
+    nodes.forEach(d => {
+      d.x0 = d.x;
+      d.y0 = d.y;
     });
+  }
 
-    d3.select("#pngBtn").on("click", () => {
-        exportTreeAsPNG(container.select("svg").node());
-    });
+  d3.select("#centerBtn").on("click", () => {
+    const svgNode = container.select("svg").node();
+    centerTree(svgRoot, svgNode.parentElement);
+  });
 
-    d3.select("#svgBtn").on("click", () => {
-        exportTreeAsSVG(container.select("svg").node());
-    });
+  d3.select("#pngBtn").on("click", () => {
+    exportTreeAsPNG(container.select("svg").node());
+  });
 
-    d3.select("#fullscreenBtn").on("click", () => {
-        toggleFullscreen(container.node());
-    });
+  d3.select("#svgBtn").on("click", () => {
+    exportTreeAsSVG(container.select("svg").node());
+  });
 
-    d3.select("#treeSearch").on("input", function() {
-        const name = this.value.toLowerCase();
-        svgRoot.selectAll("g.node").select("text")
-            .style("fill", d => d.data.name.toLowerCase().includes(name) ? "red" : "#000");
-    });
+  d3.select("#fullscreenBtn").on("click", () => {
+    toggleFullscreen(container.node());
+  });
 
-    update(root);
+  d3.select("#treeSearch").on("input", function () {
+    searchNode(this.value);
+  });
 
-    setTimeout(() => {
-        const svgNode = container.select("svg").node();
-        centerTree(d3.select(svgNode).select("g"), svgNode.parentElement);
-    }, 700);
+  update(root);
+
+  setTimeout(() => {
+    const svgNode = container.select("svg").node();
+    centerTree(svgRoot, svgNode.parentElement);
+  }, 700);
 }
 
 export function zoomIn() {
@@ -301,7 +287,6 @@ export function searchNode(query) {
         .style("fill", d => d.data.name.toLowerCase().includes(searchTerm) ? "red" : "black")
         .style("font-weight", d => d.data.name.toLowerCase().includes(searchTerm) ? "bold" : "normal");
 }
-
 
 export async function loadTreeData(rootId) {
     const response = await fetch(`/api/person/api/visualize/tree/${rootId}`);
