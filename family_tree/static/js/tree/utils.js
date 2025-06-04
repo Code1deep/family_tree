@@ -21,7 +21,7 @@ export function throttle(func, limit) {
 
 export function exportTreeAsSVG(containerId) {
     console.log("✅ exportAsSVG exécuté");
-    const svg = document.querySelector(`#${containerId} svg`);
+    const svg = document.querySelector("#tree-container svg");
     if (!svg) {
         console.error("❌ SVG introuvable pour l’export");
         return;
@@ -35,7 +35,7 @@ export function exportTreeAsSVG(containerId) {
 
 export function exportTreeAsPNG(containerId) {
     console.log("✅ exportAsPNG exécuté");
-    const svg = document.querySelector(`#${containerId} svg`);
+    const svg = document.querySelector("#tree-container svg");
     if (!svg) {
         console.error("❌ SVG introuvable pour PNG");
         return;
