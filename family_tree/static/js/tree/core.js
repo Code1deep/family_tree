@@ -221,7 +221,7 @@ if (!svgNode) {
   });
 
   d3.select("#svgBtn").on("click", () => {
-    exportTreeAsSVG(svgNode);
+    exportTreeAsSVG(svgRoot.node());
   });
 
   d3.select("#fullscreenBtn").on("click", () => {
@@ -297,11 +297,3 @@ export async function loadTreeData(rootId) {
     if (!response.ok) throw new Error("Erreur lors du chargement des données");
     return await response.json();
 }
-
-//export function transformDataForD3(data) {
-    // Exemple de transformation basique (à adapter selon ton JSON réel)
-    //return {
-        //name: data.name,
-        //children: data.children ? data.children.map(transformDataForD3) : []
-    //};
-//}
