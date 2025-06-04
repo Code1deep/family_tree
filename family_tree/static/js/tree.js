@@ -1,21 +1,27 @@
 // static/js/tree.js
+
 // ✅ Chargement des modules
 import { loadTreeData } from './tree/core.js';
 import { zoomIn, zoomOut, exportPNG, exportSVG, searchNode } from './tree/core.js';
-import { centerTree } from './tree/utils.js'; 
+import { centerTree } from './tree/utils.js';
 import { openModal } from "/static/js/modal.js";
 import { initMainD3Tree, initSubD3Tree } from './tree/index.js';
 
 // ✅ Confirmation de chargement
 console.log('✅ tree.js loaded');
 
-// ✅ Exposition facultative de la fonction pour débogage
+// ✅ Exposition facultative pour débogage
 window.initD3Tree = initMainD3Tree;
 
 document.addEventListener("DOMContentLoaded", async () => {
-  const treeContainer = document.getElementById("tree-container");
+  // ✅ Cherche un conteneur générique (main ou body)
+  const treeContainer =
+    document.querySelector("main") ||
+    document.querySelector(".tree-wrapper") ||
+    document.body;
+
   if (!treeContainer) {
-    console.error("❌ tree-container introuvable !");
+    console.error("❌ Aucun conteneur DOM valide trouvé pour afficher l’arbre !");
     return;
   }
 
@@ -24,7 +30,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!response.ok) throw new Error(`Erreur HTTP ${response.status}`);
     const treeData = await response.json();
     console.log("✅ Données reçues :", treeData);
-    initMainD3Tree("tree-container", treeData);
+    initMainD3Tree(treeContainer, treeData); // ⬅️ On passe l'élément, plus un ID
   } catch (err) {
     console.error("❌ Erreur lors du chargement de l’arbre :", err);
   }
