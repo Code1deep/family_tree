@@ -13,9 +13,6 @@
   <input id="search-box" type="text" class="form-control d-inline-block w-auto" placeholder="🔍 ابحث عن اسم" />
 </div>
 
-<!-- ✅ L’élément indispensable que les JS cherchent -->
-<div id="tree-container" data-ready="true"></div>
-
 <!-- Bouton pour ouvrir le modal -->
 <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#personModal">
   Créer une personne
@@ -76,4 +73,5 @@ document.getElementById('tree-container')?.setAttribute('data-ready', 'true');
 <script type="module" src="{{ url_for('static', filename='js/tree/utils.js') }}"></script>
 <script type="module" src="{{ url_for('static', filename='js/tree/d3-tree.js') }}"></script>
 <script type="module" src="{{ url_for('static', filename='js/tree/core.js') }}"></script>
+<script type="module" src="/static/js/tree/tree.js"></script>
 {% endblock %}
