@@ -18,7 +18,7 @@ export const initMainTree = () => {
       const res = await fetch("/api/tree/tree-data");
       if (!res.ok) throw new Error("Erreur lors du chargement des données arbre");
       const data = await res.json();
-      initMainD3Tree("tree-container", data);
+      initMainD3Tree(data);
     } catch (err) {
       console.error("❌ Erreur de chargement de l'arbre :", err);
     }
@@ -35,12 +35,12 @@ export function searchNode(query) {
     .style("font-weight", d => d.data.name.toLowerCase().includes(searchTerm) ? "bold" : "normal");
 }
 
-export async function initMainD3Tree(containerId, data) {
+export async function initMainD3Tree(data) {
     const margin = { top: 50, right: 200, bottom: 50, left: 200 };
     const width = 2000 - margin.left - margin.right;
     const height = 1200 - margin.top - margin.bottom;
 
-    const container = d3.select("main").empty() ? d3.select("body") : d3.select("main");
+    const container = d3.select(".tree-wrapper").empty() ? d3.select("body") : d3.select(".tree-wrapper");
     container.selectAll("*").remove(); // Nettoyer avant de dessiner l’arbre
 
 
@@ -283,3 +283,11 @@ export async function loadTreeData(rootId) {
     if (!response.ok) throw new Error("Erreur lors du chargement des données");
     return await response.json();
 }
+
+//export function transformDataForD3(data) {
+    // Exemple de transformation basique (à adapter selon ton JSON réel)
+    //return {
+        //name: data.name,
+        //children: data.children ? data.children.map(transformDataForD3) : []
+    //};
+//}
