@@ -38,14 +38,9 @@
 {% endblock %}
 
 {% block extra_js %}
-<!-- Modules JavaScript -->
-<script type="module" src="{{ url_for('static', filename='js/tree/utils.js') }}"></script>
-<script type="module" src="{{ url_for('static', filename='js/tree/d3-tree.js') }}"></script>
-<script type="module" src="{{ url_for('static', filename='js/tree/core.js') }}"></script>
-<script type="module" src="{{ url_for('static', filename='js/tree.js') }}"></script>
 
-<!-- CSS intégré pour le rendu D3.js -->
 <style>
+/* CSS intégré pour le rendu D3.js  */
 /* Nœuds D3 */
 .node circle {
   fill: #999;
@@ -72,4 +67,35 @@
 .ft-gener-3 { background-color: #ff8c00; }
 .ft-gener-4 { background-color: #ff1493; }
 </style>
+
+<script>
+// Attend que la page soit complètement chargée
+window.addEventListener('load', () => {
+    // Charge les scripts dans l'ordre
+    const script1 = document.createElement('script');
+    script1.src = "{{ url_for('static', filename='js/tree/utils.js') }}";
+    script1.type = 'module';
+    
+    const script2 = document.createElement('script');
+    script2.src = "{{ url_for('static', filename='js/tree/d3-tree.js') }}";
+    script2.type = 'module';
+    
+    const script3 = document.createElement('script');
+    script3.src = "{{ url_for('static', filename='js/tree/core.js') }}";
+    script3.type = 'module';
+
+    // Ajoute les scripts au DOM un par un
+    document.body.appendChild(script1);
+    script1.onload = () => {
+        document.body.appendChild(script2);
+        script2.onload = () => {
+            document.body.appendChild(script3);
+        };
+    };
+});
+</script>
+{% endblock %}
+<!-- Modules JavaScript -->
+<script type="module" src="{{ url_for('static', filename='js/tree.js') }}"></script>
+
 {% endblock %}
