@@ -13,6 +13,9 @@
   <input id="search-box" type="text" class="form-control d-inline-block w-auto" placeholder="🔍 ابحث عن اسم" />
 </div>
 
+<!-- ✅ Nouveau conteneur générique pour D3 -->
+<main class="tree-wrapper mb-5" style="width: 100%; height: 70vh; position: relative;"></main>
+
 <!-- Bouton pour ouvrir le modal -->
 <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#personModal">
   Créer une personne
@@ -37,7 +40,7 @@
 {% block extra_js %}
 
 <style>
-/* CSS intégré pour le rendu D3.js  */
+/* CSS intégré pour le rendu D3.js */
 /* Nœuds D3 */
 .node circle {
   fill: #999;
@@ -64,10 +67,6 @@
 .ft-gener-3 { background-color: #ff8c00; }
 .ft-gener-4 { background-color: #ff1493; }
 </style>
-
-<script>
-document.getElementById('tree-container')?.setAttribute('data-ready', 'true');
-</script>
 
 <!-- Chargez vos scripts normalement -->
 <script type="module" src="{{ url_for('static', filename='js/tree/utils.js') }}"></script>
