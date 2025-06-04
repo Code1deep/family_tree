@@ -33,33 +33,37 @@ export function exportTreeAsSVG(containerId) {
     downloadURL(url, "tree-visualization.svg");
 }
 
-export function exportTreeAsPNG(containerId) {
+export function exportTreeAsPNG(svgElementOrContainer) {
     console.log("✅ exportAsPNG exécuté");
-    const svg = document.querySelector("#tree-container svg");
-    if (!svg) {
+    // Accepter soit <svg>, soit un conteneur contenant <svg>
+    const svgNode = svgElementOrContainer.tagName === 'svg'
+        ? svgElementOrContainer
+        : svgElementOrContainer.querySelector('svg');
+
+    if (!svgNode) {
         console.error("❌ SVG introuvable pour PNG");
         return;
     }
 
-    const serializer = new XMLSerializer();
-    const svgString = serializer.serializeToString(svg);
-
-    const canvas = document.createElement("canvas");
-    const bbox = svg.getBBox ? svg.getBBox() : { width: 1200, height: 800 };
-    canvas.width = bbox.width + 200;
-    canvas.height = bbox.height + 200;
-    const ctx = canvas.getContext("2d");
-
+    const svgData = new XMLSerializer().serializeToString(svgNode);
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
     const img = new Image();
-    const svgBlob = new Blob([svgString], { type: "image/svg+xml;charset=utf-8" });
-    const url = URL.createObjectURL(svgBlob);
-    img.onload = function () {
-        ctx.fillStyle = "#ffffff";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(img, 100, 100);
+    const blob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+
+    canvas.width = svgNode.clientWidth * 2;
+    canvas.height = svgNode.clientHeight * 2;
+    ctx.scale(2, 2);
+
+    img.onload = () => {
+        ctx.drawImage(img, 0, 0);
         URL.revokeObjectURL(url);
-        const imgURI = canvas.toDataURL("image/png").replace("image/png", "octet/stream");
-        downloadURL(imgURI, "tree-visualization.png");
+        const pngUrl = canvas.toDataURL("image/png");
+        const link = document.createElement("a");
+        link.download = "tree.png";
+        link.href = pngUrl;
+        link.click();
     };
     img.src = url;
 }
