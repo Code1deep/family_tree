@@ -5,24 +5,36 @@ import { centerTree, exportTreeAsPNG, exportTreeAsSVG, toggleFullscreen } from '
 
 let currentScale = 1;
 
-const waitForContainer = setInterval(() => {
-  const container = document.getElementById("tree-container");
-  if (container) {
-    clearInterval(waitForContainer);
-    loadInitialTree(); // Votre fonction existante
-  }
-}, 100);
+// 2. Ajout simplement d'une fonction d'attente
+const waitForContainer = async () => {
+  return new Promise((resolve) => {
+    const check = () => {
+      const container = document.getElementById("tree-container");
+      if (container) return resolve(container);
+      setTimeout(check, 50);
+    };
+    check();
+  });
+};
 
-async function loadInitialTree() {
-  try {
-    const res = await fetch("/api/tree/tree-data");
-    if (!res.ok) throw new Error("Erreur données arbre");
-    const data = await res.json();
-    initMainD3Tree("tree-container", data);
+// Lancement automatique si #tree-container trouvé
+document.addEventListener("DOMContentLoaded", async () => {
+    console.log("✅ DOM entièrement chargé");
+
+    try {
+    const container = await waitForContainer(); // Attend le container
+    console.log("✅ tree-container trouvé");
+
+    const response = await fetch("/api/tree/tree-data");
+    if (!response.ok) throw new Error(`Erreur HTTP ${response.status}`);
+    
+    const treeData = await response.json();
+    initMainD3Tree("tree-container", treeData); // Votre fonction existante
+
   } catch (err) {
-    console.error(err);
+    console.error("Erreur:", err);
   }
-}
+});
 
 export async function initMainD3Tree(containerId, data) {
     const margin = { top: 50, right: 200, bottom: 50, left: 200 };
