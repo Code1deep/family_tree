@@ -17,6 +17,22 @@ const waitForContainer = async () => {
   });
 };
 
+// Vérification initiale (à ajouter au tout début de votre code exécutable)
+const containerCheck = () => {
+  const container = document.getElementById('tree-container');
+  if (!container?.hasAttribute('data-ready')) {
+    setTimeout(containerCheck, 100);
+    return false;
+  }
+  return true;
+};
+
+if (!containerCheck()) {
+  // Si le container n'est pas prêt, on sort de l'exécution
+  // Le setTimeout dans containerCheck gérera la réessaye
+  return;
+}
+
 // Lancement automatique si #tree-container trouvé
 document.addEventListener("DOMContentLoaded", async () => {
     console.log("✅ DOM entièrement chargé");
