@@ -8,13 +8,9 @@ let svgRoot;
 let zoomBehavior;
 
 export const initMainTree = () => {
-  console.log("🌳 Initialisation arbre principal D3");
-  const tryInit = async () => {
-    const container = document.getElementById("tree-container");
-    if (!container) {
-      setTimeout(tryInit, 100);
-      return;
-    }
+    console.log("🌳 Initialisation arbre principal D3");
+    const tryInit = async () => {
+    const container = document.querySelector("main") || document.body;
 
     console.log("✅ tree-container trouvé");
     try {
@@ -25,26 +21,27 @@ export const initMainTree = () => {
     } catch (err) {
       console.error("❌ Erreur de chargement de l'arbre :", err);
     }
-  };
+};
 
   tryInit();
 };
 
 export function searchNode(query) {
-  const searchTerm = query.toLowerCase();
-  if (!svgRoot) return;
-  svgRoot.selectAll("g.node text")
+    const searchTerm = query.toLowerCase();
+    if (!svgRoot) return;
+    svgRoot.selectAll("g.node text")
     .style("fill", d => d.data.name.toLowerCase().includes(searchTerm) ? "red" : "black")
     .style("font-weight", d => d.data.name.toLowerCase().includes(searchTerm) ? "bold" : "normal");
 }
 
 export async function initMainD3Tree(containerId, data) {
-  const margin = { top: 50, right: 200, bottom: 50, left: 200 };
-  const width = 2000 - margin.left - margin.right;
-  const height = 1200 - margin.top - margin.bottom;
+    const margin = { top: 50, right: 200, bottom: 50, left: 200 };
+    const width = 2000 - margin.left - margin.right;
+    const height = 1200 - margin.top - margin.bottom;
 
-  const container = d3.select(`#${containerId}`);
-  container.selectAll("*").remove();
+    const container = d3.select("main").empty() ? d3.select("body") : d3.select("main");
+    container.selectAll("*").remove(); // Nettoyer avant de dessiner l’arbre
+
 
   if (!document.getElementById("tree-style")) {
     d3.select("head").append("style")
@@ -68,39 +65,39 @@ export async function initMainD3Tree(containerId, data) {
     `);
   }
 
-  container.insert("div", ":first-child").attr("class", "tree-controls").html(`
-    <input id="treeSearch" placeholder="Rechercher une personne..." />
-    <button id="centerBtn">Centrer</button>
-    <button id="pngBtn">Export PNG</button>
-    <button id="svgBtn">Export SVG</button>
-    <button id="fullscreenBtn">Plein écran</button>
-  `);
+    container.insert("div", ":first-child").attr("class", "tree-controls").html(`
+        <input id="treeSearch" placeholder="Rechercher une personne..." />
+        <button id="centerBtn">Centrer</button>
+        <button id="pngBtn">Export PNG</button>
+        <button id="svgBtn">Export SVG</button>
+        <button id="fullscreenBtn">Plein écran</button>
+    `);
 
-  const svg = container.append("svg")
-    .attr("viewBox", [0, 0, width + margin.left + margin.right, height + margin.top + margin.bottom])
-    .style("width", "100%")
-    .style("height", "90vh")
-    .style("border", "1px solid #ccc");
+    const svg = container.append("svg")
+        .attr("viewBox", [0, 0, width + margin.left + margin.right, height + margin.top + margin.bottom])
+        .style("width", "100%")
+        .style("height", "90vh")
+        .style("border", "1px solid #ccc");
 
-  zoomBehavior = d3.zoom().scaleExtent([0.05, 4]).on("zoom", (event) => {
+    zoomBehavior = d3.zoom().scaleExtent([0.05, 4]).on("zoom", (event) => {
     svgRoot.attr("transform", event.transform);
     currentScale = event.transform.k;
   });
 
-  svg.call(zoomBehavior);
+    svg.call(zoomBehavior);
 
-  svgRoot = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+    svgRoot = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
-  const treeLayout = d3.tree().nodeSize([30, 300]);
-  const root = d3.hierarchy(data, d => d.children || d._children);
-  root.x0 = 0;
-  root.y0 = 0;
+    const treeLayout = d3.tree().nodeSize([30, 300]);
+    const root = d3.hierarchy(data, d => d.children || d._children);
+    root.x0 = 0;
+    root.y0 = 0;
 
-  root.children?.forEach(collapse);
+    root.children?.forEach(collapse);
 
-  const tooltip = container.append("div")
-    .attr("class", "tooltip")
-    .style("opacity", 0);
+    const tooltip = container.append("div")
+        .attr("class", "tooltip")
+        .style("opacity", 0);
 
   function collapse(d) {
     if (d.children) {
