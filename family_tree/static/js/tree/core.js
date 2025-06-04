@@ -1,7 +1,6 @@
 // static/js/tree/core.js
-import { transformDataForD3 } from './d3-tree.js';
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
-import { centerTree, exportTreeAsPNG, exportTreeAsSVG, toggleFullscreen } from './utils.js';
+//import { centerTree, exportTreeAsPNG, exportTreeAsSVG, toggleFullscreen } from './utils.js';
 
 let svgRoot, zoomBehavior, currentScale = 1;
 
