@@ -30,9 +30,16 @@ export const initMainTree = () => {
 export function searchNode(query) {
     const searchTerm = query.toLowerCase();
     if (!svgRoot) return;
+
     svgRoot.selectAll("g.node text")
-    .style("fill", d => d.data.name.toLowerCase().includes(searchTerm) ? "red" : "black")
-    .style("font-weight", d => d.data.name.toLowerCase().includes(searchTerm) ? "bold" : "normal");
+        .style("fill", d => {
+            const name = d?.data?.name?.toLowerCase() || '';
+            return name.includes(searchTerm) ? "red" : "black";
+        })
+        .style("font-weight", d => {
+            const name = d?.data?.name?.toLowerCase() || '';
+            return name.includes(searchTerm) ? "bold" : "normal";
+        });
 }
 
 export async function initMainD3Tree(data) {
