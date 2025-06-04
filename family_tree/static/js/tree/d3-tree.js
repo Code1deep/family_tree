@@ -127,12 +127,17 @@ export function initSubD3Tree(containerId, data) {
 function setupTreeSearch(root, g) {
     const input = document.getElementById('tree-search');
     if (!input) return;
+
     input.addEventListener('input', debounce(() => {
         const query = input.value.trim().toLowerCase();
         g.selectAll('.node').classed('node--highlight', false);
+        
         if (query) {
             g.selectAll('.node')
-                .filter(d => d.data.name.toLowerCase().includes(query))
+                .filter(d => {
+                    const name = d?.data?.name?.toLowerCase() || '';
+                    return name.includes(query);
+                })
                 .classed('node--highlight', true);
         }
     }, 300));
