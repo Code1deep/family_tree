@@ -280,13 +280,6 @@ export function exportSVG(container) {
     URL.revokeObjectURL(url);
 }
 
-export function searchNode(query) {
-    searchTerm = query.toLowerCase();
-    svgGroup.selectAll("g.node").select("text")
-        .style("fill", d => d.data.name.toLowerCase().includes(searchTerm) ? "red" : "black")
-        .style("font-weight", d => d.data.name.toLowerCase().includes(searchTerm) ? "bold" : "normal");
-}
-
 export async function loadTreeData(rootId) {
     const response = await fetch(`/api/person/api/visualize/tree/${rootId}`);
     if (!response.ok) throw new Error("Erreur lors du chargement des données");
