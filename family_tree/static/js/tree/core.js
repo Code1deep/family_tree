@@ -5,6 +5,34 @@ import { centerTree, exportTreeAsPNG, exportTreeAsSVG, toggleFullscreen } from '
 
 let currentScale = 1;
 
+// Lancement automatique si #tree-container trouvé
+document.addEventListener("DOMContentLoaded", () => {
+    console.log("✅ DOM entièrement chargé");
+
+    const container = document.getElementById("tree-container");
+    if (!container) {
+        console.error("❌ tree-container introuvable !");
+        return;
+    }
+
+    console.log("✅ tree-container trouvé");
+
+    // Appel d'une fonction async séparée
+    loadInitialTree();
+});
+
+async function loadInitialTree() {
+    try {
+        const res = await fetch("/api/tree/tree-data");
+        if (!res.ok) throw new Error("Erreur données arbre");
+        const data = await res.json();
+        initMainD3Tree("tree-container", data);
+    } catch (err) {
+        alert("Erreur chargement arbre.");
+        console.error(err);
+    }
+}
+
 export async function initMainD3Tree(containerId, data) {
     const margin = { top: 50, right: 200, bottom: 50, left: 200 };
     const width = 2000 - margin.left - margin.right;
@@ -197,34 +225,6 @@ export async function initMainD3Tree(containerId, data) {
         const svgNode = container.select("svg").node();
         centerTree(d3.select(svgNode).select("g"), svgNode.parentElement);
     }, 700);
-}
-
-// Lancement automatique si #tree-container trouvé
-document.addEventListener("DOMContentLoaded", () => {
-    console.log("✅ DOM entièrement chargé");
-
-    const container = document.getElementById("tree-container");
-    if (!container) {
-        console.error("❌ tree-container introuvable !");
-        return;
-    }
-
-    console.log("✅ tree-container trouvé");
-
-    // Appel d'une fonction async séparée
-    loadInitialTree();
-});
-
-async function loadInitialTree() {
-    try {
-        const res = await fetch("/api/tree/tree-data");
-        if (!res.ok) throw new Error("Erreur données arbre");
-        const data = await res.json();
-        initMainD3Tree("tree-container", data);
-    } catch (err) {
-        alert("Erreur chargement arbre.");
-        console.error(err);
-    }
 }
 
 export function zoomIn() {
