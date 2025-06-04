@@ -53,7 +53,7 @@ export function initSubD3Tree(containerId, data) {
             .node text { font: 10px sans-serif; }
         `);
     }
-    
+
     const container = document.getElementById(containerId);
     if (!container) {
         console.warn(`⏭️ Conteneur introuvable : #${containerId}`);
@@ -201,7 +201,7 @@ function setupExportButtons(containerId) {
 }
 
 function exportAsSVG(containerId) {
-    const svg = document.querySelector(`#${containerId} svg`);
+    const svg = document.querySelector("#tree-container svg");
     const serializer = new XMLSerializer();
     let source = serializer.serializeToString(svg);
     const blob = new Blob([source], { type: "image/svg+xml;charset=utf-8" });
@@ -210,7 +210,7 @@ function exportAsSVG(containerId) {
 }
 
 function exportAsPNG(containerId) {
-    const svg = document.querySelector(`#${containerId} svg`);
+    const svg = document.querySelector("#tree-container svg");
     const serializer = new XMLSerializer();
     const svgString = serializer.serializeToString(svg);
 
