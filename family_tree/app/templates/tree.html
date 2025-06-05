@@ -37,6 +37,36 @@
 </div>
 {% endblock %}
 
+<script>
+// ✅ Tester les boutons individuellement avec console.log
+document.addEventListener("DOMContentLoaded", () => {
+  const testEl = (id, label) => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.addEventListener("click", () => {
+        console.log(`🟢 ${label} cliqué (ID: #${id})`);
+      });
+    } else {
+      console.warn(`⚠️ Élément non trouvé : #${id}`);
+    }
+  };
+
+  testEl("fullscreenBtn", "Plein écran");
+  testEl("centerBtn", "Centrer l’arbre");
+  testEl("pngBtn", "Exporter PNG");
+  testEl("svgBtn", "Exporter SVG");
+
+  const searchBox = document.getElementById("treeSearch");
+  if (searchBox) {
+    searchBox.addEventListener("input", () => {
+      console.log(`🔍 Saisie de recherche : ${searchBox.value}`);
+    });
+  } else {
+    console.warn("⚠️ Champ de recherche #treeSearch non trouvé");
+  }
+});
+</script>
+
 {% block extra_js %}
 <style>
 /* 🌳 Style D3.js */
