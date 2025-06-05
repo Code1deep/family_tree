@@ -92,3 +92,20 @@ export function buildTreeFromEdges(nodes, edges) {
     const rootNode = nodes.find(node => !childIds.has(node.id));
     return nodeMap.get(rootNode.id);
 }
+
+  // Fonctions utilitaires d’interaction
+export function centerTree(svgGroup, wrapper) {
+  const bounds = svgGroup.node().getBBox();
+  const scale = Math.min(
+    wrapper.clientWidth / bounds.width,
+    wrapper.clientHeight / bounds.height,
+    1
+  );
+  const translate = [
+    (wrapper.clientWidth - bounds.width * scale) / 2 - bounds.x * scale,
+    (wrapper.clientHeight - bounds.height * scale) / 2 - bounds.y * scale
+  ];
+  d3.select(svgGroup.node().ownerSVGElement)
+    .transition().duration(750)
+    .call(zoomBehavior.transform, d3.zoomIdentity.translate(...translate).scale(scale));
+}
