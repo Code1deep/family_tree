@@ -320,4 +320,4 @@ export async function loadTreeData(rootId) {
     return await response.json();
 }
 
-export { exportTreeAsPNG as exportPNG, exportTreeAsSVG as exportSVG };
+export { exportTreeAsPNG as exportPNG, searchNode, exportTreeAsSVG as exportSVG };
