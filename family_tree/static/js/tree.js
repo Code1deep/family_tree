@@ -1,9 +1,8 @@
 // static/js/tree.js
-
 // ✅ Chargement des modules
 import { loadTreeData } from './tree/core.js';
-import { zoomIn, zoomOut, exportPNG, exportSVG, searchNode } from './tree/core.js';
-import { centerTree } from './tree/utils.js';
+import { zoomIn, zoomOut } from './tree/core.js';
+import { centerTree, searchNode, exportPNG, exportSVG } from './tree/utils.js';
 import { openModal } from "/static/js/modal.js";
 import { initMainD3Tree, initSubD3Tree } from './tree/index.js';
 
