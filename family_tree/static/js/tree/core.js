@@ -1,6 +1,6 @@
 // static/js/tree/core.js
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
-import { centerTree, exportTreeAsPNG, exportTreeAsSVG, toggleFullscreen } from './tree/utils.js';
+import { centerTree, exportPNG, exportSVG, toggleFullscreen, searchNode} from './tree/utils.js';
 
 let svgRoot, zoomBehavior, currentScale = 1;
 
@@ -209,91 +209,6 @@ export function renderTree(data) {
       d.y0 = d.y;
     });
   }
-
-  // Fonctions utilitaires d’interaction
-export function centerTree(svgGroup, wrapper) {
-  const bounds = svgGroup.node().getBBox();
-  const scale = Math.min(
-    wrapper.clientWidth / bounds.width,
-    wrapper.clientHeight / bounds.height,
-    1
-  );
-  const translate = [
-    (wrapper.clientWidth - bounds.width * scale) / 2 - bounds.x * scale,
-    (wrapper.clientHeight - bounds.height * scale) / 2 - bounds.y * scale
-  ];
-  d3.select(svgGroup.node().ownerSVGElement)
-    .transition().duration(750)
-    .call(zoomBehavior.transform, d3.zoomIdentity.translate(...translate).scale(scale));
-}
-
-export function searchNode(query, svgRoot) {
-  const term = query.trim().toLowerCase();
-  svgRoot.selectAll("g.node text")
-    .style("font-weight", d => d.data.name.toLowerCase().includes(term) ? "bold" : "normal")
-    .style("fill", d => d.data.name.toLowerCase().includes(term) ? "red" : "black");
-}
-
-  function exportTreeAsPNG(svgNode) {
-    const svgData = new XMLSerializer().serializeToString(svgNode);
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
-    const img = new Image();
-    const svgBlob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
-    const url = URL.createObjectURL(svgBlob);
-    img.onload = () => {
-      canvas.width = img.width;
-      canvas.height = img.height;
-      ctx.drawImage(img, 0, 0);
-      const png = canvas.toDataURL("image/png");
-      const a = document.createElement("a");
-      a.href = png;
-      a.download = "tree.png";
-      a.click();
-      URL.revokeObjectURL(url);
-    };
-    img.src = url;
-  }
-
-  function exportTreeAsSVG(svgNode) {
-    const svgData = new XMLSerializer().serializeToString(svgNode);
-    const blob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = "tree.svg";
-    a.click();
-  }
-
-  const svgNode = container.select("svg").node();
-  if (!svgNode) {
-    console.error("❌ Aucun SVG trouvé pour les actions");
-} else {
-  d3.select("#centerBtn").on("click", () => {
-    centerTree(svgRoot, svgNode.parentElement);
-  });
-
-  d3.select("#pngBtn").on("click", () => {
-    exportTreeAsPNG(svgNode);
-  });
-
-  d3.select("#svgBtn").on("click", () => {
-    exportTreeAsSVG(svgRoot.node());
-  });
-
-  d3.select("#fullscreenBtn").on("click", () => {
-    toggleFullscreen(container.node());
-  });
-
-  d3.select("#treeSearch").on("input", function () {
-    searchNode(this.value, svgRoot);
-  });
-
-  update(root);
-
-  setTimeout(() => {
-    centerTree(svgRoot, svgNode.parentElement);
-  }, 500);
-}
 }
 
 export function zoomIn() {
@@ -311,9 +226,3 @@ export async function loadTreeData(rootId) {
     if (!response.ok) throw new Error("Erreur lors du chargement des données");
     return await response.json();
 }
-
-export {
-  exportTreeAsPNG as exportPNG,
-  exportTreeAsSVG as exportSVG
-};
-
