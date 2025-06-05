@@ -321,13 +321,11 @@ export async function loadTreeData(rootId) {
     return await response.json();
 }
 
-
-
 export {
   searchNode,
   centerTree,
   zoomHandler,
-  exportAsPNG,
-  exportAsSVG,
+  exportTreeAsPNG as exportPNG,
+  exportTreeAsSVG as exportSVG,
   toggleFullscreen
 };
