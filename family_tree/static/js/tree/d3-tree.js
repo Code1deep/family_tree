@@ -150,26 +150,6 @@ function setupTreeSearch(root, g) {
     }, 300));
 }
 
-/** Centrage avec transition douce */
-function centerTree(g, container, svg) {
-    const bbox = g.node().getBBox();
-    const x = bbox.x + bbox.width / 2;
-    const y = bbox.y + bbox.height / 2;
-    const scale = 1;
-    const containerWidth = container.clientWidth;
-    const containerHeight = container.clientHeight;
-
-    const dx = containerWidth / 2 - x;
-    const dy = containerHeight / 2 - y;
-
-    svg.transition()
-        .duration(750)
-        .call(
-            d3.zoom().transform,
-            d3.zoomIdentity.translate(dx, dy).scale(scale)
-        );
-}
-
 /** Redimensionnement adaptatif */
 function setupResizeHandler(redrawFn) {
     window.addEventListener("resize", debounce(() => {
@@ -266,6 +246,17 @@ function downloadURL(data, filename) {
     a.click();
     document.body.removeChild(a);
 }
+
+/* Fonction inutilisée mais conservée si besoin futur */
+function update(source) {
+    // Logique de mise à jour optimisée (non utilisée ici)
+}
+
+function zoomed(event) {
+    // Inutilisé également, géré directement dans initD3Tree
+}
+
+
 /** Centrage automatique 
 //function centerTree(svg, container) {
     //const g = svg.select('g');
@@ -283,10 +274,3 @@ function downloadURL(data, filename) {
 } 
 
 /* Fonction inutilisée mais conservée si besoin futur */
-function update(source) {
-    // Logique de mise à jour optimisée (non utilisée ici)
-}
-
-function zoomed(event) {
-    // Inutilisé également, géré directement dans initD3Tree
-}
