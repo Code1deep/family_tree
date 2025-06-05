@@ -1,6 +1,6 @@
 // static/js/tree/controls.js
-import { toggleFullscreen, exportPNG, exportSVG, debounce, centerTree } from './utils.js';
-import { searchNode } from './core.js'; // si searchNode y est défini
+import { toggleFullscreen, exportPNG, exportSVG, debounce, centerTree, searchNode } from './utils.js';
+//import { searchNode } from './core.js'; // si searchNode y est défini
 
 /**
  * Attache tous les contrôles UI de l’arbre généalogique.
