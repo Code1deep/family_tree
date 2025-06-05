@@ -4,26 +4,24 @@
 {% block content %}
 <h1 class="text-center mb-4">شجرة العائلة الحسنة</h1>
 
+<!-- 🔘 Boutons de contrôle -->
 <div class="header-actions text-center mb-3">
   <a href="/add" class="btn btn-success me-2">➕ إضافة فرد جديد</a>
-  <button id="fullscreen-btn" class="btn btn-secondary me-2">🖼️ ملء الشاشة</button>
-  <button id="center-btn" class="btn btn-info me-2">🎯 توسيط</button>
-  <button id="export-png" class="btn btn-warning me-2">⬇️ تصدير PNG</button>
-  <button id="export-svg" class="btn btn-warning me-2">⬇️ تصدير SVG</button>
-  <input id="search-box" type="text" class="form-control d-inline-block w-auto" placeholder="🔍 ابحث عن اسم" />
+  <button id="fullscreenBtn" class="btn btn-secondary me-2">🖼️ ملء الشاشة</button>
+  <button id="centerBtn" class="btn btn-info me-2">🎯 توسيط</button>
+  <button id="pngBtn" class="btn btn-warning me-2">⬇️ تصدير PNG</button>
+  <button id="svgBtn" class="btn btn-warning me-2">⬇️ تصدير SVG</button>
+  <input id="treeSearch" type="text" class="form-control d-inline-block w-auto" placeholder="🔍 ابحث عن اسم" />
 </div>
 
-<!-- ✅ Nouveau conteneur générique pour D3 -->
-<main class="tree-wrapper mb-5" style="width: 100%; height: 70vh; position: relative;"></main>
+<!-- 📐 Conteneur de l’arbre D3.js -->
+<main id="tree-container" class="tree-wrapper mb-5" style="width: 100%; height: 70vh; position: relative;"></main>
 
-<div class="tree-wrapper"></div>
-
-<!-- Bouton pour ouvrir le modal -->
+<!-- Modal Bootstrap : formulaire d'ajout -->
 <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#personModal">
   Créer une personne
 </button>
 
-<!-- Modal Bootstrap contenant le formulaire -->
 <div class="modal fade" id="personModal" tabindex="-1" aria-labelledby="personModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
@@ -40,10 +38,8 @@
 {% endblock %}
 
 {% block extra_js %}
-
 <style>
-/* CSS intégré pour le rendu D3.js */
-/* Nœuds D3 */
+/* 🌳 Style D3.js */
 .node circle {
   fill: #999;
   stroke: steelblue;
@@ -57,8 +53,7 @@
   stroke: #ccc;
   stroke-width: 2px;
 }
-
-/* Styles supplémentaires pour les blocs de génération */
+/* 🎨 Styles personnalisés par génération */
 .ft-node {
   border-radius: 5px;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
@@ -68,9 +63,13 @@
 .ft-gener-2 { background-color: #32cd32; }
 .ft-gener-3 { background-color: #ff8c00; }
 .ft-gener-4 { background-color: #ff1493; }
+.node--highlight {
+  stroke: #ff0000 !important;
+  stroke-width: 4px;
+}
 </style>
 
-<!-- Chargez vos scripts normalement -->
+<!-- 🧠 JS modules -->
 <script type="module" src="{{ url_for('static', filename='js/tree/utils.js') }}"></script>
 <script type="module" src="{{ url_for('static', filename='js/tree/d3-tree.js') }}"></script>
 <script type="module" src="{{ url_for('static', filename='js/tree/core.js') }}"></script>
