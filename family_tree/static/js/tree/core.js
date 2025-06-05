@@ -324,7 +324,8 @@ export async function loadTreeData(rootId) {
 export {
   searchNode,
   centerTree,
-  zoomHandler,
+  zoomIn,
+  zoomOut,
   exportTreeAsPNG as exportPNG,
   exportTreeAsSVG as exportSVG,
   toggleFullscreen
