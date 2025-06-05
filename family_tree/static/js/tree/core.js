@@ -1,6 +1,6 @@
 // static/js/tree/core.js
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
-import { centerTree, exportPNG, exportSVG, toggleFullscreen, searchNode} from './tree/utils.js';
+import { centerTree, exportPNG, exportSVG, toggleFullscreen, searchNode} from './utils.js';
 
 let svgRoot, zoomBehavior, currentScale = 1;
 
