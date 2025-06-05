@@ -1,5 +1,6 @@
 // static/js/tree/utils.js
 console.log("✅ utils.js chargé");
+
 export function debounce(func, wait) {
     let timeout;
     return function(...args) {
@@ -19,23 +20,8 @@ export function throttle(func, limit) {
     };
 }
 
-export function exportTreeAsSVG(containerId) {
-    console.log("✅ exportAsSVG exécuté");
-    const svg = document.querySelector("#tree-container svg");
-    if (!svg) {
-        console.error("❌ SVG introuvable pour l’export");
-        return;
-    }
-    const serializer = new XMLSerializer();
-    const source = serializer.serializeToString(svg);
-    const blob = new Blob([source], { type: "image/svg+xml;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    downloadURL(url, "tree-visualization.svg");
-}
-
-export function exportTreeAsPNG(svgElementOrContainer) {
+export function exportPNG(svgElementOrContainer) {
     console.log("✅ exportAsPNG exécuté");
-    // Accepter soit <svg>, soit un conteneur contenant <svg>
     const svgNode = svgElementOrContainer.tagName === 'svg'
         ? svgElementOrContainer
         : svgElementOrContainer.querySelector('svg');
@@ -60,12 +46,18 @@ export function exportTreeAsPNG(svgElementOrContainer) {
         ctx.drawImage(img, 0, 0);
         URL.revokeObjectURL(url);
         const pngUrl = canvas.toDataURL("image/png");
-        const link = document.createElement("a");
-        link.download = "tree.png";
-        link.href = pngUrl;
-        link.click();
+        downloadURL(pngUrl, "tree.png");
     };
     img.src = url;
+}
+
+export function exportSVG(svgNode) {
+    console.log("✅ exportAsSVG exécuté");
+    const serializer = new XMLSerializer();
+    const source = serializer.serializeToString(svgNode);
+    const blob = new Blob([source], { type: "image/svg+xml;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    downloadURL(url, "tree.svg");
 }
 
 function downloadURL(dataUrl, filename) {
@@ -75,22 +67,6 @@ function downloadURL(dataUrl, filename) {
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-}
-
-export function centerTree(svg, container, offsetY = 50) {
-    console.log("✅ centerTree exécuté");
-    // centrage automatique de l’arbre
-    const bbox = svg.node().getBBox();
-    const x = bbox.x + bbox.width / 2;
-    const y = bbox.y;
-    const containerWidth = container.clientWidth;
-    const containerHeight = container.clientHeight;
-
-    const dx = containerWidth / 2 - x;
-    const dy = offsetY - y;
-
-    svg.transition().duration(500)
-        .attr("transform", `translate(${dx},${dy})`);
 }
 
 export function toggleFullscreen(container) {
