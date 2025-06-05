@@ -319,3 +319,5 @@ export async function loadTreeData(rootId) {
     if (!response.ok) throw new Error("Erreur lors du chargement des données");
     return await response.json();
 }
+
+export { exportTreeAsPNG as exportPNG, exportTreeAsSVG as exportSVG };
