@@ -109,3 +109,10 @@ export function centerTree(svgGroup, wrapper) {
     .transition().duration(750)
     .call(zoomBehavior.transform, d3.zoomIdentity.translate(...translate).scale(scale));
 }
+
+export function searchNode(query, svgRoot) {
+  const term = query.trim().toLowerCase();
+  svgRoot.selectAll("g.node text")
+    .style("font-weight", d => d.data.name.toLowerCase().includes(term) ? "bold" : "normal")
+    .style("fill", d => d.data.name.toLowerCase().includes(term) ? "red" : "black");
+}
