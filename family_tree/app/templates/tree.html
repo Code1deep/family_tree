@@ -38,34 +38,35 @@
 {% endblock %}
 
 <script>
-// ✅ Tester les boutons individuellement avec console.log
+// Test direct de chaque bouton avec console.log
 document.addEventListener("DOMContentLoaded", () => {
-  const testEl = (id, label) => {
+  const test = (id, label) => {
     const el = document.getElementById(id);
     if (el) {
       el.addEventListener("click", () => {
         console.log(`🟢 ${label} cliqué (ID: #${id})`);
       });
     } else {
-      console.warn(`⚠️ Élément non trouvé : #${id}`);
+      console.warn(`❌ Élément non trouvé : #${id}`);
     }
   };
 
-  testEl("fullscreenBtn", "Plein écran");
-  testEl("centerBtn", "Centrer l’arbre");
-  testEl("pngBtn", "Exporter PNG");
-  testEl("svgBtn", "Exporter SVG");
+  test("fullscreen-btn", "Bouton plein écran");
+  test("center-btn", "Bouton centrer");
+  test("export-png", "Bouton export PNG");
+  test("export-svg", "Bouton export SVG");
 
-  const searchBox = document.getElementById("treeSearch");
-  if (searchBox) {
-    searchBox.addEventListener("input", () => {
-      console.log(`🔍 Saisie de recherche : ${searchBox.value}`);
+  const search = document.getElementById("search-box");
+  if (search) {
+    search.addEventListener("input", () => {
+      console.log(`🔍 Recherche : ${search.value}`);
     });
   } else {
-    console.warn("⚠️ Champ de recherche #treeSearch non trouvé");
+    console.warn("❌ Champ recherche introuvable : #search-box");
   }
 });
 </script>
+
 
 {% block extra_js %}
 <style>
