@@ -211,21 +211,28 @@ export function renderTree(data) {
   }
 
   // Fonctions utilitaires d’interaction
-  function centerTree(svgGroup, wrapper) {
-    const bounds = svgGroup.node().getBBox();
-    const scale = Math.min(
-      wrapper.clientWidth / bounds.width,
-      wrapper.clientHeight / bounds.height,
-      1
-    );
-    const translate = [
-      (wrapper.clientWidth - bounds.width * scale) / 2 - bounds.x * scale,
-      (wrapper.clientHeight - bounds.height * scale) / 2 - bounds.y * scale
-    ];
-    d3.select(svgGroup.node().ownerSVGElement)
-      .transition().duration(750)
-      .call(zoomBehavior.transform, d3.zoomIdentity.translate(...translate).scale(scale));
-  }
+export function centerTree(svgGroup, wrapper) {
+  const bounds = svgGroup.node().getBBox();
+  const scale = Math.min(
+    wrapper.clientWidth / bounds.width,
+    wrapper.clientHeight / bounds.height,
+    1
+  );
+  const translate = [
+    (wrapper.clientWidth - bounds.width * scale) / 2 - bounds.x * scale,
+    (wrapper.clientHeight - bounds.height * scale) / 2 - bounds.y * scale
+  ];
+  d3.select(svgGroup.node().ownerSVGElement)
+    .transition().duration(750)
+    .call(zoomBehavior.transform, d3.zoomIdentity.translate(...translate).scale(scale));
+}
+
+export function searchNode(query, svgRoot) {
+  const term = query.trim().toLowerCase();
+  svgRoot.selectAll("g.node text")
+    .style("font-weight", d => d.data.name.toLowerCase().includes(term) ? "bold" : "normal")
+    .style("fill", d => d.data.name.toLowerCase().includes(term) ? "red" : "black");
+}
 
   function exportTreeAsPNG(svgNode) {
     const svgData = new XMLSerializer().serializeToString(svgNode);
@@ -257,22 +264,6 @@ export function renderTree(data) {
     a.click();
   }
 
-  function toggleFullscreen(elem) {
-    if (!document.fullscreenElement) {
-      elem.requestFullscreen().catch(err => console.error(err));
-    } else {
-      document.exitFullscreen();
-    }
-  }
-
-  function searchNode(query) {
-    const term = query.trim().toLowerCase();
-    svgRoot.selectAll("g.node text")
-      .style("font-weight", d => d.data.name.toLowerCase().includes(term) ? "bold" : "normal")
-      .style("fill", d => d.data.name.toLowerCase().includes(term) ? "red" : "black");
-  }
-
-
   const svgNode = container.select("svg").node();
   if (!svgNode) {
     console.error("❌ Aucun SVG trouvé pour les actions");
@@ -294,7 +285,7 @@ export function renderTree(data) {
   });
 
   d3.select("#treeSearch").on("input", function () {
-    searchNode(this.value);
+    searchNode(this.value, svgRoot);
   });
 
   update(root);
@@ -322,9 +313,7 @@ export async function loadTreeData(rootId) {
 }
 
 export {
-  searchNode,
-  centerTree,
   exportTreeAsPNG as exportPNG,
-  exportTreeAsSVG as exportSVG,
-  toggleFullscreen
+  exportTreeAsSVG as exportSVG
 };
+
