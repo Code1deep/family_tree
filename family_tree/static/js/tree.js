@@ -1,8 +1,12 @@
 // static/js/tree.js
-import { loadTreeData, drawTree, zoomIn, zoomOut, exportPNG, exportSVG, searchNode } from './tree/core.js';
-import { centerTree } from './tree/utils.js';
+// ✅ Importation des modules
+import { centerTree } from './tree/utils.js'; 
 import { openModal } from "/static/js/modal.js";
 import { initMainD3Tree, initSubD3Tree } from './tree/index.js';
+import { drawTree } from "./tree/core.js";  
+
+import { loadTreeData, drawTree, zoomIn, zoomOut, exportPNG, exportSVG, searchNode } from './tree/core.js';
+
 
 console.log('✅ tree.js loaded');
 window.initD3Tree = initMainD3Tree;
@@ -85,7 +89,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     document.getElementById("treeSearch")?.addEventListener("input", (e) => {
         console.log("🔍 Recherche en cours :", e.target.value);
-        searchNode(e.target.value);
+        searchNode(query, d3.select("svg"));
     });
 
     document.getElementById("centerBtn")?.addEventListener("click", () => {
