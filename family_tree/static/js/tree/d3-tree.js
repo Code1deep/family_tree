@@ -1,6 +1,6 @@
 // static/js/tree/d3-tree.js
 import * as d3 from 'https://d3js.org/d3.v7.min.js';
-import { debounce } from './utils.js';
+import { debounce, downloadURL, toggleFullscreen, centerTree } from './utils.js';
 import { openModal } from '/static/js/modal.js';
 
 /** CSS directement intégré */
@@ -53,7 +53,7 @@ export function initSubD3Tree(containerId, data) {
             .node text { font: 10px sans-serif; }
         `);
     }
-
+    
     const container = document.getElementById(containerId);
     if (!container) {
         console.warn(`⏭️ Conteneur introuvable : #${containerId}`);
@@ -127,25 +127,13 @@ export function initSubD3Tree(containerId, data) {
 function setupTreeSearch(root, g) {
     const input = document.getElementById('tree-search');
     if (!input) return;
-
     input.addEventListener('input', debounce(() => {
         const query = input.value.trim().toLowerCase();
-        g.selectAll('.node')
-        .classed('node--highlight', false)
-        .style('stroke', null)
-        .style('stroke-width', null);
-
-        
+        g.selectAll('.node').classed('node--highlight', false);
         if (query) {
             g.selectAll('.node')
-                .filter(d => {
-                    const name = d?.data?.name?.toLowerCase() || '';
-                    return name.includes(query);
-                })
-                .classed('node--highlight', true)
-                .style('stroke', 'red')
-                .style('stroke-width', 2);
-
+                .filter(d => d.data.name.toLowerCase().includes(query))
+                .classed('node--highlight', true);
         }
     }, 300));
 }
@@ -181,8 +169,8 @@ function setupCenterButton(containerId, g, svg) {
 
 /** Export PNG & SVG */
 function setupExportButtons(containerId) {
-    const exportSvgBtn = document.getElementById("export-svg");
-    const exportPngBtn = document.getElementById("export-png");
+    const exportSvgBtn = document.getElementById("svgBtn");
+    const exportPngBtn = document.getElementById("pngBtn");
 
     if (exportSvgBtn) {
         exportSvgBtn.addEventListener("click", () => exportAsSVG(containerId));
@@ -193,7 +181,7 @@ function setupExportButtons(containerId) {
 }
 
 function exportAsSVG(containerId) {
-    const svg = document.querySelector("#tree-container svg");
+    const svg = document.querySelector(`#${containerId} svg`);
     const serializer = new XMLSerializer();
     let source = serializer.serializeToString(svg);
     const blob = new Blob([source], { type: "image/svg+xml;charset=utf-8" });
@@ -202,7 +190,7 @@ function exportAsSVG(containerId) {
 }
 
 function exportAsPNG(containerId) {
-    const svg = document.querySelector("#tree-container svg");
+    const svg = document.querySelector(`#${containerId} svg`);
     const serializer = new XMLSerializer();
     const svgString = serializer.serializeToString(svg);
 
@@ -226,25 +214,8 @@ function exportAsPNG(containerId) {
     img.src = url;
 }
 
-export function toggleFullscreen(container) {
-    if (!document.fullscreenElement) {
-        container.requestFullscreen();
-    } else {
-        document.exitFullscreen();
-    }
-}
-
 export function transformDataForD3(rawData) {
     return d3.hierarchy(rawData);
-}
-
-function downloadURL(data, filename) {
-    const a = document.createElement("a");
-    a.href = data;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
 }
 
 /* Fonction inutilisée mais conservée si besoin futur */
@@ -255,22 +226,3 @@ function update(source) {
 function zoomed(event) {
     // Inutilisé également, géré directement dans initD3Tree
 }
-
-
-/** Centrage automatique 
-//function centerTree(svg, container) {
-    //const g = svg.select('g');
-    //const bbox = g.node().getBBox();
-    //const x = bbox.x + bbox.width / 2;
-   // const y = bbox.y + bbox.height / 2;
-    //const containerWidth = container.clientWidth;
-    //const containerHeight = container.clientHeight;
-
-   // const dx = containerWidth / 2 - x;
-   // const dy = containerHeight / 2 - y;
-
-   // g.transition().duration(500)
-      //  .attr("transform", `translate(${dx},${dy})`);
-} 
-
-/* Fonction inutilisée mais conservée si besoin futur */
