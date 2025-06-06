@@ -1,4 +1,5 @@
 // static/js/tree/core.js
+console.log("✔ core.js initialisé");
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 import { centerTree, exportPNG, exportSVG, toggleFullscreen, searchNode} from './utils.js';
 
