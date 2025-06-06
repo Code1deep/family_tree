@@ -20,7 +20,7 @@ export function throttle(func, limit) {
     };
 }
 
-function downloadURL(dataUrl, filename) {
+export function downloadURL(dataUrl, filename) {
     const a = document.createElement("a");
     a.href = dataUrl;
     a.download = filename;
