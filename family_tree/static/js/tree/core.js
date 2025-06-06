@@ -7,7 +7,8 @@ import { centerTree, exportTreeAsPNG, exportTreeAsSVG, toggleFullscreen } from '
 
 let currentScale = 1;
 
-// Fonction principale d’affichage D3.js
+// ===========================
+// Fonction principale d’affichage D3.js (version hiérarchique)
 export function initMainD3Tree(containerId, data) {
     const margin = { top: 50, right: 200, bottom: 50, left: 200 };
     const width = 2000 - margin.left - margin.right;
@@ -209,35 +210,9 @@ export function initMainD3Tree(containerId, data) {
     }, 700);
 }
 
-// Lancement automatique si élément présent
-document.addEventListener('DOMContentLoaded', async () => {
-    const container = document.getElementById("tree-container");
-    if (container) {
-        try {
-            const res = await fetch("/api/tree/tree-data");
-            if (!res.ok) throw new Error("Données arbre introuvables");
-            const data = await res.json();
-            initMainD3Tree("tree-container", data);
-        } catch (err) {
-            alert("Erreur lors du chargement de l’arbre généalogique.");
-            console.error(err);
-        }
-    }
-});
-
-async function fetchTreeData() {
-    try {
-        const response = await fetch('/api/tree/tree-data');
-        if (!response.ok) throw new Error("Erreur de chargement des données");
-        return await response.json();
-    } catch (err) {
-        console.error("Erreur dans fetchTreeData:", err);
-        alert("Impossible de charger les données de l'arbre.");
-        return null;
-    }
-}
-
-export async function drawTree(data) {
+// ===========================
+// Fonction d’affichage D3.js (version nodes+edges)
+async function drawTree(data) {
     console.log("✅ drawTree() started...");
     try {
         if (!data || !data.nodes || !data.edges) {
@@ -317,23 +292,46 @@ export async function drawTree(data) {
     }
 }
 
-// Point d’entrée
+// ===========================
+// Nouvelle fonction wrapper qui choisit la bonne méthode d’affichage selon la forme des données
+export async function renderFamilyTree(containerId, data) {
+    if (data?.nodes && data?.edges) {
+        console.log("➡️ Données au format {nodes, edges} détectées → drawTree()");
+        await drawTree(data);
+    } else {
+        console.log("➡️ Données au format hiérarchique → initMainD3Tree()");
+        initMainD3Tree(containerId, data);
+    }
+}
+
+// ===========================
+// Chargement automatique à l’ouverture de page
 document.addEventListener('DOMContentLoaded', async () => {
-    const data = await fetchTreeData();
-    if (data) {
-        drawTree(data);
-        initControls();  // si tu as des boutons fullscreen/export...
+    const container = document.getElementById("tree-container");
+    if (container) {
+        try {
+            const res = await fetch("/api/tree/tree-data");
+            if (!res.ok) throw new Error("Données arbre introuvables");
+            const data = await res.json();
+            await renderFamilyTree("tree-container", data);
+        } catch (err) {
+            alert("Erreur lors du chargement de l’arbre généalogique.");
+            console.error(err);
+        }
     }
 });
 
+// ===========================
+// Fonctions exportées restantes (zoom, export, recherche, chargement...)
 export function zoomIn() {
     currentScale = Math.min(currentScale * 1.2, 4);
-    svgRoot.transition().duration(300).call(zoomBehavior.scaleTo, currentScale);
+    // Note : variable svgRoot ou zoomBehavior non définie dans ta version, à intégrer si besoin
+    // svgRoot.transition().duration(300).call(zoomBehavior.scaleTo, currentScale);
 }
 
 export function zoomOut() {
     currentScale = Math.max(currentScale / 1.2, 0.05);
-    svgRoot.transition().duration(300).call(zoomBehavior.scaleTo, currentScale);
+    // svgRoot.transition().duration(300).call(zoomBehavior.scaleTo, currentScale);
 }
 
 export function exportPNG(container) {
@@ -376,12 +374,13 @@ export function exportSVG(container) {
 }
 
 export function searchNode(query) {
-    searchTerm = query.toLowerCase();
-    svgGroup.selectAll("g.node").select("text")
+    const searchTerm = query.toLowerCase();
+    // Variable svgGroup non définie dans ta version, adapter si besoin
+    // svgGroup.selectAll("g.node").select("text")
+    d3.selectAll("g.node").select("text")
         .style("fill", d => d.data.name.toLowerCase().includes(searchTerm) ? "red" : "black")
         .style("font-weight", d => d.data.name.toLowerCase().includes(searchTerm) ? "bold" : "normal");
 }
-
 
 export async function loadTreeData(rootId) {
     const response = await fetch(`/api/person/api/visualize/tree/${rootId}`);
