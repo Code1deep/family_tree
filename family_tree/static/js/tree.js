@@ -1,27 +1,19 @@
 // static/js/tree.js
-// ✅ Importation des modules
-import { loadTreeData } from './tree/core.js';
-import { zoomIn, zoomOut, exportPNG, exportSVG, searchNode } from './tree/core.js';
-import { centerTree } from './tree/utils.js'; 
+import { loadTreeData, drawTree, zoomIn, zoomOut, exportPNG, exportSVG, searchNode } from './tree/core.js';
+import { centerTree } from './tree/utils.js';
 import { openModal } from "/static/js/modal.js";
 import { initMainD3Tree, initSubD3Tree } from './tree/index.js';
-import { drawTree } from "./tree/core.js";  
 
-// ✅ Confirmation de chargement
 console.log('✅ tree.js loaded');
-
-// ✅ Pour debug manuel si besoin
 window.initD3Tree = initMainD3Tree;
 
-// ✅ Fonction utilitaire : transforme {nodes, edges} → hiérarchie
+// Fonction utilitaire
 function convertToHierarchy(data) {
     console.log("🔄 Conversion {nodes, edges} → hiérarchie");
-
     const nodeById = {};
     data.nodes.forEach(n => {
         nodeById[n.id] = { ...n, children: [] };
     });
-
     data.edges.forEach(e => {
         const parent = nodeById[e.from];
         const child = nodeById[e.to];
@@ -41,21 +33,9 @@ function convertToHierarchy(data) {
     return nodeById[root.id];
 }
 
-// ✅ Bloc test manuel (ex: drawTree uniquement pour debug)
+// ✅ DOMContentLoaded UNIQUE
 document.addEventListener("DOMContentLoaded", async () => {
-    console.log("📦 DOMContentLoaded → Test manuel drawTree()");
-    const data = await fetchTreeData();
-    if (data) {
-        console.log("🧪 Données de test reçues :", data);
-        drawTree(data);
-    } else {
-        console.warn("⚠️ Aucune donnée reçue pour le test");
-    }
-});
-
-// ✅ Bloc principal : chargement de l’arbre généalogique
-document.addEventListener("DOMContentLoaded", async () => {
-    console.log("📦 DOMContentLoaded → Chargement principal de l'arbre");
+    console.log("📦 DOMContentLoaded → Initialisation");
 
     const treeContainer = document.getElementById("tree-container");
     if (!treeContainer) {
@@ -87,28 +67,28 @@ document.addEventListener("DOMContentLoaded", async () => {
         console.error("❌ Erreur lors du chargement de l’arbre :", err);
     }
 
-    // ✅ Ajout des événements de contrôle
-    document.getElementById("fullscreen-btn")?.addEventListener("click", () => {
+    // ✅ Événements UI
+    document.getElementById("fullscreenBtn")?.addEventListener("click", () => {
         console.log("🖥️ Clic bouton : Plein écran");
         toggleFullscreen(treeContainer);
     });
 
-    document.getElementById("export-png")?.addEventListener("click", () => {
+    document.getElementById("pngBtn")?.addEventListener("click", () => {
         console.log("📷 Clic bouton : Export PNG");
         exportPNG(treeContainer);
     });
 
-    document.getElementById("export-svg")?.addEventListener("click", () => {
+    document.getElementById("svgBtn")?.addEventListener("click", () => {
         console.log("📐 Clic bouton : Export SVG");
         exportSVG(treeContainer);
     });
 
-    document.getElementById("search-box")?.addEventListener("input", (e) => {
+    document.getElementById("treeSearch")?.addEventListener("input", (e) => {
         console.log("🔍 Recherche en cours :", e.target.value);
         searchNode(e.target.value);
     });
 
-    document.getElementById("center-btn")?.addEventListener("click", () => {
+    document.getElementById("centerBtn")?.addEventListener("click", () => {
         console.log("🎯 Clic bouton : Centrer arbre");
         centerTree();
     });
