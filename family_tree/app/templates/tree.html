@@ -17,8 +17,6 @@
 <!-- 📐 Conteneur de l’arbre D3.js -->
 <main id="tree-container" class="tree-wrapper mb-5" style="width: 100%; height: 70vh; position: relative;"></main>
 
-<div id="tree-container"></div>
-
 <!-- Modal Bootstrap : formulaire d'ajout -->
 <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#personModal">
   Créer une personne
@@ -53,18 +51,18 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  test("fullscreen-btn", "Bouton plein écran");
-  test("center-btn", "Bouton centrer");
-  test("export-png", "Bouton export PNG");
-  test("export-svg", "Bouton export SVG");
+  test("fullscreenBtn", "Bouton plein écran");
+  test("centerBtn", "Bouton centrer");
+  test("pngBtn", "Bouton export PNG");
+  test("svgBtn", "Bouton export SVG");
 
-  const search = document.getElementById("search-box");
+  const search = document.getElementById("treeSearch");
   if (search) {
     search.addEventListener("input", () => {
       console.log(`🔍 Recherche : ${search.value}`);
     });
   } else {
-    console.warn("❌ Champ recherche introuvable : #search-box");
+    console.warn("❌ Champ recherche introuvable : #treeSearch");
   }
 });
 </script>
