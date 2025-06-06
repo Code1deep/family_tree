@@ -1,5 +1,4 @@
 <!-- partials/_scripts.html -->
-
 <!-- JavaScript Libraries -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -8,13 +7,12 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <!-- Custom JS -->
-<script src="https://balkan.app/js/OrgChart.js"></script>
-
+ 
+<script type="module" src="{{ url_for('static', filename='js/tree.js') }}"></script>
 <script>
 // Fonction principale encapsulée
 (function() {
-    'use strict';
-    
+    'use strict';    
     // Initialisation du graphique
     function initChart() {
         const chartEl = document.getElementById('quickStatsChart');
@@ -60,7 +58,6 @@
             .catch(console.error);
         });
     }
-
     // Initialisation
     document.addEventListener('DOMContentLoaded', () => {
         initChart();
