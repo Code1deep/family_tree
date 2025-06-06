@@ -13,10 +13,12 @@ console.log('✅ tree.js loaded');
 // ✅ Exposition facultative de la fonction pour débogage
 window.initD3Tree = initMainD3Tree;
 
-
-document.addEventListener("DOMContentLoaded", () => {
-    console.log("✅ DOM loaded, launching tree draw");
-    drawTree();
+// Pour test uniquement si nécessaire :
+document.addEventListener("DOMContentLoaded", async () => {
+    const data = await fetchTreeData();
+    if (data) {
+        drawTree(data);  // <- TEST uniquement
+    }
 });
 
 document.addEventListener("DOMContentLoaded", async () => {
