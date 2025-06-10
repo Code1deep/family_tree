@@ -42,9 +42,9 @@ window.skipAutoInit = true;
 document.addEventListener("DOMContentLoaded", async () => {
     console.log("📦 DOMContentLoaded → Initialisation");
 
-    const treeContainer = document.getElementById("tree-container");
+    const treeContainer = document.getElementById("wrapper");  // Remplacement ici
     if (!treeContainer) {
-        console.error("❌ Échec : élément #tree-container introuvable");
+        console.error("❌ Échec : élément #wrapper introuvable");
         return;
     }
 
@@ -65,7 +65,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
 
         console.log("🌳 Initialisation de l’arbre D3.js ...");
-        initMainD3Tree("tree-container", finalData);
+        initMainD3Tree("wrapper", finalData);  // Remplacement ici aussi
         console.log("✅ Arbre affiché avec succès");
 
     } catch (err) {
