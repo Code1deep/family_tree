@@ -67,6 +67,15 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 
 {% block extra_js %}
+<script>
+  console.log("🧪 Étude DOM: début test wrapper dans tree.html");
+  const testWrapper = document.getElementById("wrapper");
+  if (testWrapper) {
+    console.log("✅ #wrapper trouvé dans tree.html (au moment du test)");
+  } else {
+    console.warn("❌ #wrapper introuvable dans tree.html au moment du test");
+  }
+</script>
 <style>
 /* 🌳 Style D3.js */
 .node circle {
@@ -104,4 +113,3 @@ document.addEventListener("DOMContentLoaded", () => {
 <script type="module" src="{{ url_for('static', filename='js/tree/core.js') }}"></script>
 <script type="module" src="{{ url_for('static', filename='js/tree.js') }}"></script>
 {% endblock %}
-
