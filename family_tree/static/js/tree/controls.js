@@ -65,7 +65,7 @@ export function setupDOMSearchHighlight() {
 
     searchInput.addEventListener('input', debounce(() => {
         const query = searchInput.value.trim().toLowerCase();
-        document.querySelectorAll('#tree-container .node').forEach(node => {
+        document.querySelectorAll('#wrapper.node').forEach(node => {
             const text = node.textContent.toLowerCase();
             node.classList.remove("node--highlight");
             if (query && text.includes(query)) {
