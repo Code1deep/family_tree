@@ -88,7 +88,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     document.getElementById("treeSearch")?.addEventListener("input", (e) => {
         console.log("🔍 Recherche en cours :", e.target.value);
-        searchNode(query, d3.select("svg"));
+        searchNode(e.target.value, d3.select("svg"));
     });
 
     document.getElementById("centerBtn")?.addEventListener("click", () => {
