@@ -36,6 +36,8 @@ function convertToHierarchy(data) {
     return nodeById[root.id];
 }
 
+window.skipAutoInit = true;
+
 // ✅ DOMContentLoaded UNIQUE
 document.addEventListener("DOMContentLoaded", async () => {
     console.log("📦 DOMContentLoaded → Initialisation");
