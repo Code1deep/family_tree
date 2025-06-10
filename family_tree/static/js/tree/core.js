@@ -26,7 +26,6 @@ export function initMainD3Tree(containerId, data) {
     const container = d3.select(`#${containerId}`);
     container.selectAll("*").remove(); // Clear previous tree
 
-    // Add styles directly in JS
     if (!document.getElementById("tree-style")) {
         d3.select("head").append("style")
             .attr("id", "tree-style")
@@ -113,40 +112,27 @@ export function initMainD3Tree(containerId, data) {
             .text(d => d.data.name);
 
         const nodeUpdate = nodeEnter.merge(node);
-
-        nodeUpdate.transition().duration(500)
-            .attr("transform", d => `translate(${d.y},${d.x})`);
-
-        nodeUpdate.select('circle')
-            .attr('r', 4)
-            .style('fill', d => d._children ? "#555" : "#999");
+        nodeUpdate.transition().duration(500).attr("transform", d => `translate(${d.y},${d.x})`);
+        nodeUpdate.select('circle').attr('r', 4).style('fill', d => d._children ? "#555" : "#999");
 
         const nodeExit = node.exit().transition().duration(500)
-            .attr("transform", d => `translate(${source.y},${source.x})`)
-            .remove();
-
+            .attr("transform", d => `translate(${source.y},${source.x})`).remove();
         nodeExit.select('circle').attr('r', 0);
         nodeExit.select('text').style('fill-opacity', 0);
 
         const link = svg.selectAll('path.link')
             .data(links, d => d.target.data.id);
-
         const linkEnter = link.enter().insert('path', "g")
             .attr("class", "link")
             .attr('d', d => {
                 const o = { x: source.x0, y: source.y0 };
                 return diagonal(o, o);
             });
-
-        linkEnter.merge(link)
-            .transition().duration(500)
-            .attr('d', d => diagonal(d.source, d.target));
-
-        link.exit().transition().duration(500)
-            .attr('d', d => {
-                const o = { x: source.x, y: source.y };
-                return diagonal(o, o);
-            }).remove();
+        linkEnter.merge(link).transition().duration(500).attr('d', d => diagonal(d.source, d.target));
+        link.exit().transition().duration(500).attr('d', d => {
+            const o = { x: source.x, y: source.y };
+            return diagonal(o, o);
+        }).remove();
 
         nodes.forEach(d => {
             d.x0 = d.x;
@@ -204,15 +190,14 @@ export function initMainD3Tree(containerId, data) {
         toggleFullscreen(container.node());
     });
 
-    d3.select("#treeSearch").on("input", function() {
+    d3.select("#treeSearch").on("input", function () {
         const name = this.value.toLowerCase();
-        svg.selectAll("g.node").select("text").each(function(d) {
+        svg.selectAll("g.node").select("text").each(function (d) {
             const match = d.data.name.toLowerCase().includes(name);
             d3.select(this).style("fill", match ? "red" : "#000");
         });
     });
 
-    // Auto-center après chargement initial
     setTimeout(() => {
         const svgNode = container.select("svg").node();
         centerTree(d3.select(svgNode).select("g"), svgNode.parentElement);
@@ -229,7 +214,7 @@ export async function drawTree(data) {
             return;
         }
 
-        const container = d3.select("#tree-container");
+        const container = d3.select("#wrapper");
         container.selectAll("*").remove();
 
         const width = 1600;
@@ -316,13 +301,13 @@ export async function renderFamilyTree(containerId, data) {
 // ===========================
 // Chargement automatique à l’ouverture de page
 document.addEventListener('DOMContentLoaded', async () => {
-    const container = document.getElementById("tree-container");
+    const container = document.getElementById("wrapper");
     if (container) {
         try {
             const res = await fetch("/api/tree/tree-data");
             if (!res.ok) throw new Error("Données arbre introuvables");
             const data = await res.json();
-            await renderFamilyTree("tree-container", data);
+            await renderFamilyTree("wrapper", data);
         } catch (err) {
             alert("Erreur lors du chargement de l’arbre généalogique.");
             console.error(err);
