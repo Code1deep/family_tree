@@ -3,14 +3,14 @@ import { loadTreeData, transformDataForD3 } from './tree/core.js';
 import { initMainD3Tree } from './tree/index.js';
 
 document.addEventListener("DOMContentLoaded", async () => {
-    const treeContainer = document.getElementById("tree-container");
+    const treeContainer = document.getElementById("wrapper");
     if (!treeContainer) return;
 
     try {
         const rootId = 1; // Ou récupérer depuis le template
         const rawData = await loadTreeData(rootId);
         const d3Data = transformDataForD3(rawData);
-        initMainD3Tree("tree-container", d3Data);
+        initMainD3Tree("wrapper", d3Data);
     } catch (error) {
         console.error("Failed to initialize tree:", error);
         treeContainer.innerHTML = `<div class="alert alert-danger">Erreur de chargement de l'arbre</div>`;
