@@ -63,19 +63,3 @@
     });
 })();
 </script>
-
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-  const hasTreeWrapper = document.getElementById('tree-wrapper');
-  if (hasTreeWrapper) {
-    console.log("✅ Chargement dynamique de tree.js");
-    import('{{ url_for("static", filename="js/tree/tree.js") }}')
-      .then(module => {
-        console.log("✅ tree.js chargé avec succès");
-      })
-      .catch(err => {
-        console.error("❌ Erreur lors du chargement de tree.js :", err);
-      });
-  }
-});
-</script>
