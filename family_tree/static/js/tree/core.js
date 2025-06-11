@@ -213,9 +213,11 @@ export function initMainD3Tree(containerId, data) {
 // Fonction d’affichage D3.js (version nodes+edges)
 export async function drawTree(data) {
     console.log("✅ drawTree() started...");
+    console.log("🟢 Données reçues pour dessiner l'arbre :", data);
     try {
         if (!data || !data.nodes || !data.edges) {
             console.error("❌ Données invalides pour drawTree:", data);
+            console.error("❌ Données manquantes ou invalides :", data);
             return;
         }
 
