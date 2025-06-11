@@ -8,8 +8,7 @@ from family_tree.app.extensions import db
 def register_tree_api_routes(bp, person_service):
     """
     Enregistre les routes API JSON pour l’arbre généalogique.
-    """
-
+    """    
     @bp.route('/<int:person_id>', methods=['GET'])
     def get_tree_json(person_id):
         """
@@ -33,6 +32,7 @@ def register_tree_api_routes(bp, person_service):
 
     @bp.route('/', methods=['GET'])
     def get_default_tree():
+        print("✅ get_default_tree() appelé")
         """
         Endpoint JSON pour générer un arbre généalogique global ou par défaut.
         """
