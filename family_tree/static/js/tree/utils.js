@@ -31,9 +31,10 @@ export function downloadURL(dataUrl, filename) {
 
 export function exportPNG(svgElementOrContainer) {
     console.log("✅ exportPNG exécuté");
-    const svgNode = svgElementOrContainer.tagName === 'svg'
+
+    const svgNode = svgElementOrContainer?.tagName === 'svg'
         ? svgElementOrContainer
-        : svgElementOrContainer.querySelector('svg');
+        : svgElementOrContainer?.querySelector?.('svg');
 
     if (!svgNode) {
         console.error("❌ SVG introuvable pour PNG");
@@ -47,8 +48,11 @@ export function exportPNG(svgElementOrContainer) {
     const blob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
     const url = URL.createObjectURL(blob);
 
-    canvas.width = svgNode.clientWidth * 2;
-    canvas.height = svgNode.clientHeight * 2;
+    // Définir les dimensions pour éviter PNG vide
+    const width = svgNode.clientWidth || 800;
+    const height = svgNode.clientHeight || 600;
+    canvas.width = width * 2;
+    canvas.height = height * 2;
     ctx.scale(2, 2);
 
     img.onload = () => {
@@ -62,6 +66,10 @@ export function exportPNG(svgElementOrContainer) {
 
 export function exportSVG(svgNode) {
     console.log("✅ exportSVG exécuté");
+    if (!svgNode) {
+        console.error("❌ SVG introuvable pour SVG export");
+        return;
+    }
     const serializer = new XMLSerializer();
     const source = serializer.serializeToString(svgNode);
     const blob = new Blob([source], { type: "image/svg+xml;charset=utf-8" });
@@ -72,7 +80,9 @@ export function exportSVG(svgNode) {
 export function toggleFullscreen(container) {
     console.log("✅ toggleFullscreen exécuté");
     if (!document.fullscreenElement) {
-        container.requestFullscreen();
+        container.requestFullscreen().catch(err => {
+            console.error("❌ Échec du mode plein écran :", err);
+        });
     } else {
         document.exitFullscreen();
     }
@@ -90,11 +100,15 @@ export function buildTreeFromEdges(nodes, edges) {
     });
     const childIds = new Set(edges.map(e => e.target));
     const rootNode = nodes.find(node => !childIds.has(node.id));
+    if (!rootNode) {
+        console.error("❌ Aucun nœud racine trouvé");
+        return null;
+    }
     return nodeMap.get(rootNode.id);
 }
 
-// ✅ zoomBehavior DOIT ÊTRE PASSÉ en paramètre
 export function centerTree(svgGroup, wrapper, zoomBehavior) {
+    console.log("✅ centerTree exécuté");
     const bounds = svgGroup.node().getBBox();
     const scale = Math.min(
         wrapper.clientWidth / bounds.width,
@@ -111,6 +125,7 @@ export function centerTree(svgGroup, wrapper, zoomBehavior) {
 }
 
 export function searchNode(query, svgRoot) {
+    console.log("✅ searchNode exécuté");
     const term = query.trim().toLowerCase();
     svgRoot.selectAll("g.node text")
         .style("font-weight", d => d.data.name.toLowerCase().includes(term) ? "bold" : "normal")
