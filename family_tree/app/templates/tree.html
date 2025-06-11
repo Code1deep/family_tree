@@ -80,20 +80,6 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 
-{% block scripts %}
-  {{ super() }}
-  <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const hasTreeWrapper = document.getElementById('tree-wrapper');
-    if (hasTreeWrapper) {
-      import('{{ url_for("static", filename="js/tree/tree.js") }}')
-        .then(module => console.log("✅ tree.js chargé"))
-        .catch(console.error);
-    }
-  });
-  </script>
-{% endblock %}
-
 {% block extra_js %}
 <style>
 /* 🌳 Style D3.js */
@@ -130,5 +116,5 @@ document.addEventListener("DOMContentLoaded", () => {
 <script type="module" src="{{ url_for('static', filename='js/tree/utils.js') }}"></script>
 <script type="module" src="{{ url_for('static', filename='js/tree/d3-tree.js') }}"></script>
 <script type="module" src="{{ url_for('static', filename='js/tree/core.js') }}"></script>
-<script type="module" src="{{ url_for('static', filename='js/tree.js') }}"></script>
+<!-- <script type="module" src="{{ url_for('static', filename='js/tree.js') }}"></script> -->
 {% endblock %}
