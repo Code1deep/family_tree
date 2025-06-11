@@ -7,8 +7,6 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <!-- Custom JS -->
- 
-<!-- <script type="module" src="{{ url_for('static', filename='js/tree.js') }}"></script> -->
 <script>
 // Fonction principale encapsulée
 (function() {
@@ -66,4 +64,18 @@
 })();
 </script>
 
-<script type="module" src="{{ url_for('static', filename='js/tree.js') }}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const hasTreeWrapper = document.getElementById('tree-wrapper');
+  if (hasTreeWrapper) {
+    console.log("✅ Chargement dynamique de tree.js");
+    import('{{ url_for("static", filename="js/tree/tree.js") }}')
+      .then(module => {
+        console.log("✅ tree.js chargé avec succès");
+      })
+      .catch(err => {
+        console.error("❌ Erreur lors du chargement de tree.js :", err);
+      });
+  }
+});
+</script>
