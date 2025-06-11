@@ -1,76 +1,68 @@
 // static/js/tree/controls.js
-import { toggleFullscreen, exportPNG, exportSVG, debounce, centerTree, searchNode } from './utils.js';
-//import { searchNode } from './core.js'; // si searchNode y est défini
+import * as d3 from 'https://d3js.org/d3.v7.min.js';
+import {
+  toggleFullscreen,
+  exportPNG,
+  exportSVG,
+  debounce,
+  centerTree,
+  searchNode
+} from './utils.js';
 
 /**
- * Attache tous les contrôles UI de l’arbre généalogique.
+ * Attache les contrôles de l’arbre généalogique.
  * @param {Object} params - Paramètres nécessaires.
  * @param {d3.Selection} params.container - Conteneur D3 du SVG principal.
  * @param {d3.Selection} params.svgRoot - Groupe `<g>` D3 contenant l’arbre.
  * @param {HTMLElement} params.svgNode - Élément DOM <svg>.
- * @param {Object} params.root - Donnée racine D3 (utilisée dans update()).
- * @param {Function} [params.update] - Fonction d’update D3 facultative.
+ * @param {Object} params.root - Donnée racine D3.
+ * @param {Function} [params.update] - Fonction update() si nécessaire.
  */
 export function setupTreeControls({ container, svgRoot, svgNode, root, update }) {
     if (!svgNode) {
-        console.error("❌ Aucun SVG trouvé pour les actions");
+        console.error("❌ Aucun élément SVG trouvé.");
         return;
     }
 
-    const parentElement = svgNode.parentElement;
+    const parent = svgNode.parentElement;
 
-    // 🔘 Centrage
-    d3.select("#centerBtn").on("click", () => {
-        centerTree(svgRoot, parentElement);
-    });
+    const controls = [
+        { id: "#centerBtn", handler: () => centerTree(svgRoot, parent) },
+        { id: "#pngBtn", handler: () => exportPNG(svgNode) },
+        { id: "#svgBtn", handler: () => exportSVG(svgNode) },
+        { id: "#fullscreenBtn", handler: () => toggleFullscreen(container.node()) },
+        { id: "#treeSearch", handler: function () {
+            searchNode(this.value, svgRoot);
+        }, type: "input" }
+    ];
 
-    // 📤 Export PNG
-    d3.select("#pngBtn").on("click", () => {
-        exportPNG(svgNode);
-    });
-
-    // 📤 Export SVG
-    d3.select("#svgBtn").on("click", () => {
-        exportSVG(svgNode);
-    });
-
-    // ⛶ Plein écran
-    d3.select("#fullscreenBtn").on("click", () => {
-        toggleFullscreen(container.node());
-    });
-
-    // 🔍 Recherche (D3)
-    d3.select("#treeSearch").on("input", function () {
-        searchNode(this.value, svgRoot);
-    });
-
-    // ↻ Mise à jour initiale
-    if (typeof update === 'function') {
-        update(root);
+    for (const ctrl of controls) {
+        const el = d3.select(ctrl.id);
+        if (!el.empty()) {
+            el.on(ctrl.type || "click", ctrl.handler);
+        }
     }
 
-    // 📍 Centrage initial
+    // Exécuter update et centrage initial si fournis
+    if (typeof update === "function") update(root);
+
     setTimeout(() => {
-        centerTree(svgRoot, parentElement);
+        centerTree(svgRoot, parent);
     }, 500);
 }
 
 /**
- * Recherche générique via DOM (alternative simple sans D3).
- * Utilisée si les nœuds ont `.node` et `textContent`.
+ * Recherche simple via DOM (optionnelle, alternative à D3).
  */
 export function setupDOMSearchHighlight() {
-    const searchInput = document.getElementById('tree-search');
-    if (!searchInput) return;
+    const input = document.getElementById("tree-search");
+    if (!input) return;
 
-    searchInput.addEventListener('input', debounce(() => {
-        const query = searchInput.value.trim().toLowerCase();
-        document.querySelectorAll('#wrapper.node').forEach(node => {
+    input.addEventListener("input", debounce(() => {
+        const query = input.value.trim().toLowerCase();
+        document.querySelectorAll("#wrapper .node").forEach(node => {
             const text = node.textContent.toLowerCase();
-            node.classList.remove("node--highlight");
-            if (query && text.includes(query)) {
-                node.classList.add("node--highlight");
-            }
+            node.classList.toggle("node--highlight", query && text.includes(query));
         });
     }, 300));
 }
