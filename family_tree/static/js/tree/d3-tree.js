@@ -1,9 +1,8 @@
-// static/js/tree/d3-tree.js
 import * as d3 from 'https://d3js.org/d3.v7.min.js';
 import { debounce, downloadURL, toggleFullscreen, centerTree } from './utils.js';
 import { openModal } from '/static/js/modal.js';
 
-/** CSS directement intégré */
+/** CSS intégré dynamiquement */
 const style = document.createElement("style");
 style.innerHTML = `
 .node circle {
@@ -27,11 +26,11 @@ style.innerHTML = `
 document.head.appendChild(style);
 
 function showPersonDetails(d) {
-    const p = d.data;
+    const p = d.data || {};
     const photo = p.photo || "/static/img/default.png";
-    const bio = p.data.bio || "Aucune biographie disponible";
-    const mother = p.data.mother || "Inconnue";
-    const father = p.data.father || "Inconnu";
+    const bio = p.bio || "Aucune biographie disponible";
+    const mother = p.mother || "Inconnue";
+    const father = p.father || "Inconnu";
 
     const html = `
         <img src="${photo}" alt="Photo de ${p.name}">
@@ -42,18 +41,17 @@ function showPersonDetails(d) {
     openModal(html);
 }
 
-// Fonction utilisée pour afficher un sous-arbre dynamique lors d’un clic sur un nœud
 export function initSubD3Tree(containerId, data) {
     if (!document.getElementById("subtree-style")) {
-    d3.select("head").append("style")
-        .attr("id", "subtree-style")
-        .html(`
-            .link { fill: none; stroke: #ccc; stroke-width: 1.5px; }
-            .node circle { fill: #999; stroke: #555; stroke-width: 1.5px; }
-            .node text { font: 10px sans-serif; }
-        `);
+        d3.select("head").append("style")
+            .attr("id", "subtree-style")
+            .html(`
+                .link { fill: none; stroke: #ccc; stroke-width: 1.5px; }
+                .node circle { fill: #999; stroke: #555; stroke-width: 1.5px; }
+                .node text { font: 10px sans-serif; }
+            `);
     }
-    
+
     const container = document.getElementById(containerId);
     if (!container) {
         console.warn(`⏭️ Conteneur introuvable : #${containerId}`);
@@ -74,10 +72,7 @@ export function initSubD3Tree(containerId, data) {
 
     const zoom = d3.zoom()
         .scaleExtent([0.1, 3])
-        .on("zoom", event => {
-            g.attr("transform", event.transform);
-        });
-
+        .on("zoom", event => g.attr("transform", event.transform));
     svg.call(zoom);
 
     const treeLayout = d3.tree().size([height, width]);
@@ -99,6 +94,7 @@ export function initSubD3Tree(containerId, data) {
         .attr("transform", d => `translate(${d.y},${d.x})`);
 
     node.append("circle").attr("r", 6);
+
     node.append("text")
         .attr("dy", 3)
         .attr("x", d => d.children ? -10 : 10)
@@ -115,18 +111,17 @@ export function initSubD3Tree(containerId, data) {
         .on("click", showPersonDetails);
 
     centerTree(g, container, svg);
-
     setupTreeSearch(root, g);
     setupExportButtons(containerId);
     setupFullscreen(container);
-    setupResizeHandler(() => initSubD3Tree(containerId, data)); // redessiner
-    setupCenterButton(containerId, g, svg); // bouton manuel
+    setupResizeHandler(() => initSubD3Tree(containerId, data));
+    setupCenterButton(containerId, g, svg);
 }
 
-/** Recherche */
 function setupTreeSearch(root, g) {
     const input = document.getElementById('tree-search');
     if (!input) return;
+
     input.addEventListener('input', debounce(() => {
         const query = input.value.trim().toLowerCase();
         g.selectAll('.node').classed('node--highlight', false);
@@ -138,22 +133,20 @@ function setupTreeSearch(root, g) {
     }, 300));
 }
 
-/** Redimensionnement adaptatif */
 function setupResizeHandler(redrawFn) {
-    window.addEventListener("resize", debounce(() => {
-        redrawFn();
-    }, 300));
+    window.addEventListener("resize", debounce(() => redrawFn(), 300));
 }
 
-/** Bouton de recentrage manuel */
 function setupCenterButton(containerId, g, svg) {
     const btn = document.getElementById('center-tree');
     if (!btn) return;
 
     btn.addEventListener("click", () => {
-        const bbox = g.node().getBBox();
+        const bbox = g.node()?.getBBox?.();
+        if (!bbox) return;
         const x = bbox.x + bbox.width / 2;
         const y = bbox.y + bbox.height / 2;
+
         const container = document.getElementById(containerId);
         const dx = container.clientWidth / 2 - x;
         const dy = container.clientHeight / 2 - y;
@@ -167,7 +160,6 @@ function setupCenterButton(containerId, g, svg) {
     });
 }
 
-/** Export PNG & SVG */
 function setupExportButtons(containerId) {
     const exportSvgBtn = document.getElementById("svgBtn");
     const exportPngBtn = document.getElementById("pngBtn");
@@ -183,7 +175,7 @@ function setupExportButtons(containerId) {
 function exportAsSVG(containerId) {
     const svg = document.querySelector(`#${containerId} svg`);
     const serializer = new XMLSerializer();
-    let source = serializer.serializeToString(svg);
+    const source = serializer.serializeToString(svg);
     const blob = new Blob([source], { type: "image/svg+xml;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     downloadURL(url, "genealogy-tree.svg");
@@ -218,11 +210,8 @@ export function transformDataForD3(rawData) {
     return d3.hierarchy(rawData);
 }
 
-/* Fonction inutilisée mais conservée si besoin futur */
-function update(source) {
-    // Logique de mise à jour optimisée (non utilisée ici)
-}
-
-function zoomed(event) {
-    // Inutilisé également, géré directement dans initD3Tree
-}
+// Les fonctions suivantes sont conservées si besoin futur, mais non utilisées dans ce fichier.
+/*
+function update(source) {}
+function zoomed(event) {}
+*/
