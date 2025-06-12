@@ -14,9 +14,9 @@ def inject_service(service):
 def register_tree_routes(person_api):
     from family_tree.interfaces.forms.person_form import PersonForm
     @person_api.route("/visualize/tree/<int:person_id>", endpoint="visualize_tree_by_id")
-    def person_get_family_tree(person_id):
+    def person_get_family_tree():
         try:
-            visualizer = FamilyTreeVisualizer(current_app, PersonRepository(db.session))
+            visualizer = FamilyTreeVisualizer(current_app, PersonRepository(db.session()))
             tree_data = visualizer.generate_familytree_data(root_person_id=1)
             return jsonify(tree_data)
         except Exception as e:
@@ -27,7 +27,7 @@ def register_tree_routes(person_api):
     @person_api.route("/visualize/tree/root")
     def get_root_tree():
         try:
-            visualizer = FamilyTreeVisualizer(current_app, PersonRepository(db.session))
+            visualizer = FamilyTreeVisualizer(current_app, PersonRepository(db.session()))
             root_person_id = 1 
             tree_data = visualizer.generate_familytree_data(root_person_id)  
             return jsonify(tree_data)
@@ -38,7 +38,7 @@ def register_tree_routes(person_api):
 
     @person_api.route('/tree')
     def show_tree():
-        visualizer = FamilyTreeVisualizer(current_app, PersonRepository(db.session))
+        visualizer = FamilyTreeVisualizer(current_app, PersonRepository(db.session()))
         tree_data = visualizer.generate_familytree_data(root_person_id=1)
         form = PersonForm()
         return render_template(
@@ -54,7 +54,7 @@ def register_tree_routes(person_api):
         try:
             if person_id <= 0:
                 abort(400, description="Invalid person ID")
-            visualizer = FamilyTreeVisualizer(current_app, PersonRepository(db.session))
+            visualizer = FamilyTreeVisualizer(current_app, PersonRepository(db.session()))
             tree_data = visualizer.generate_familytree_data(person_id)
             if not tree_data["nodes"] and not tree_data["edges"]:
                 return jsonify({'error': 'Person not found'}), 404
@@ -66,7 +66,7 @@ def register_tree_routes(person_api):
 
     @person_api.route('/tree/<int:person_id>', methods=['GET'])
     def show_tree_by_id(person_id):
-        visualizer = FamilyTreeVisualizer(current_app, PersonRepository(db.session))
+        visualizer = FamilyTreeVisualizer(current_app, PersonRepository(db.session()))
         tree_data = visualizer.generate_familytree_data(root_person_id=person_id)
         form = PersonForm()  
         if current_app.config.get('TESTING'):
@@ -83,7 +83,7 @@ def register_tree_routes(person_api):
     @person_api.route('/tree')
     def api_tree_default():
         try:
-            visualizer = FamilyTreeVisualizer(current_app, PersonRepository(db.session))
+            visualizer = FamilyTreeVisualizer(current_app, PersonRepository(db.session()))
             root_person_id = 1
             tree_data = visualizer.generate_familytree_data(root_person_id)
             return jsonify(tree_data)
