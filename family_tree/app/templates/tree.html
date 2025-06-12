@@ -41,7 +41,7 @@
   document.addEventListener("DOMContentLoaded", async () => {
     console.log("📦 DOM complètement chargé → import de tree.js");
     try {
-      await import("/static/js/tree.js");
+      await import("/static/js/tree/tree.js");
       console.log("✅ tree.js importé avec succès");
     } catch (err) {
       console.error("❌ Erreur lors de l'import de tree.js :", err);
