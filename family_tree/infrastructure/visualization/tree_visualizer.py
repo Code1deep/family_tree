@@ -11,7 +11,7 @@ from family_tree.domain.models.person import Person
 from family_tree.domain.services.tree_service import TreeService 
 
 def get_visualizer():
-    return FamilyTreeVisualizer(current_app, PersonRepository(db.session))
+    return FamilyTreeVisualizer(current_app, PersonRepository(db.session()))
 
 class FamilyTreeVisualizer:
     def __init__(self, app, person_repo: PersonRepository):
@@ -110,8 +110,15 @@ class FamilyTreeVisualizer:
         if person is None:
             return None
         if isinstance(person, dict):
-            return int(person.get('id'))
-        return int(getattr(person, 'id', None))
+            person_id = person.get('id')
+        else:
+            person_id = getattr(person, 'id', None)
+
+        if person_id is None:
+            return None
+
+        return int(person_id)
+
     
     def _get_attr(self, person, attr):
         if isinstance(person, dict):
@@ -124,6 +131,4 @@ class FamilyTreeVisualizer:
         first = self._get_attr(parent, 'first_name') or ''
         last = self._get_attr(parent, 'last_name') or ''
         return f"{first} {last}".strip()
-    
-def get_visualizer():
-    return FamilyTreeVisualizer(current_app, PersonRepository())
+
