@@ -8,11 +8,41 @@ import { loadTreeData, drawTree, zoomIn, zoomOut } from './tree/core.js';
 
 
 console.log('✅ tree.js loaded');
-// static/js/tree.js
+window.initD3Tree = initMainD3Tree;
+
+// Fonction utilitaire
+function convertToHierarchy(data) {
+    console.log("🔄 Conversion {nodes, edges} → hiérarchie");
+    const nodeById = {};
+    data.nodes.forEach(n => {
+        nodeById[n.id] = { ...n, children: [] };
+    });
+    data.edges.forEach(e => {
+        const parent = nodeById[e.from];
+        const child = nodeById[e.to];
+        if (parent && child) {
+            parent.children.push(child);
+        }
+    });
+
+    const allChildIds = new Set(data.edges.map(e => e.to));
+    const root = data.nodes.find(n => !allChildIds.has(n.id));
+    if (!root) {
+        console.error("❌ Racine introuvable");
+        return null;
+    }
+
+    console.log("✅ Racine trouvée :", root);
+    return nodeById[root.id];
+}
+
+window.skipAutoInit = true;
+
+// ✅ DOMContentLoaded UNIQUE
 document.addEventListener("DOMContentLoaded", async () => {
     console.log("📦 DOMContentLoaded → Initialisation");
 
-    const treeContainer = document.getElementById("wrapper");
+    const treeContainer = document.getElementById("wrapper");  // Remplacement ici
     if (!treeContainer) {
         console.error("❌ Échec : élément #wrapper introuvable");
         return;
@@ -34,85 +64,37 @@ document.addEventListener("DOMContentLoaded", async () => {
             return;
         }
 
-        drawTree(finalData);
-    } catch (error) {
-        console.error("❌ Erreur lors du chargement de l’arbre :", error);
+        console.log("🌳 Initialisation de l’arbre D3.js ...");
+        initMainD3Tree("wrapper", finalData);  // Remplacement ici aussi
+        console.log("✅ Arbre affiché avec succès");
+
+    } catch (err) {
+        console.error("❌ Erreur lors du chargement de l’arbre :", err);
     }
+
+    // ✅ Événements UI
+    document.getElementById("fullscreenBtn")?.addEventListener("click", () => {
+        console.log("🖥️ Clic bouton : Plein écran");
+        toggleFullscreen(treeContainer);
+    });
+
+    document.getElementById("pngBtn")?.addEventListener("click", () => {
+        console.log("📷 Clic bouton : Export PNG");
+        exportPNG(treeContainer);
+    });
+
+    document.getElementById("svgBtn")?.addEventListener("click", () => {
+        console.log("📐 Clic bouton : Export SVG");
+        exportSVG(treeContainer);
+    });
+
+    document.getElementById("treeSearch")?.addEventListener("input", (e) => {
+        console.log("🔍 Recherche en cours :", e.target.value);
+        searchNode(e.target.value, d3.select("svg"));
+    });
+
+    document.getElementById("centerBtn")?.addEventListener("click", () => {
+        console.log("🎯 Clic bouton : Centrer arbre");
+        centerTree();
+    });
 });
-
-/**
- * Convertit { nodes, edges } → hiérarchie D3
- */
-function convertToHierarchy(data) {
-    const { nodes, edges } = data;
-    const nodeById = new Map(nodes.map(d => [d.id, { ...d, children: [] }]));
-
-    for (const edge of edges) {
-        const parent = nodeById.get(edge.from);
-        const child = nodeById.get(edge.to);
-        if (parent && child) {
-            parent.children.push(child);
-        } else {
-            console.warn("⚠️ Lien ignoré : parent ou enfant introuvable", edge);
-        }
-    }
-
-    const allChildren = new Set(edges.map(e => e.to));
-    const root = nodes.find(n => !allChildren.has(n.id));
-
-    if (!root) {
-        console.error("❌ Aucun nœud racine trouvé !");
-        return null;
-    }
-
-    console.log("🌳 Racine trouvée :", root);
-    return d3.hierarchy(nodeById.get(root.id));
-}
-
-/**
- * Affiche l’arbre généalogique avec D3.js
- */
-function drawTree(root) {
-    console.log("🧠 Affichage avec D3");
-
-    const width = document.getElementById("wrapper").clientWidth;
-    const height = document.getElementById("wrapper").clientHeight;
-
-    const svg = d3.select("#wrapper")
-        .append("svg")
-        .attr("width", width)
-        .attr("height", height);
-
-    const g = svg.append("g").attr("transform", "translate(40,40)");
-
-    const treeLayout = d3.tree().size([width - 100, height - 100]);
-    const treeData = treeLayout(root);
-
-    const link = g.selectAll(".link")
-        .data(treeData.links())
-        .enter()
-        .append("path")
-        .attr("class", "link")
-        .attr("d", d3.linkVertical()
-            .x(d => d.x)
-            .y(d => d.y)
-        )
-        .attr("stroke", "#ccc")
-        .attr("fill", "none");
-
-    const node = g.selectAll(".node")
-        .data(treeData.descendants())
-        .enter()
-        .append("g")
-        .attr("class", "node")
-        .attr("transform", d => `translate(${d.x},${d.y})`);
-
-    node.append("circle")
-        .attr("r", 20)
-        .attr("fill", "#1e90ff");
-
-    node.append("text")
-        .attr("dy", 5)
-        .attr("text-anchor", "middle")
-        .text(d => d.data.first_name || d.data.label || "??");
-}
