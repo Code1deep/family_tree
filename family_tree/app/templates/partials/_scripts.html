@@ -1,17 +1,19 @@
 <!-- partials/_scripts.html -->
-<!-- JavaScript Libraries -->
+<!-- JS Libraries chargées de manière classique -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<!-- Custom JS -->
+<!-- ✅ D3.js classique (déjà chargé dans base_template.html) -->
+
+<!-- Custom JS encapsulé -->
 <script>
-// Fonction principale encapsulée
-(function() {
-    'use strict';    
-    // Initialisation du graphique
+(function () {
+    'use strict';
+
+    // ✅ 1. Graphique de statistiques (si ID présent)
     function initChart() {
         const chartEl = document.getElementById('quickStatsChart');
         if (!chartEl) return;
@@ -35,15 +37,15 @@
                     }
                 });
             })
-            .catch(console.error);
+            .catch(err => console.error("❌ Erreur fetch stats:", err));
     }
 
-    // Gestion du sélecteur de langue
+    // ✅ 2. Gestion changement de langue
     function initLanguageSelector() {
         const selector = document.getElementById('languageSelector');
         if (!selector) return;
 
-        selector.addEventListener('change', function() {
+        selector.addEventListener('change', function () {
             fetch('/change-language', {
                 method: 'POST',
                 headers: {
@@ -52,14 +54,31 @@
                 },
                 body: JSON.stringify({ language: this.value })
             })
-            .then(response => response.ok && window.location.reload())
-            .catch(console.error);
+            .then(response => {
+                if (response.ok) window.location.reload();
+            })
+            .catch(err => console.error("❌ Erreur changement langue:", err));
         });
     }
-    // Initialisation
+
+    // ✅ 3. Initialisation globale
     document.addEventListener('DOMContentLoaded', () => {
         initChart();
         initLanguageSelector();
+
+        // ✅ 4. Chargement dynamique du module arbre si wrapper trouvé
+        const hasTreeWrapper = document.getElementById('tree-wrapper') || document.getElementById('wrapper');
+        if (hasTreeWrapper) {
+            console.log("🌳 Initialisation arbre généalogique → import de tree.js");
+
+            import('{{ url_for("static", filename="js/tree/tree.js") }}')
+                .then(module => {
+                    console.log("✅ tree.js chargé avec succès");
+                })
+                .catch(err => {
+                    console.error("❌ Erreur lors du chargement de tree.js :", err);
+                });
+        }
     });
 })();
 </script>
