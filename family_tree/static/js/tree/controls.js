@@ -1,5 +1,5 @@
 // static/js/tree/controls.js
-import * as d3 from 'https://d3js.org/d3.v7.min.js';
+import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js";
 import {
   toggleFullscreen,
   exportPNG,
