@@ -1,18 +1,22 @@
 # C:\family_tree\app\factory.py
 from family_tree.infrastructure.persistence.db import db_session
 import os
-import sys
+#import sys
 from pathlib import Path
 from flask_wtf.csrf import CSRFProtect
-# family_tree/app/factory.py
 from flask import Flask, request, current_app
 from family_tree.app.extensions import db, babel, login_manager
 import logging.config
 from family_tree.app.config import LOGGING_CONFIG
 
+
+from family_tree.interfaces.auth import auth_bp, load_user
+print("✓ Import auth_bp & load_user OK")
+
+
 # Configuration des chemins
-BASE_DIR = Path(__file__).parent.parent
-sys.path.insert(0, str(BASE_DIR))
+BASE_DIR = Path(__file__).resolve().parent 
+#sys.path.insert(0, str(BASE_DIR))
 
 # Debug - Affiche la structure
 print(f"\n=== STRUCTURE DU PROJET ===")
@@ -25,9 +29,9 @@ for root, dirs, files in os.walk(BASE_DIR):
         print(f"{subindent}{f}")
 
 print("\n=== CHEMIN PYTHON ===")
-for p in sys.path:
-    print(p)
-print("====================\n")
+#for p in sys.path:
+ #  print(p)
+#print("====================\n")
 
 _app_creation_count = 0
 
@@ -41,7 +45,7 @@ def create_app(config_object='config.Config', testing=False):
         # Initialisation de l'app avec chemins absolus
         app = Flask(__name__,
                    instance_relative_config=True,
-                   template_folder=os.path.join(BASE_DIR, 'app/templates'),
+                   template_folder=os.path.join(BASE_DIR, 'templates'),
                    static_folder=os.path.join(BASE_DIR, 'static'))  # Modifié pour correspondre à votre structure
         
         # Debug des chemins
@@ -52,6 +56,7 @@ def create_app(config_object='config.Config', testing=False):
 
         # Configuration
         app.config.from_object(config_object)
+        app.secret_key = 'super secret string'  # 🔐 sécurise ensuite
         db_path = os.path.join(app.instance_path, 'family.db')
         app.config.update(
             SQLALCHEMY_DATABASE_URI=f'sqlite:///{db_path}',
@@ -59,11 +64,12 @@ def create_app(config_object='config.Config', testing=False):
         )
         print(f"DB path: {db_path}")
 
+
         # Vérification des dossiers
         os.makedirs(app.instance_path, exist_ok=True)
         print(f"Instance folder exists: {os.path.exists(app.instance_path)}")
-        print(f"Template folder exists: {os.path.exists(app.template_folder)}")
-        print(f"Static folder exists: {os.path.exists(app.static_folder)}")
+        print(f"Template folder exists: {os.path.exists(app.template_folder) if app.template_folder else 'N/A'}")
+        print(f"Static folder exists: {os.path.exists(app.static_folder) if app.static_folder else 'N/A'}")
 
         # Initialisation des extensions
         csrf = CSRFProtect()
@@ -72,6 +78,12 @@ def create_app(config_object='config.Config', testing=False):
         babel.init_app(app)
         login_manager.init_app(app)
         login_manager.login_view = 'auth.login'
+
+            # User loader
+        login_manager.user_loader(load_user)
+
+        # Enregistrement des blueprints
+        app.register_blueprint(auth_bp)
 
         # Middleware logging
         @app.before_request
@@ -126,7 +138,7 @@ def create_app(config_object='config.Config', testing=False):
                 from family_tree.interfaces.api.resources.person.init_person_service import init_person_resources
                 from family_tree.interfaces.api.resources.tree.init_tree_service import init_tree_resources
 
-                repo = PersonRepository(db.session)
+                repo = PersonRepository(db.session())
                 person_service = PersonService(repo)
                 
                 init_person_resources(db_session)
