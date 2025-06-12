@@ -1,4 +1,4 @@
-// static/js/tree/tree.js
+// static/js/tree.js
 // ✅ Importation des modules
 import { renderFamilyTree } from './core.js';
 import { toggleFullscreen, exportPNG, exportSVG, centerTree, searchNode } from './utils.js';
