@@ -1,4 +1,4 @@
-import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js";
+// static/js/tree/d3-tree.js
 import { debounce, downloadURL, toggleFullscreen, centerTree } from './utils.js';
 import { openModal } from '/static/js/modal.js';
 
