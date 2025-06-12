@@ -71,7 +71,7 @@
         if (hasTreeWrapper) {
             console.log("🌳 Initialisation arbre généalogique → import de tree.js");
 
-            import('{{ url_for("static", filename="js/tree.js") }}')
+            import('{{ url_for("static", filename="js/tree/tree.js") }}')
                 .then(module => {
                     console.log("✅ tree.js chargé avec succès");
                 })
