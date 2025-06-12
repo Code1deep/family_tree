@@ -1,94 +1,118 @@
 // static/js/tree.js
-// tree.js
-function drawTree(data) {
-  const nodes = data.nodes;
-  const edges = data.edges;
+// ✅ Importation des modules
+import { centerTree, exportPNG, exportSVG, searchNode } from './tree/utils.js'; 
+import { openModal } from "/static/js/modal.js";
+import { initMainD3Tree, initSubD3Tree } from './tree/index.js';
 
-  // Préparer les données sous forme de hiérarchie
-  const nodeById = new Map(nodes.map(d => [d.id, { ...d, children: [] }]));
-  edges.forEach(edge => {
-    const parent = nodeById.get(edge.from);
-    const child = nodeById.get(edge.to);
-    if (parent && child) parent.children.push(child);
-  });
+import { loadTreeData, drawTree, zoomIn, zoomOut } from './tree/core.js';
 
-  // Trouver la racine (nœud sans parent)
-  const allChildIds = new Set(edges.map(e => e.to));
-  const root = nodes.find(n => !allChildIds.has(n.id));
-  if (!root) {
-    console.error("❌ Impossible de déterminer la racine");
-    return;
-  }
 
-  const hierarchyRoot = d3.hierarchy(nodeById.get(root.id));
+console.log('✅ tree.js loaded');
+// static/js/tree.js
+document.addEventListener("DOMContentLoaded", async () => {
+    console.log("📦 DOMContentLoaded → Initialisation");
 
-  // Définir dimensions et marges
-  const width = document.getElementById("wrapper").clientWidth;
-  const height = document.getElementById("wrapper").clientHeight;
-  const margin = { top: 20, right: 90, bottom: 30, left: 90 };
+    const treeContainer = document.getElementById("wrapper");
+    if (!treeContainer) {
+        console.error("❌ Échec : élément #wrapper introuvable");
+        return;
+    }
 
-  // Nettoyer le conteneur
-  d3.select("#wrapper").selectAll("*").remove();
+    try {
+        console.log("📡 Requête vers /api/tree/ ...");
+        const response = await fetch("/api/tree/");
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const treeData = await response.json();
+        console.log("✅ Données reçues depuis API :", treeData);
 
-  const svg = d3.select("#wrapper")
-    .append("svg")
-    .attr("viewBox", [0, 0, width, height])
-    .attr("preserveAspectRatio", "xMidYMid meet");
+        const finalData = (treeData.nodes && treeData.edges)
+            ? convertToHierarchy(treeData)
+            : treeData;
 
-  const g = svg.append("g")
-    .attr("transform", `translate(${margin.left},${margin.top})`);
+        if (!finalData) {
+            console.error("❌ Données finales invalides !");
+            return;
+        }
 
-  // Appliquer layout tree
-  const treeLayout = d3.tree().size([width - 2 * margin.left, height - 2 * margin.top]);
-  treeLayout(hierarchyRoot);
-
-  // Liens
-  g.selectAll(".link")
-    .data(hierarchyRoot.links())
-    .join("path")
-    .attr("class", "link")
-    .attr("fill", "none")
-    .attr("stroke", "#ccc")
-    .attr("stroke-width", 2)
-    .attr("d", d3.linkVertical()
-      .x(d => d.x)
-      .y(d => d.y)
-    );
-
-  // Nœuds
-  const node = g.selectAll(".node")
-    .data(hierarchyRoot.descendants())
-    .join("g")
-    .attr("class", "node")
-    .attr("transform", d => `translate(${d.x},${d.y})`);
-
-  node.append("circle")
-    .attr("r", 20)
-    .attr("fill", "#1e90ff")
-    .attr("stroke", "steelblue")
-    .attr("stroke-width", 2);
-
-  node.append("text")
-    .attr("dy", ".35em")
-    .attr("text-anchor", "middle")
-    .attr("fill", "#fff")
-    .text(d => d.data.name);
-}
-
-async function loadAndDrawTree() {
-  try {
-    const response = await fetch("/api/tree/tree-data");
-    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-    const data = await response.json();
-    console.log("✅ Données arbre chargées :", data);
-    drawTree(data);
-  } catch (err) {
-    console.error("❌ Erreur lors du chargement des données :", err);
-    const wrapper = document.getElementById("wrapper");
-    wrapper.innerHTML = `<div style="color: red;">Erreur chargement arbre: ${err.message}</div>`;
-  }
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-  loadAndDrawTree();
+        drawTree(finalData);
+    } catch (error) {
+        console.error("❌ Erreur lors du chargement de l’arbre :", error);
+    }
 });
+
+/**
+ * Convertit { nodes, edges } → hiérarchie D3
+ */
+function convertToHierarchy(data) {
+    const { nodes, edges } = data;
+    const nodeById = new Map(nodes.map(d => [d.id, { ...d, children: [] }]));
+
+    for (const edge of edges) {
+        const parent = nodeById.get(edge.from);
+        const child = nodeById.get(edge.to);
+        if (parent && child) {
+            parent.children.push(child);
+        } else {
+            console.warn("⚠️ Lien ignoré : parent ou enfant introuvable", edge);
+        }
+    }
+
+    const allChildren = new Set(edges.map(e => e.to));
+    const root = nodes.find(n => !allChildren.has(n.id));
+
+    if (!root) {
+        console.error("❌ Aucun nœud racine trouvé !");
+        return null;
+    }
+
+    console.log("🌳 Racine trouvée :", root);
+    return d3.hierarchy(nodeById.get(root.id));
+}
+
+/**
+ * Affiche l’arbre généalogique avec D3.js
+ */
+function drawTree(root) {
+    console.log("🧠 Affichage avec D3");
+
+    const width = document.getElementById("wrapper").clientWidth;
+    const height = document.getElementById("wrapper").clientHeight;
+
+    const svg = d3.select("#wrapper")
+        .append("svg")
+        .attr("width", width)
+        .attr("height", height);
+
+    const g = svg.append("g").attr("transform", "translate(40,40)");
+
+    const treeLayout = d3.tree().size([width - 100, height - 100]);
+    const treeData = treeLayout(root);
+
+    const link = g.selectAll(".link")
+        .data(treeData.links())
+        .enter()
+        .append("path")
+        .attr("class", "link")
+        .attr("d", d3.linkVertical()
+            .x(d => d.x)
+            .y(d => d.y)
+        )
+        .attr("stroke", "#ccc")
+        .attr("fill", "none");
+
+    const node = g.selectAll(".node")
+        .data(treeData.descendants())
+        .enter()
+        .append("g")
+        .attr("class", "node")
+        .attr("transform", d => `translate(${d.x},${d.y})`);
+
+    node.append("circle")
+        .attr("r", 20)
+        .attr("fill", "#1e90ff");
+
+    node.append("text")
+        .attr("dy", 5)
+        .attr("text-anchor", "middle")
+        .text(d => d.data.first_name || d.data.label || "??");
+}
