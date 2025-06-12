@@ -1,6 +1,7 @@
-// static/js/tree.js
+// static/js/tree/tree.js
 // ✅ Importation des modules
-import { centerTree, exportPNG, exportSVG, searchNode } from './tree/utils.js';
+import { renderFamilyTree } from './core.js';
+import { toggleFullscreen, exportPNG, exportSVG, centerTree, searchNode } from './utils.js';
 import { openModal } from './modal.js';
 import { initMainD3Tree, initSubD3Tree } from './tree/index.js';
 import { loadTreeData, drawTree, zoomIn, zoomOut } from './tree/core.js';
@@ -40,7 +41,7 @@ window.skipAutoInit = true;
 document.addEventListener("DOMContentLoaded", async () => {
     console.log("📦 DOMContentLoaded → Initialisation");
 
-    const treeContainer = document.getElementById("wrapper");  // Remplacement ici
+    const treeContainer = document.getElementById("wrapper");
     if (!treeContainer) {
         console.error("❌ Échec : élément #wrapper introuvable");
         return;
@@ -53,17 +54,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         const treeData = await response.json();
         console.log("✅ Données reçues depuis API :", treeData);
 
-        const finalData = (treeData.nodes && treeData.edges)
-            ? convertToHierarchy(treeData)
-            : treeData;
-
-        if (!finalData) {
-            console.error("❌ Données finales invalides !");
-            return;
-        }
-
-        console.log("🌳 Initialisation de l’arbre D3.js ...");
-        initMainD3Tree("wrapper", finalData);  // Remplacement ici aussi
+        console.log("🌳 Appel à renderFamilyTree...");
+        await renderFamilyTree("wrapper", treeData);
         console.log("✅ Arbre affiché avec succès");
 
     } catch (err) {
