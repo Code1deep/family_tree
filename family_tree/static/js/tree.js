@@ -1,100 +1,94 @@
 // static/js/tree.js
-// ✅ Importation des modules
-import { centerTree, exportPNG, exportSVG, searchNode } from './tree/utils.js'; 
-import { openModal } from "/static/js/modal.js";
-import { initMainD3Tree, initSubD3Tree } from './tree/index.js';
+// tree.js
+function drawTree(data) {
+  const nodes = data.nodes;
+  const edges = data.edges;
 
-import { loadTreeData, drawTree, zoomIn, zoomOut } from './tree/core.js';
+  // Préparer les données sous forme de hiérarchie
+  const nodeById = new Map(nodes.map(d => [d.id, { ...d, children: [] }]));
+  edges.forEach(edge => {
+    const parent = nodeById.get(edge.from);
+    const child = nodeById.get(edge.to);
+    if (parent && child) parent.children.push(child);
+  });
 
+  // Trouver la racine (nœud sans parent)
+  const allChildIds = new Set(edges.map(e => e.to));
+  const root = nodes.find(n => !allChildIds.has(n.id));
+  if (!root) {
+    console.error("❌ Impossible de déterminer la racine");
+    return;
+  }
 
-console.log('✅ tree.js loaded');
-window.initD3Tree = initMainD3Tree;
+  const hierarchyRoot = d3.hierarchy(nodeById.get(root.id));
 
-// Fonction utilitaire
-function convertToHierarchy(data) {
-    console.log("🔄 Conversion {nodes, edges} → hiérarchie");
-    const nodeById = {};
-    data.nodes.forEach(n => {
-        nodeById[n.id] = { ...n, children: [] };
-    });
-    data.edges.forEach(e => {
-        const parent = nodeById[e.from];
-        const child = nodeById[e.to];
-        if (parent && child) {
-            parent.children.push(child);
-        }
-    });
+  // Définir dimensions et marges
+  const width = document.getElementById("wrapper").clientWidth;
+  const height = document.getElementById("wrapper").clientHeight;
+  const margin = { top: 20, right: 90, bottom: 30, left: 90 };
 
-    const allChildIds = new Set(data.edges.map(e => e.to));
-    const root = data.nodes.find(n => !allChildIds.has(n.id));
-    if (!root) {
-        console.error("❌ Racine introuvable");
-        return null;
-    }
+  // Nettoyer le conteneur
+  d3.select("#wrapper").selectAll("*").remove();
 
-    console.log("✅ Racine trouvée :", root);
-    return nodeById[root.id];
+  const svg = d3.select("#wrapper")
+    .append("svg")
+    .attr("viewBox", [0, 0, width, height])
+    .attr("preserveAspectRatio", "xMidYMid meet");
+
+  const g = svg.append("g")
+    .attr("transform", `translate(${margin.left},${margin.top})`);
+
+  // Appliquer layout tree
+  const treeLayout = d3.tree().size([width - 2 * margin.left, height - 2 * margin.top]);
+  treeLayout(hierarchyRoot);
+
+  // Liens
+  g.selectAll(".link")
+    .data(hierarchyRoot.links())
+    .join("path")
+    .attr("class", "link")
+    .attr("fill", "none")
+    .attr("stroke", "#ccc")
+    .attr("stroke-width", 2)
+    .attr("d", d3.linkVertical()
+      .x(d => d.x)
+      .y(d => d.y)
+    );
+
+  // Nœuds
+  const node = g.selectAll(".node")
+    .data(hierarchyRoot.descendants())
+    .join("g")
+    .attr("class", "node")
+    .attr("transform", d => `translate(${d.x},${d.y})`);
+
+  node.append("circle")
+    .attr("r", 20)
+    .attr("fill", "#1e90ff")
+    .attr("stroke", "steelblue")
+    .attr("stroke-width", 2);
+
+  node.append("text")
+    .attr("dy", ".35em")
+    .attr("text-anchor", "middle")
+    .attr("fill", "#fff")
+    .text(d => d.data.name);
 }
 
-window.skipAutoInit = true;
+async function loadAndDrawTree() {
+  try {
+    const response = await fetch("/api/tree/tree-data");
+    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+    const data = await response.json();
+    console.log("✅ Données arbre chargées :", data);
+    drawTree(data);
+  } catch (err) {
+    console.error("❌ Erreur lors du chargement des données :", err);
+    const wrapper = document.getElementById("wrapper");
+    wrapper.innerHTML = `<div style="color: red;">Erreur chargement arbre: ${err.message}</div>`;
+  }
+}
 
-// ✅ DOMContentLoaded UNIQUE
-document.addEventListener("DOMContentLoaded", async () => {
-    console.log("📦 DOMContentLoaded → Initialisation");
-
-    const treeContainer = document.getElementById("wrapper");  // Remplacement ici
-    if (!treeContainer) {
-        console.error("❌ Échec : élément #wrapper introuvable");
-        return;
-    }
-
-    try {
-        console.log("📡 Requête vers /api/tree/ ...");
-        const response = await fetch("/api/tree/");
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        const treeData = await response.json();
-        console.log("✅ Données reçues depuis API :", treeData);
-
-        const finalData = (treeData.nodes && treeData.edges)
-            ? convertToHierarchy(treeData)
-            : treeData;
-
-        if (!finalData) {
-            console.error("❌ Données finales invalides !");
-            return;
-        }
-
-        console.log("🌳 Initialisation de l’arbre D3.js ...");
-        initMainD3Tree("wrapper", finalData);  // Remplacement ici aussi
-        console.log("✅ Arbre affiché avec succès");
-
-    } catch (err) {
-        console.error("❌ Erreur lors du chargement de l’arbre :", err);
-    }
-
-    // ✅ Événements UI
-    document.getElementById("fullscreenBtn")?.addEventListener("click", () => {
-        console.log("🖥️ Clic bouton : Plein écran");
-        toggleFullscreen(treeContainer);
-    });
-
-    document.getElementById("pngBtn")?.addEventListener("click", () => {
-        console.log("📷 Clic bouton : Export PNG");
-        exportPNG(treeContainer);
-    });
-
-    document.getElementById("svgBtn")?.addEventListener("click", () => {
-        console.log("📐 Clic bouton : Export SVG");
-        exportSVG(treeContainer);
-    });
-
-    document.getElementById("treeSearch")?.addEventListener("input", (e) => {
-        console.log("🔍 Recherche en cours :", e.target.value);
-        searchNode(e.target.value, d3.select("svg"));
-    });
-
-    document.getElementById("centerBtn")?.addEventListener("click", () => {
-        console.log("🎯 Clic bouton : Centrer arbre");
-        centerTree();
-    });
+document.addEventListener("DOMContentLoaded", () => {
+  loadAndDrawTree();
 });
