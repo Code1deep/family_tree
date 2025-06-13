@@ -52,6 +52,7 @@ def create_app(config_object='config.Config', testing=False):
         app = Flask(__name__,
                    instance_relative_config=True,
                    template_folder=os.path.join(BASE_DIR, 'app', 'templates'),
+                   static_url_path='/static',
                    static_folder=os.path.join(BASE_DIR, 'static'))
         
         # Debug des chemins
@@ -204,7 +205,13 @@ def create_app(config_object='config.Config', testing=False):
             if request:  # Vérification supplémentaire
                 print(f"[REQUEST] {request.method} {request.path} -> {response.status}")
             return response
+
+        @app.route('/static/<path:filename>')
+        def custom_static(filename):
+            return send_from_directory(os.path.join(app.root_path, 'static'), filename)
+    
         configure_routes(app)
+
         return app
 
     except Exception as e:
