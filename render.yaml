@@ -6,7 +6,6 @@ services:
       pip install -r requirements.txt
       # Copie les fichiers statiques explicitement au bon endroit
       cp -r static/ /opt/render/project/src/family_tree/static/
-    startCommand: gunicorn family_tree.wsgi:app
     plan: free
     envVars:
       - key: DATABASE_URL
