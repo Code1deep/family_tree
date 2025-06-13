@@ -8,7 +8,7 @@ from flask import Flask, request, current_app, send_from_directory, url_for
 from family_tree.app.extensions import db, babel, login_manager
 import logging.config
 from family_tree.app.config import LOGGING_CONFIG
-
+from .urls import configure_routes
 
 from family_tree.interfaces.auth import auth_bp, load_user
 print("✓ Import auth_bp & load_user OK")
@@ -204,7 +204,7 @@ def create_app(config_object='config.Config', testing=False):
             if request:  # Vérification supplémentaire
                 print(f"[REQUEST] {request.method} {request.path} -> {response.status}")
             return response
-
+        configure_routes(app)
         return app
 
     except Exception as e:
