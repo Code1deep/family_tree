@@ -4,7 +4,7 @@ import os
 #import sys
 from pathlib import Path
 from flask_wtf.csrf import CSRFProtect
-from flask import Flask, request, current_app, send_from_directory
+from flask import Flask, request, current_app, send_from_directory, url_for
 from family_tree.app.extensions import db, babel, login_manager
 import logging.config
 from family_tree.app.config import LOGGING_CONFIG
@@ -134,6 +134,9 @@ def create_app(config_object='config.Config', testing=False):
 
 
         with app.app_context():
+            print("URL JS core.js:", url_for('static', filename='js/tree/core.js'))
+            print("URL image logo.png:", url_for('static', filename='images/logo.png'))
+
             # Test de connexion DB
             try:
                 db.create_all()
