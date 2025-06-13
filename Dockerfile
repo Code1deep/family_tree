@@ -17,4 +17,4 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 EXPOSE 8000
 
 # Commande de démarrage
-CMD ["gunicorn", "family_tree.wsgi:app"]
+CMD [gunicorn family_tree.wsgi:app]
