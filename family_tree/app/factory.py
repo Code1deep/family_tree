@@ -59,6 +59,19 @@ def create_app(config_object='config.Config', testing=False):
         else:
             print("⚠ app.static_folder is None")
 
+        # Debug complet des chemins
+        print(f"\n=== DEBUG BASE_DIR ===")
+        print(f"__file__: {__file__}")
+        print(f"Path(__file__).resolve(): {Path(__file__).resolve()}")
+        print(f"BASE_DIR: {BASE_DIR}")
+        print(f"BASE_DIR parent: {BASE_DIR.parent}")
+        print(f"BASE_DIR grand-parent: {BASE_DIR.parent.parent}")
+
+        # Simule ce que Flask reçoit
+        static_test_path = os.path.join(BASE_DIR, 'static')
+        print(f"STATIC PATH CALCULÉ: {static_test_path}")
+        print(f"Ce dossier existe-t-il ? {os.path.exists(static_test_path)}")
+
         # Configuration
         app.config.from_object(config_object)
         app.secret_key = 'super secret string'  # 🔐 sécurise ensuite
