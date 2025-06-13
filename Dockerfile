@@ -1,20 +1,21 @@
-# Base image officielle Python
+# Base image Python légère
 FROM python:3.11-slim
 
-# Empêche Python de bufferiser les logs (utile pour Render logs en temps réel)
-ENV PYTHONUNBUFFERED=1
-
-# Crée un répertoire de travail
+# Définir le répertoire de travail
 WORKDIR /opt/render/project/src/family_tree
 
-# Copie les fichiers nécessaires
+# Copier tout le projet dans le conteneur
 COPY . .
 
-# Met à jour pip et installe les dépendances
-RUN pip install --upgrade pip && pip install -r requirements.txt
+# Mettre à jour pip et installer les dépendances
+RUN pip install --upgrade pip
+RUN pip install -r requirements.txt
 
-# Expose le port (Render n'en a pas besoin explicitement mais utile si tu testes en local)
+# Exposer le port (optionnel car Render gère ça automatiquement)
 EXPOSE 8000
 
-# Commande de démarrage
-CMD python start_server.py family_tree.wsgi
+# Créer un script de démarrage sans ":" dans la commande
+RUN echo 'from gunicorn.app.wsgiapp import run\nif __name__ == "__main__":\n    run()' > start_server.py
+
+# Commande de démarrage : pas de ":"
+CMD ["python", "start_server.py", "family_tree.wsgi"]
