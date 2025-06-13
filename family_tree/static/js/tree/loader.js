@@ -1,5 +1,5 @@
 // static/js/tree/loader.js
-import { loadTreeData, transformDataForD3, initMainD3Tree } from './core.js';
+import { loadTreeData, transformDataForD3, initMainD3Tree } from '/static/js/tree/core.js';
 
 document.addEventListener("DOMContentLoaded", async () => {
     const treeContainer = document.getElementById("wrapper");
