@@ -132,11 +132,14 @@ def create_app(config_object='config.Config', testing=False):
         def serve_js_tree(filename):
             return send_from_directory('static/js/tree', filename, mimetype='application/javascript')
 
+        with app.test_request_context():
+            print("✅ STATIC PATH TESTS")
+            print(url_for('static', filename='js/tree/core.js'))
+            print(url_for('static', filename='js/tree/d3-tree.js'))
+            print(url_for('static', filename='images/logo.png'))
+
 
         with app.app_context():
-            print("URL JS core.js:", url_for('static', filename='js/tree/core.js'))
-            print("URL image logo.png:", url_for('static', filename='images/logo.png'))
-
             # Test de connexion DB
             try:
                 db.create_all()
