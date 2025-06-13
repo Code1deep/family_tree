@@ -1,21 +1,19 @@
-# Base image Python légère
+# Image officielle Python
 FROM python:3.11-slim
 
 # Définir le répertoire de travail
-WORKDIR /opt/render/project/src/family_tree
+WORKDIR /opt/render/project/src
 
-# Copier tout le projet dans le conteneur
+# Copier le projet dans le conteneur
 COPY . .
 
-# Mettre à jour pip et installer les dépendances
+# Installer les dépendances
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
-# Exposer le port (optionnel car Render gère ça automatiquement)
+# Exposer le port (Render le gère mais bon à garder pour clarté)
 EXPOSE 8000
 
-# Créer un script de démarrage sans ":" dans la commande
-RUN echo 'from gunicorn.app.wsgiapp import run\nif __name__ == "__main__":\n    run()' > start_server.py
+# Démarrage : gunicorn sans colon
+CMD ["gunicorn", "family_tree.wsgi", "--bind", "0.0.0.0:8000"]
 
-# Commande de démarrage : pas de ":"
-CMD ["python", "start_server.py", "family_tree.wsgi"]
