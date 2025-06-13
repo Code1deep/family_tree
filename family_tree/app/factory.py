@@ -45,7 +45,7 @@ def create_app(config_object='config.Config', testing=False):
         # Initialisation de l'app avec chemins absolus
         app = Flask(__name__,
                    instance_relative_config=True,
-                   template_folder=os.path.join(BASE_DIR, 'templates'),
+                   template_folder=os.path.join(BASE_DIR, 'app', 'templates'),
                    static_folder=os.path.join(BASE_DIR, 'static'))
         
         # Debug des chemins
