@@ -5,8 +5,8 @@ console.log("🧠 core.js chargé");
 const wrapper = document.getElementById("wrapper");
 console.log("🔍 wrapper in core.js ?", wrapper);
 
-
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js";
+
 import { transformDataForD3 } from './d3-tree.js';
 import {
   debounce,
@@ -296,6 +296,16 @@ export async function drawTree(data) {
 // ===========================
 // Nouvelle fonction wrapper qui choisit la bonne méthode d’affichage selon la forme des données
 export async function renderFamilyTree(containerId, data) {
+    console.log("✅ D3 chargé :", typeof d3); 
+    console.log("📌 D3 version :", d3.version);
+    console.log("🛠 D3 fonctions : ", Object.keys(d3));
+    try {
+    d3.select('body').append('div').text('D3 fonctionne!');
+    console.log('✅ Test D3 réussi');
+    } catch (e) {
+    console.error('❌ Échec test D3:', e);
+    }
+
     if (data?.nodes && data?.edges) {
         console.log("➡️ Données au format {nodes, edges} détectées → drawTree()");
         await drawTree(data);
@@ -305,24 +315,6 @@ export async function renderFamilyTree(containerId, data) {
     }
 }
 
-// ===========================
-// Chargement automatique à l’ouverture de page
-document.addEventListener('DOMContentLoaded', async () => {
-    const container = document.getElementById("wrapper");
-    if (container) {
-        try {
-            const res = await fetch("/api/tree/tree-data");
-            if (!res.ok) throw new Error("Données arbre introuvables");
-            const data = await res.json();
-            await renderFamilyTree("wrapper", data);
-        } catch (err) {
-            alert("Erreur lors du chargement de l’arbre généalogique.");
-            console.error(err);
-        }
-    }
-});
-
-// ===========================
 // Fonctions exportées restantes (zoom, export, recherche, chargement...)
 export function zoomIn() {
     currentScale = Math.min(currentScale * 1.2, 4);
