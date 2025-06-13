@@ -7,7 +7,7 @@ console.log("🔍 wrapper in core.js ?", wrapper);
 
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js";
 
-import { transformDataForD3 } from './d3-tree.js';
+import { transformDataForD3 } from '/static/js/tree/d3-tree.js';
 import {
   debounce,
   throttle,
