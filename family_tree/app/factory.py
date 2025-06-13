@@ -4,7 +4,7 @@ import os
 #import sys
 from pathlib import Path
 from flask_wtf.csrf import CSRFProtect
-from flask import Flask, request, current_app
+from flask import Flask, request, current_app, send_from_directory
 from family_tree.app.extensions import db, babel, login_manager
 import logging.config
 from family_tree.app.config import LOGGING_CONFIG
@@ -103,6 +103,11 @@ def create_app(config_object='config.Config', testing=False):
         @app.route('/')
         def home():
             return "Bienvenue sur Family Tree API", 200
+
+        @app.route('/static/js/tree/<path:filename>')
+        def serve_js_tree(filename):
+            return send_from_directory('static/js/tree', filename, mimetype='application/javascript')
+
 
         with app.app_context():
             # Test de connexion DB
