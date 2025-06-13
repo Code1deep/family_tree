@@ -35,6 +35,12 @@ print("\n=== CHEMIN PYTHON ===")
 
 _app_creation_count = 0
 
+import os
+for root, dirs, files in os.walk(str(BASE_DIR / 'static')):
+    for file in files:
+        print(f"STATIC FILE FOUND: {os.path.join(root, file)}")
+
+
 def create_app(config_object='config.Config', testing=False):
     """Factory d'application Flask avec debug complet"""
     global _app_creation_count
