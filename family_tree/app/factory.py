@@ -53,6 +53,11 @@ def create_app(config_object='config.Config', testing=False):
         print(f"Instance path: {app.instance_path}")
         print(f"Template path: {app.template_folder}")
         print(f"Static path: {app.static_folder}")
+        if app.static_folder is not None:
+            print(f"Static folder path Flask: {app.static_folder}")
+            print(f"Static folder exists: {os.path.exists(app.static_folder)}")
+        else:
+            print("⚠ app.static_folder is None")
 
         # Configuration
         app.config.from_object(config_object)
