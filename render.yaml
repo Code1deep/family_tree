@@ -1,7 +1,7 @@
 services:
   - type: web
     name: family-tree-app
-    env: docker
+    env: python
     buildCommand: |
       pip install -r requirements.txt
       # Copie les fichiers statiques explicitement au bon endroit
