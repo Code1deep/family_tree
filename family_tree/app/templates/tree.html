@@ -14,7 +14,7 @@
   <input id="treeSearch" type="text" class="form-control d-inline-block w-auto" placeholder="🔍 ابحث عن اسم" />
 </div>
 
-<!-- 📐 Nouveau conteneur de l’arbre -->
+<!-- 📐 Conteneur de l’arbre -->
 <main id="wrapper" class="tree-wrapper mb-5" style="width: 100%; height: 70vh; position: relative;"></main>
 
 <!-- 🧍 Modal Bootstrap : formulaire -->
@@ -36,51 +36,35 @@
   </div>
 </div>
 
-<script type="module">
-  // Charger dynamiquement tree.js une fois que le DOM est prêt
-  document.addEventListener("DOMContentLoaded", async () => {
-    console.log("📦 DOM complètement chargé → import de tree.js");
-    try {
-      await import("/static/js/tree/tree.js");
-      console.log("✅ tree.js importé avec succès");
-    } catch (err) {
-      console.error("❌ Erreur lors de l'import de tree.js :", err);
-    }
-  });
-</script>
-
 {% endblock %}
 
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const test = (id, label) => {
-    const el = document.getElementById(id);
-    if (el) {
-      el.addEventListener("click", () => {
-        console.log(`🟢 ${label} cliqué (ID: #${id})`);
-      });
-    } else {
-      console.warn(`❌ Élément non trouvé : #${id}`);
-    }
-  };
+{% block extra_js %}
+<!-- 🌳 Charger D3.js AVANT tout -->
+<script src="https://d3js.org/d3.v7.min.js"></script>
 
-  test("fullscreenBtn", "Bouton plein écran");
-  test("centerBtn", "Bouton centrer");
-  test("pngBtn", "Bouton export PNG");
-  test("svgBtn", "Bouton export SVG");
+<!-- 🌟 Tes modules -->
+<script type="module" src="{{ url_for('static', filename='js/tree/utils.js') }}"></script>
+<script type="module" src="{{ url_for('static', filename='js/tree/d3-tree.js') }}"></script>
+<script type="module" src="{{ url_for('static', filename='js/tree/core.js') }}"></script>
 
-  const search = document.getElementById("treeSearch");
-  if (search) {
-    search.addEventListener("input", () => {
-      console.log(`🔍 Recherche : ${search.value}`);
-    });
-  } else {
-    console.warn("❌ Champ recherche introuvable : #treeSearch");
+<!-- 💡 Import dynamique tree.js après DOM prêt -->
+<script type="module">
+document.addEventListener("DOMContentLoaded", async () => {
+  console.log("📦 DOM complètement chargé → import de tree.js");
+  console.log("🔎 typeof d3 :", typeof d3); // Vérification immédiate
+  if (typeof d3 === "undefined") {
+    console.error("❌ D3.js n'est pas chargé !");
+    return;
+  }
+  try {
+    await import("/static/js/tree/tree.js");
+    console.log("✅ tree.js importé avec succès");
+  } catch (err) {
+    console.error("❌ Erreur lors de l'import de tree.js :", err);
   }
 });
 </script>
 
-{% block extra_js %}
 <style>
 /* 🌳 Style D3.js */
 .node circle {
@@ -111,9 +95,34 @@ document.addEventListener("DOMContentLoaded", () => {
   stroke-width: 4px;
 }
 </style>
-
-<!-- 🧠 JS modules -->
-<script type="module" src="{{ url_for('static', filename='js/tree/utils.js') }}"></script>
-<script type="module" src="{{ url_for('static', filename='js/tree/d3-tree.js') }}"></script>
-<script type="module" src="{{ url_for('static', filename='js/tree/core.js') }}"></script>
 {% endblock %}
+
+<script>
+// 🔘 Boutons + recherche
+document.addEventListener("DOMContentLoaded", () => {
+  const test = (id, label) => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.addEventListener("click", () => {
+        console.log(`🟢 ${label} cliqué (ID: #${id})`);
+      });
+    } else {
+      console.warn(`❌ Élément non trouvé : #${id}`);
+    }
+  };
+
+  test("fullscreenBtn", "Bouton plein écran");
+  test("centerBtn", "Bouton centrer");
+  test("pngBtn", "Bouton export PNG");
+  test("svgBtn", "Bouton export SVG");
+
+  const search = document.getElementById("treeSearch");
+  if (search) {
+    search.addEventListener("input", () => {
+      console.log(`🔍 Recherche : ${search.value}`);
+    });
+  } else {
+    console.warn("❌ Champ recherche introuvable : #treeSearch");
+  }
+});
+</script>
