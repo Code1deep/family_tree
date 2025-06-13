@@ -52,7 +52,7 @@ def create_app(config_object='config.Config', testing=False):
         app = Flask(__name__,
                    instance_relative_config=True,
                    template_folder=os.path.join(BASE_DIR, 'app', 'templates'),
-                   static_folder=os.path.join(BASE_DIR, 'static'))
+                   static_folder=os.path.join(BASE_DIR, 'static', 'static'))
         
         # Debug des chemins
         print(f"\n=== CONFIGURATION PATHS ===")
