@@ -1,17 +1,19 @@
 # infrastructure/persistence/repositories/person_repo.py
-
 from family_tree.domain.models.person import Person
 from family_tree.app.extensions import db
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy import func, literal, literal_column
 from family_tree.domain.services.tree_service import TreeService
 from typing import Dict, List, Optional
 import logging
+from sqlalchemy.orm.scoping import scoped_session
+from sqlalchemy import or_, func
 
 logger = logging.getLogger(__name__)
 
 class PersonRepository:
-    def __init__(self, session: Session = db.session): 
+    def __init__(self, session: scoped_session = db.session):
         self.session = session
 
     def delete(self, person):
@@ -27,8 +29,11 @@ class PersonRepository:
         print(f">>> DEBUG: appel à get({person_id}) dans PersonRepository")
         return self.session.get(Person, person_id)
 
-    def get_all(self):
-        return self.session.query(Person).all()
+    def get_all(self, gender=None):
+        query = self.session.query(Person)
+        if gender:
+            query = query.filter(Person.gender.ilike(gender))  # insensible à la casse
+        return query.all()
 
     def get_person_with_relatives(self, person_id):
         if not person_id or person_id <= 0:
@@ -62,19 +67,8 @@ class PersonRepository:
         return self.get_all()
 
     def get_children(self, parent_id):
-        """
-        Renvoie les enfants pour un parent donné.
-        parent_id peut être un entier ou un tuple/list contenant un entier.
-        """
-        try:
-            # Si parent_id est un tuple ou une liste, en extraire le premier élément
-            if isinstance(parent_id, (list, tuple)):
-                parent_id = parent_id[0]
-            else:
-                # Forcer la conversion au cas où
-                parent_id = int(parent_id)
-        except Exception as e:
-            raise ValueError(f"parent_id doit être convertible en entier, obtenu : {parent_id}")
+        if isinstance(parent_id, Person):
+            parent_id = parent_id.id
 
         return self.session.query(Person).filter(
             (Person.father_id == parent_id) | (Person.mother_id == parent_id)
@@ -136,14 +130,21 @@ class PersonRepository:
             logger.error(f"Error generating tree: {str(e)}")
             return {'nodes': [], 'edges': []}
 
-    def get_by_name(self, name):
-        return self.session.query(Person)\
+    def get_by_name(self, name: str):
+        pattern = f"%{name}%"
+    
+        # Utilisation de func.ilike() partout
+        return (
+            self.session.query(Person)
             .filter(
-                (Person.first_name + " " + Person.last_name).ilike(f'%{name}%') |
-                Person.first_name.ilike(f'%{name}%') |
-                Person.last_name.ilike(f'%{name}%')
-            )\
+                or_(
+                    func.ilike(func.concat(Person.first_name, ' ', Person.last_name), pattern),
+                    func.ilike(Person.first_name, pattern),
+                    func.ilike(Person.last_name, pattern)
+                )
+            )
             .all()
+        )
 
     def update(self, person_id, updated_data):
         person = self.get(person_id)
@@ -156,9 +157,3 @@ class PersonRepository:
 
         self.session.commit()
         return person
-
-    def get_all(self, gender=None):
-        query = self.session.query(Person)
-        if gender:
-            query = query.filter(Person.gender.ilike(gender))  # insensible à la casse
-        return query.all()
