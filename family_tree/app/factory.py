@@ -174,7 +174,7 @@ def create_app(config_object='config.Config', testing=False):
                 from family_tree.interfaces.api.resources.person.init_person_service import init_person_resources
                 from family_tree.interfaces.api.resources.tree.init_tree_service import init_tree_resources
 
-                repo = PersonRepository(db.session())
+                repo = PersonRepository(db.session)
                 person_service = PersonService(repo)
                 
                 init_person_resources(db_session)
