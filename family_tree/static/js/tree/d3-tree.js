@@ -80,7 +80,7 @@ export function initSubD3Tree(containerId, data) {
         .on("zoom", event => g.attr("transform", event.transform));
     svg.call(zoom);
 
-    const treeLayout = d3.tree().size([width, height]);
+    const treeLayout = d3.tree().size([height, width]);
     const root = d3.hierarchy(data);
     treeLayout(root);
 
@@ -88,15 +88,16 @@ export function initSubD3Tree(containerId, data) {
         .data(root.links())
         .enter().append("path")
         .attr("class", "link")
-        .attr("d", d3.linkHorizontal()
-            .x(d => d.y)
-            .y(d => d.x));
+        .attr("d", d3.linkVertical()
+            .x(d => d.x)
+            .y(d => d.y));
 
     const node = g.selectAll(".node")
         .data(root.descendants())
         .enter().append("g")
         .attr("class", "node")
-        .attr("transform", d => `translate(${d.y},${d.x})`);
+        .attr("transform", d => `translate(${d.x},${d.y})`);
+
 
     node.append("circle").attr("r", 6);
 
