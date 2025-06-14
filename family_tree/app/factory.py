@@ -131,7 +131,7 @@ def create_app(config_object='config.Config', testing=False):
 
         @app.route('/static/js/tree/<path:filename>')
         def serve_js_tree(filename):
-            return send_from_directory('static/js/tree', filename, mimetype='application/javascript')
+            return send_from_directory(os.path.join(BASE_DIR, 'static', 'js', 'tree'), filename)
 
         with app.test_request_context():
             print("✅ STATIC PATH TESTS")
@@ -139,7 +139,7 @@ def create_app(config_object='config.Config', testing=False):
             print(url_for('static', filename='js/tree/d3-tree.js'))
             print(url_for('static', filename='images/logo.png'))
 
-
+    
         with app.app_context():
             # Test de connexion DB
             try:
@@ -207,10 +207,9 @@ def create_app(config_object='config.Config', testing=False):
             return response
 
         # Route générique pour tous les fichiers statiques
-        @app.route('/static/<path:subpath>')
-        def serve_static(subpath):
-            static_dir = Path(__file__).parent.parent / 'static'
-            return send_from_directory(static_dir, subpath)
+        @app.route('/static/js/tree/<filename>')
+        def serve_tree_js(filename):
+            return send_from_directory(os.path.join(BASE_DIR, 'static', 'js', 'tree'), filename)
 
         # Route spécifique pour les JS (double sécurité)
         @app.route('/js/tree/<filename>')
