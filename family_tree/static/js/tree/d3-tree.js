@@ -99,12 +99,12 @@ export function initSubD3Tree(containerId, data) {
         .attr("transform", d => `translate(${d.x},${d.y})`);
 
 
-    node.append("circle").attr("r", 6);
+    node.append("circle").attr("r", 12);
 
     node.append("text")
-        .attr("dy", 3)
-        .attr("x", d => d.children ? -10 : 10)
-        .style("text-anchor", d => d.children ? "end" : "start")
+        .attr("dy", "0.31em")
+        .attr("x", d => d.children ? -15 : 15)
+        .style("font", "14px sans-serif");  // texte plus grand
         .text(d => d.data.name);
 
     node.append("text")
