@@ -104,8 +104,9 @@ export function initSubD3Tree(containerId, data) {
     node.append("text")
         .attr("dy", "0.31em")
         .attr("x", d => d.children ? -15 : 15)
-        .style("font", "14px sans-serif");  // texte plus grand
+        .style("text-anchor", d => d.children ? "end" : "start")
         .text(d => d.data.name);
+        .style("font", "14px sans-serif");
 
     node.append("text")
         .attr("dy", "2.5em")
