@@ -316,8 +316,8 @@ function renderTreeFromRoot(rootId, nodeById, svg, width, height) {
 
     const root = d3.hierarchy(rootData);
 
-    const treeLayout = d3.tree()
-        .size([window.innerWidth - 100, window.innerHeight - 200]);
+    const treeLayout = d3.tree().size([height, width]);  // [y, x] pour vertical
+    
     treeLayout(root);
 
     // Liens
