@@ -80,7 +80,7 @@ export function initSubD3Tree(containerId, data) {
         .on("zoom", event => g.attr("transform", event.transform));
     svg.call(zoom);
 
-    const treeLayout = d3.tree().size([height, width]);
+    const treeLayout = d3.tree().size([width, height]);
     const root = d3.hierarchy(data);
     treeLayout(root);
 
