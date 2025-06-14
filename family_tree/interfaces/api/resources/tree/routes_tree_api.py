@@ -50,3 +50,4 @@ def register_tree_api_routes(bp, person_service):
         visualizer = get_visualizer()
         data = visualizer.generate_familytree_data()
         return jsonify(data)
+
