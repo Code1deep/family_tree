@@ -39,10 +39,19 @@
 {% endblock %}
 
 {% block extra_js %}
+
 <!-- 🌳 Charger D3.js AVANT tout -->
+<!-- Charger D3.js en premier -->
 <script src="https://d3js.org/d3.v7.min.js"></script>
+<script>
+  console.log("D3 global (inline):", window.d3);  // <-- AJOUTEZ ICI
+</script>
 
 <!-- 🌟 Tes modules -->
+ <script>
+  console.log("D3 global (inline):", window.d3);  // <-- AJOUTEZ ICI
+</script>
+
 <script type="module" src="{{ url_for('static', filename='js/tree/utils.js') }}"></script>
 <script type="module" src="{{ url_for('static', filename='js/tree/d3-tree.js') }}"></script>
 <script type="module" src="{{ url_for('static', filename='js/tree/core.js') }}"></script>
