@@ -73,12 +73,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.error("❌ D3.js n'est pas chargé !");
     return;
   }
-  try {
-    await import("/static/js/tree/tree.js");
-    console.log("✅ tree.js importé avec succès");
-  } catch (err) {
-    console.error("❌ Erreur lors de l'import de tree.js :", err);
-  }
+
 });
 </script>
 
