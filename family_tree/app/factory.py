@@ -8,7 +8,7 @@ from flask import Flask, request, current_app, send_from_directory, url_for
 from family_tree.app.extensions import db, babel, login_manager
 import logging.config
 from family_tree.app.config import LOGGING_CONFIG
-from .urls import configure_routes
+from pathlib import Path
 
 from family_tree.interfaces.auth import auth_bp, load_user
 print("✓ Import auth_bp & load_user OK")
@@ -206,12 +206,18 @@ def create_app(config_object='config.Config', testing=False):
                 print(f"[REQUEST] {request.method} {request.path} -> {response.status}")
             return response
 
-        @app.route('/static/<path:filename>')
-        def custom_static(filename):
-            return send_from_directory(os.path.join(app.root_path, 'static'), filename)
-    
-        configure_routes(app)
+        # Route générique pour tous les fichiers statiques
+        @app.route('/static/<path:subpath>')
+        def serve_static(subpath):
+            static_dir = Path(__file__).parent.parent / 'static'
+            return send_from_directory(static_dir, subpath)
 
+        # Route spécifique pour les JS (double sécurité)
+        @app.route('/js/tree/<filename>')
+        def serve_js(filename):
+            js_dir = Path(__file__).parent.parent / 'static' / 'js' / 'tree'
+            return send_from_directory(js_dir, filename)
+        
         return app
 
     except Exception as e:
