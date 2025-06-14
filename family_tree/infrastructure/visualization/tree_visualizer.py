@@ -11,7 +11,7 @@ from family_tree.domain.models.person import Person
 from family_tree.domain.services.tree_service import TreeService 
 
 def get_visualizer():
-    return FamilyTreeVisualizer(current_app, PersonRepository(db.session()))
+    return FamilyTreeVisualizer(current_app, PersonRepository(db.session))
 
 class FamilyTreeVisualizer:
     def __init__(self, app, person_repo: PersonRepository):
