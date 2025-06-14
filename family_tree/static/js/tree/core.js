@@ -340,7 +340,7 @@ function renderTreeFromRoot(rootId, nodeById, svg, width, height) {
         .attr("transform", d => `translate(${d.y},${d.x})`);
 
     node.append("circle")
-        .attr("r", 5)
+        .attr("r", 15)
         .attr("fill", d => d.children ? "#555" : "#999");
 
     node.append("text")
