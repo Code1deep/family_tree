@@ -243,13 +243,21 @@ export async function drawTree(data) {
         });
 
         // Détecter racines
-        const rootCandidates = data.nodes.filter(n => !data.edges.some(e => e.to === n.id));
+        const rootCandidates = data.nodes.filter(n => {
+            // Soit le noeud n'a pas de parent dans les edges
+            // Soit ses parents ne sont pas dans les nodes (cas des données incomplètes)
+            const parentEdges = data.edges.filter(e => e.to === n.id);
+            return parentEdges.length === 0 || 
+                    parentEdges.some(e => !data.nodes.some(n => n.id === e.from));
+        });
         console.log("🌳 Ancêtres racines détectés :", rootCandidates.map(n => `${n.id} (${n.name || ''})`));
 
         if (rootCandidates.length === 0) {
-            console.error("❌ Aucun ancêtre trouvé comme racine");
-            return;
+            // Fallback: prendre le premier noeud disponible
+            rootCandidates.push(data.nodes[0]);
+            console.warn("⚠ Aucune racine trouvée, utilisation du premier noeud comme fallback");
         }
+
 
         // Ajouter sélecteur racine
         addRootSelector(rootCandidates, nodeById, data, svg, width, height);
@@ -294,6 +302,10 @@ function addRootSelector(rootCandidates, nodeById, data, svg, width, height) {
  * Render tree à partir d’une racine choisie
  */
 function renderTreeFromRoot(rootId, nodeById, svg, width, height) {
+  if (!nodeById[rootId]) {
+    console.error(`Noeud ${rootId} non trouvé dans nodeById`);
+    return;
+  }
     svg.selectAll("*").remove();
 
     const rootData = nodeById[rootId];
