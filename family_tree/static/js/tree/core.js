@@ -1,11 +1,10 @@
 // static/js/tree/core.js
 console.log("✔ core.js initialisé");
-
 console.log("🧠 core.js chargé");
+console.log("📦 [core.js] D3 dispo ?", window.d3, typeof d3);
+
 const wrapper = document.getElementById("wrapper");
 console.log("🔍 wrapper in core.js ?", wrapper);
-
-import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js";
 
 import { transformDataForD3 } from '/static/js/tree/d3-tree.js';
 import {
@@ -17,10 +16,9 @@ import {
   buildTreeFromEdges,
   centerTree,
   searchNode
-} from './utils.js';
+} from '/static/js/tree/utils.js';
 
 let currentScale = 1;
-
 // ===========================
 // Fonction principale d’affichage D3.js (version hiérarchique)
 export function initMainD3Tree(containerId, data) {
