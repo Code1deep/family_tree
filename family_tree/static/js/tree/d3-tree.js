@@ -22,6 +22,11 @@ style.innerHTML = `
     stroke: #ccc;
     stroke-width: 2px;
 }
+#rootSelector {
+  padding: 4px;
+  font-size: 14px;
+}
+
 `;
 document.head.appendChild(style);
 
