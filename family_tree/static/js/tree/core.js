@@ -206,16 +206,15 @@ export function initMainD3Tree(containerId, data) {
         centerTree(d3.select(svgNode).select("g"), svgNode.parentElement);
     }, 700);
 }
-
-// ===========================
-// Fonction d’affichage D3.js (version nodes+edges)
+/**
+ * Fonction d’affichage D3.js (version nodes+edges avec sélection dynamique de racine)
+ */
 export async function drawTree(data) {
     console.log("✅ drawTree() started...");
     console.log("🟢 Données reçues pour dessiner l'arbre :", data);
     try {
         if (!data || !data.nodes || !data.edges) {
             console.error("❌ Données invalides pour drawTree:", data);
-            console.error("❌ Données manquantes ou invalides :", data);
             return;
         }
 
@@ -232,65 +231,114 @@ export async function drawTree(data) {
             .append("g")
             .attr("transform", "translate(80,40)");
 
-        // Convertir data.nodes et data.edges en structure hiérarchique
+        // Indexation des noeuds
         const nodeById = {};
         data.nodes.forEach(n => nodeById[n.id] = { ...n, children: [] });
 
+        // Construction des liens enfants
         data.edges.forEach(e => {
             const parent = nodeById[e.from];
             const child = nodeById[e.to];
             if (parent && child) parent.children.push(child);
         });
 
-        // Trouver la racine (aucun parent)
-        const childIds = new Set(data.edges.map(e => e.to));
-        const rootNode = data.nodes.find(n => !childIds.has(n.id));
-        if (!rootNode) {
-            console.error("❌ Racine introuvable dans les données");
+        // Détecter racines
+        const rootCandidates = data.nodes.filter(n => !data.edges.some(e => e.to === n.id));
+        console.log("🌳 Ancêtres racines détectés :", rootCandidates.map(n => `${n.id} (${n.name || ''})`));
+
+        if (rootCandidates.length === 0) {
+            console.error("❌ Aucun ancêtre trouvé comme racine");
             return;
         }
 
-        const root = d3.hierarchy(nodeById[rootNode.id]);
+        // Ajouter sélecteur racine
+        addRootSelector(rootCandidates, nodeById, data, svg, width, height);
 
-        const treeLayout = d3.tree().size([height, width - 160]);
-        treeLayout(root);
-
-        // Liens
-        svg.selectAll("path.link")
-            .data(root.links())
-            .join("path")
-            .attr("class", "link")
-            .attr("fill", "none")
-            .attr("stroke", "#ccc")
-            .attr("stroke-width", 2)
-            .attr("d", d3.linkHorizontal()
-                .x(d => d.y)
-                .y(d => d.x));
-
-        // Noeuds
-        const node = svg.selectAll("g.node")
-            .data(root.descendants())
-            .join("g")
-            .attr("class", "node")
-            .attr("transform", d => `translate(${d.y},${d.x})`);
-
-        node.append("circle")
-            .attr("r", 5)
-            .attr("fill", d => d.children ? "#555" : "#999");
-
-        node.append("text")
-            .attr("dy", "0.31em")
-            .attr("x", d => d.children ? -10 : 10)
-            .attr("text-anchor", d => d.children ? "end" : "start")
-            .text(d => d.data.name || `ID ${d.data.id}`)
-            .style("font", "12px sans-serif");
-
-        console.log("✅ drawTree() terminé avec succès");
     } catch (err) {
         console.error("❌ Erreur drawTree():", err);
     }
 }
 
+/**
+ * Ajoute un sélecteur dynamique de racine à l’interface
+ */
+function addRootSelector(rootCandidates, nodeById, data, svg, width, height) {
+    let selector = document.getElementById("rootSelector");
+    if (!selector) {
+        selector = document.createElement("select");
+        selector.id = "rootSelector";
+        selector.style.position = "absolute";
+        selector.style.top = "10px";
+        selector.style.left = "10px";
+        selector.style.zIndex = "1000";
+        document.body.appendChild(selector);
+    }
+    selector.innerHTML = ""; // Clear previous
+
+    rootCandidates.forEach(n => {
+        const opt = document.createElement("option");
+        opt.value = n.id;
+        opt.textContent = `${n.name || 'ID ' + n.id} (ID: ${n.id})`;
+        selector.appendChild(opt);
+    });
+
+    selector.addEventListener("change", () => {
+        renderTreeFromRoot(selector.value, nodeById, svg, width, height);
+    });
+
+    // Afficher le premier racine par défaut
+    renderTreeFromRoot(selector.value || rootCandidates[0].id, nodeById, svg, width, height);
+}
+
+/**
+ * Render tree à partir d’une racine choisie
+ */
+function renderTreeFromRoot(rootId, nodeById, svg, width, height) {
+    svg.selectAll("*").remove();
+
+    const rootData = nodeById[rootId];
+    if (!rootData) {
+        console.error("❌ Racine invalide :", rootId);
+        return;
+    }
+
+    const root = d3.hierarchy(rootData);
+
+    const treeLayout = d3.tree().size([height, width - 160]);
+    treeLayout(root);
+
+    // Liens
+    svg.selectAll("path.link")
+        .data(root.links())
+        .join("path")
+        .attr("class", "link")
+        .attr("fill", "none")
+        .attr("stroke", "#ccc")
+        .attr("stroke-width", 2)
+        .attr("d", d3.linkHorizontal()
+            .x(d => d.y)
+            .y(d => d.x));
+
+    // Noeuds
+    const node = svg.selectAll("g.node")
+        .data(root.descendants())
+        .join("g")
+        .attr("class", "node")
+        .attr("transform", d => `translate(${d.y},${d.x})`);
+
+    node.append("circle")
+        .attr("r", 5)
+        .attr("fill", d => d.children ? "#555" : "#999");
+
+    node.append("text")
+        .attr("dy", "0.31em")
+        .attr("x", d => d.children ? -10 : 10)
+        .attr("text-anchor", d => d.children ? "end" : "start")
+        .text(d => d.data.name || `ID ${d.data.id}`)
+        .style("font", "12px sans-serif");
+
+    console.log(`✅ Arbre dessiné à partir de la racine ID ${rootId}`);
+}
 // ===========================
 // Nouvelle fonction wrapper qui choisit la bonne méthode d’affichage selon la forme des données
 export async function renderFamilyTree(containerId, data) {
