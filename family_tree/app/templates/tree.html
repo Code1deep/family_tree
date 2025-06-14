@@ -44,7 +44,12 @@
 <!-- Charger D3.js en premier -->
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <script>
-  console.log("D3 global (inline):", window.d3);  // <-- AJOUTEZ ICI
+  console.log("✅ D3 global juste après chargement : ", window.d3);
+  if (window.d3) {
+    console.log("✔ D3 version (window.d3.version) :", window.d3.version);
+  } else {
+    console.error("❌ D3 n’est PAS défini après chargement du script !");
+  }
 </script>
 
 <!-- 🌟 Tes modules -->
