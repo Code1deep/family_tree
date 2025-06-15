@@ -19,7 +19,7 @@ import {
 } from '/static/js/tree/utils.js';
 
 let currentScale = 1;
-
+// ===========================
 // Fonction principale d’affichage D3.js (version hiérarchique)
 export function initMainD3Tree(containerId, data) {
     const margin = { top: 50, right: 200, bottom: 50, left: 200 };
@@ -34,16 +34,22 @@ export function initMainD3Tree(containerId, data) {
             .attr("id", "tree-style")
             .html(`
                 .node circle {
+                    fill: #fff !important;
+                    stroke: steelblue !important;
                     stroke-width: 5px !important;
                     r: 55px !important;
                 }
                 .node text {
                     font: 24px 'Arial', sans-serif !important;
                     font-weight: bold !important;
+                    fill: #333 !important;
                 }
                 .link {
+                    stroke: #666 !important;
                     stroke-width: 5px !important;
+                    stroke-opacity: 0.9 !important;
                 }
+        
                 .tooltip { position: absolute; text-align: center; padding: 5px; font: 12px sans-serif; background: lightsteelblue; border: 1px solid #aaa; pointer-events: none; border-radius: 3px; }
         
                 .tree-controls {
@@ -109,6 +115,9 @@ export function initMainD3Tree(containerId, data) {
         .append("g")
         .attr("transform", `translate(${margin.left},${margin.top})`);
 
+    const hierarchyData = d3.hierarchy(data);
+    setNodeLevels(hierarchyData); // `root` est ton nœud racine D3
+
     const treeLayout = d3.tree().nodeSize([30, 300]);
 
     const root = d3.hierarchy(data, d => d.children || d._children);
@@ -130,6 +139,13 @@ export function initMainD3Tree(containerId, data) {
         .attr("class", "tooltip")
         .style("position", "absolute")
         .style("opacity", 0);
+
+    function setNodeLevels(node, level = 0) {
+        node.level = level;
+        if (node.children) {
+            node.children.forEach(child => setNodeLevels(child, level + 1));
+        }
+    }
 
     function update(source) {
         const treeData = treeLayout(root);
@@ -155,6 +171,9 @@ export function initMainD3Tree(containerId, data) {
 
         nodeEnter.append('circle')
             .attr('r', 1e-6)
+            .attr("class", d => `ft-node ft-gener-${d.data.level}`)
+            .attr("stroke", "steelblue")
+            .attr("stroke-width", 2)
             .style('fill', d => d._children ? "#555" : "#999");
 
         nodeEnter.append('text')
@@ -306,7 +325,6 @@ export async function drawTree(data) {
             rootCandidates.push(data.nodes[0]);
             console.warn("⚠ Aucune racine trouvée, utilisation du premier noeud comme fallback");
         }
-
 
         // Ajouter sélecteur racine
         addRootSelector(rootCandidates, nodeById, data, svg, width, height);
