@@ -99,6 +99,6 @@ def full_initialize():
         add_level_4()
 
 # ✅ Tu peux appeler full_initialize() depuis ton serveur Flask ou ton script principal.
-if __name__ == '__main__':
-    print("\n=== appeler full_initialize() depuis ton serveur Flask ou ton script principal ===")
-    full_initialize()
+#if __name__ == '__main__':
+   # print("\n=== appeler full_initialize() depuis ton serveur Flask ou ton script principal ===")
+    #full_initialize()
