@@ -36,18 +36,19 @@ export function initMainD3Tree(containerId, data) {
                 .node circle { 
                     fill: #fff;
                     stroke: steelblue;
-                    stroke-width: 6px;
-                    r: 80px; /* Taille fixe des cercles */
+                    stroke-width: 3px;
+                    r: 15px; /* Taille fixe des cercles */
                 }
                 .node text { 
-                    font: 14px sans-serif; /* Texte plus grand */
-                    font-weight: bold;
+                    font: 16px sans-serif; /* Texte plus grand */
+                    font-weight: 600;
+                    fill: #333;
                 }
                 .link { 
                     fill: none; 
                     stroke: #666; /* Couleur plus visible */
                     stroke-width: 3px; /* Branches plus épaisses */
-                    stroke-opacity: 0.8;
+                    stroke-opacity: 0.9;
                 }
                 .tooltip { position: absolute; text-align: center; padding: 5px; font: 12px sans-serif; background: lightsteelblue; border: 1px solid #aaa; pointer-events: none; border-radius: 3px; }
         
@@ -356,63 +357,67 @@ function addRootSelector(rootCandidates, nodeById, data, svg, width, height) {
  * Render tree à partir d’une racine choisie
  */
 function renderTreeFromRoot(rootId, nodeById, svg, width, height) {
-    if (!nodeById[rootId]) {
-        console.error(`Noeud ${rootId} non trouvé dans nodeById`);
-        return;
-    }
+    if (!nodeById[rootId]) return;
     
     svg.selectAll("*").remove();
     const rootData = nodeById[rootId];
     const root = d3.hierarchy(rootData);
 
-    // Ajustez ces valeurs pour contrôler l'espacement
-    const nodeSize = 120; // Augmentez pour plus d'espace entre les niveaux
-    const treeWidth = width - 200;
-
-    // Configuration pour un arbre vertical avec meilleur espacement
+    // Configuration de l'arbre
     const treeLayout = d3.tree()
-        .nodeSize([nodeSize, treeWidth / 3]) // [hauteur, largeur] entre nœuds
-        .separation((a, b) => 1.2); // Espace supplémentaire entre frères
+        .nodeSize([100, 250]) // [espace vertical, espace horizontal]
+        .separation((a, b) => 1.5);
 
     treeLayout(root);
 
-    // Liens verticaux avec ajustement de la courbure
-    const linkGenerator = d3.linkVertical()
-        .x(d => d.x)
-        .y(d => d.y);
+    // Calcul du centrage
+    const treeWidth = d3.max(root.descendants(), d => d.y);
+    const xOffset = (width - treeWidth) / 2;
+    const yOffset = 50;
 
+    // Liens
     svg.selectAll("path.link")
         .data(root.links())
         .join("path")
         .attr("class", "link")
-        .attr("stroke-width", 3) // Branches plus épaisses
-        .attr("d", linkGenerator);
+        .attr("d", d3.linkVertical()
+            .x(d => d.y + xOffset)
+            .y(d => d.x + yOffset));
 
-    // Noeuds avec taille augmentée
+    // Noeuds
     const node = svg.selectAll("g.node")
         .data(root.descendants())
         .join("g")
         .attr("class", "node")
-        .attr("transform", d => `translate(${d.x},${d.y})`);
+        .attr("transform", d => `translate(${d.y + xOffset},${d.x + yOffset})`);
 
+    // Cercles plus grands
     node.append("circle")
-        .attr("r", 10) // Taille des cercles augmentée
-        .attr("fill", d => d.children ? "#555" : "#999")
-        .attr("stroke", "steelblue")
-        .attr("stroke-width", 2);
+        .attr("r", 15)
+        .attr("fill", d => d.children ? "#4a8fd9" : "#9bc2e6")
+        .attr("stroke", "#2c6cb1")
+        .attr("stroke-width", 3);
 
-    // Texte plus grand et mieux positionné
+    // Texte plus visible
     node.append("text")
         .attr("dy", ".35em")
-        .attr("x", d => d.children ? -15 : 15)
+        .attr("x", d => d.children ? -20 : 20)
         .style("text-anchor", d => d.children ? "end" : "start")
-        .style("font-size", "14px") // Taille de police augmentée
-        .style("font-weight", "bold")
+        .style("font-size", "16px")
+        .style("font-weight", "600")
+        .style("fill", "#333")
         .text(d => d.data.name);
 
-    // Ajustement du viewBox pour mieux contenir l'arbre
-    const bounds = svg.node().getBBox();
-    svg.attr("viewBox", `${bounds.x-20} ${bounds.y-20} ${bounds.width+40} ${bounds.height+40}`);
+    // Ajustement automatique du viewport
+    const padding = 50;
+    const bounds = {
+        x: d3.min(root.descendants(), d => d.y + xOffset - 15),
+        y: d3.min(root.descendants(), d => d.x + yOffset - 15),
+        width: treeWidth + 30,
+        height: d3.max(root.descendants(), d => d.x) + yOffset + 30
+    };
+    
+    svg.attr("viewBox", `${bounds.x-padding} ${bounds.y-padding} ${bounds.width+2*padding} ${bounds.height+2*padding}`);
 }
 // ===========================
 // Nouvelle fonction wrapper qui choisit la bonne méthode d’affichage selon la forme des données
