@@ -81,27 +81,22 @@ export function initSubD3Tree(containerId, data) {
     svg.call(zoom);
 
     const treeLayout = d3.tree().size([width, height]);
-    const root = d3.hierarchy(data);  // ou rootData
-
+    const root = d3.hierarchy(data);
     treeLayout(root);
 
-    // Liens
     g.selectAll(".link")
-      .data(root.links())
-      .join("path")
-      .attr("class", "link")
-      .attr("d", d3.linkVertical()
-      .x(d => d.y)
-      .y(d => d.x));
+        .data(root.links())
+        .enter().append("path")
+        .attr("class", "link")
+        .attr("d", d3.linkHorizontal()
+            .x(d => d.y)
+            .y(d => d.x));
 
-    // Noeuds
     const node = g.selectAll(".node")
-      .data(root.descendants())
-      .join("g")
-      .attr("class", "node")
-      .attr("transform", d => `translate(${d.y},${d.x})`);
-
-
+        .data(root.descendants())
+        .enter().append("g")
+        .attr("class", "node")
+        .attr("transform", d => `translate(${d.y},${d.x})`);
 
     node.append("circle").attr("r", 6);
 
@@ -110,7 +105,6 @@ export function initSubD3Tree(containerId, data) {
         .attr("x", d => d.children ? -10 : 10)
         .style("text-anchor", d => d.children ? "end" : "start")
         .text(d => d.data.name);
-        .style("font", "14px sans-serif");
 
     node.append("text")
         .attr("dy", "2.5em")
