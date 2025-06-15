@@ -19,8 +19,23 @@ import {
 } from '/static/js/tree/utils.js';
 
 let currentScale = 1;
+
+// Définition des couleurs pour chaque génération (0 à 9)
+const generationColors = [
+    "#3498db", // Génération 0 (bleu)
+    "#e74c3c", // Génération 1 (rouge)
+    "#2ecc71", // Génération 2 (vert)
+    "#9b59b6", // Génération 3 (violet)
+    "#f39c12", // Génération 4 (orange)
+    "#1abc9c", // Génération 5 (turquoise)
+    "#d35400", // Génération 6 (orange foncé)
+    "#7f8c8d", // Génération 7 (gris)
+    "#8e44ad", // Génération 8 (violet foncé)
+    "#27ae60"  // Génération 9 (vert foncé)
+];
+
 // ===========================
-// Fonction principale d’affichage D3.js (version hiérarchique)
+// Fonction principale d'affichage D3.js (version hiérarchique)
 export function initMainD3Tree(containerId, data) {
     const margin = { top: 50, right: 200, bottom: 50, left: 200 };
     const width = 2000 - margin.left - margin.right;
@@ -95,7 +110,6 @@ export function initMainD3Tree(containerId, data) {
                     border-radius: 4px;
                 }
             `);
-
     }
 
     container.insert("div", ":first-child").attr("class", "tree-controls").html(`
@@ -171,7 +185,7 @@ export function initMainD3Tree(containerId, data) {
 
         nodeEnter.append('circle')
             .attr('r', 1e-6)
-            .attr("class", d => `ft-node ft-gener-${d.data.level}`)
+            .attr("class", d => `ft-node ft-gener-${d.depth}`)  // Utilisation de depth pour la génération
             .attr("stroke", "steelblue")
             .attr("stroke-width", 2)
             .style('fill', d => generationColors[d.depth % generationColors.length]);
@@ -274,8 +288,9 @@ export function initMainD3Tree(containerId, data) {
         centerTree(d3.select(svgNode).select("g"), svgNode.parentElement);
     }, 700);
 }
+
 /**
- * Fonction d’affichage D3.js (version nodes+edges avec sélection dynamique de racine)
+ * Fonction d'affichage D3.js (version nodes+edges avec sélection dynamique de racine)
  */
 export async function drawTree(data) {
     console.log("✅ drawTree() started...");
@@ -335,7 +350,7 @@ export async function drawTree(data) {
 }
 
 /**
- * Ajoute un sélecteur dynamique de racine à l’interface
+ * Ajoute un sélecteur dynamique de racine à l'interface
  */
 function addRootSelector(rootCandidates, nodeById, data, svg, width, height) {
     let selector = document.getElementById("rootSelector");
@@ -366,22 +381,9 @@ function addRootSelector(rootCandidates, nodeById, data, svg, width, height) {
 }
 
 /**
- * Render tree à partir d’une racine choisie
+ * Render tree à partir d'une racine choisie
  */
 function renderTreeFromRoot(rootId, nodeById, svg, width, height) {
-    const generationColors = [
-        "#3498db", // Génération 0
-        "#e74c3c", // Génération 1
-        "#2ecc71", // Génération 2
-        "#9b59b6", // Génération 3
-        "#f39c12", // Génération 4
-        "#1abc9c", // Génération 5
-        "#d35400", // Génération 6
-        "#7f8c8d", // Génération 7
-        "#8e44ad", // Génération 8
-        "#27ae60"  // Génération 9
-        ];
-
     if (!nodeById[rootId]) return;
     
     svg.selectAll("*").remove();
@@ -423,7 +425,7 @@ function renderTreeFromRoot(rootId, nodeById, svg, width, height) {
     // Cercles de 55px
     node.append("circle")
         .attr("r", nodeRadius)
-        .attr("class", d => `ft-node ft-gener-${d.data.level}`)
+        .attr("class", d => `ft-node ft-gener-${d.depth}`)  // Utilisation de depth pour la génération
         .attr("fill", d => generationColors[d.depth % generationColors.length])
         .attr("stroke", "steelblue")
         .attr("stroke-width", 5);
@@ -441,8 +443,9 @@ function renderTreeFromRoot(rootId, nodeById, svg, width, height) {
     svg.attr("viewBox", `0 0 ${width} ${height}`)
        .attr("preserveAspectRatio", "xMidYMid meet");
 }
+
 // ===========================
-// Nouvelle fonction wrapper qui choisit la bonne méthode d’affichage selon la forme des données
+// Nouvelle fonction wrapper qui choisit la bonne méthode d'affichage selon la forme des données
 export async function renderFamilyTree(containerId, data) {
     console.log("✅ D3 chargé :", typeof d3); 
     console.log("📌 D3 version :", d3.version);
