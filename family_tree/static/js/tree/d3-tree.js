@@ -103,11 +103,11 @@ export function initSubD3Tree(containerId, data) {
 
 
 
-    node.append("circle").attr("r", 12);
+    node.append("circle").attr("r", 6);
 
     node.append("text")
-        .attr("dy", "0.31em")
-        .attr("x", d => d.children ? -15 : 15)
+        .attr("dy", 3)
+        .attr("x", d => d.children ? -10 : 10)
         .style("text-anchor", d => d.children ? "end" : "start")
         .text(d => d.data.name);
         .style("font", "14px sans-serif");
