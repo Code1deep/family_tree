@@ -302,54 +302,47 @@ function addRootSelector(rootCandidates, nodeById, data, svg, width, height) {
  * Render tree à partir d’une racine choisie
  */
 function renderTreeFromRoot(rootId, nodeById, svg, width, height) {
-  if (!nodeById[rootId]) {
-    console.error(`Noeud ${rootId} non trouvé dans nodeById`);
-    return;
-  }
-    svg.selectAll("*").remove();
-
-    const rootData = nodeById[rootId];
-    if (!rootData) {
-        console.error("❌ Racine invalide :", rootId);
+    if (!nodeById[rootId]) {
+        console.error(`Noeud ${rootId} non trouvé dans nodeById`);
         return;
     }
-
+    
+    svg.selectAll("*").remove();
+    const rootData = nodeById[rootId];
     const root = d3.hierarchy(rootData);
 
-    const treeLayout = d3.tree().size([width - 160, height]);
+    // Configuration pour un arbre vertical
+    const treeLayout = d3.tree().size([height - 100, width - 200]); // [height, width]
+    
     treeLayout(root);
 
-    // Liens
+    // Liens verticaux
+    const linkGenerator = d3.linkVertical()
+        .x(d => d.x)
+        .y(d => d.y);
+
     svg.selectAll("path.link")
         .data(root.links())
         .join("path")
         .attr("class", "link")
-        .attr("fill", "none")
-        .attr("stroke", "#ccc")
-        .attr("stroke-width", 2)
-        .attr("d", d3.linkVertical()
-            .x(d => d.y)
-            .y(d => d.x));
+        .attr("d", linkGenerator);
 
-    // Noeuds
+    // Noeuds positionnés verticalement
     const node = svg.selectAll("g.node")
         .data(root.descendants())
         .join("g")
         .attr("class", "node")
-        .attr("transform", d => `translate(${d.y},${d.x})`);
+        .attr("transform", d => `translate(${d.x},${d.y})`);
 
     node.append("circle")
-        .attr("r", 5)
+        .attr("r", 6)
         .attr("fill", d => d.children ? "#555" : "#999");
 
     node.append("text")
-        .attr("dy", "0.31em")
-        .attr("x", d => d.children ? -10 : 10)
-        .attr("text-anchor", d => d.children ? "end" : "start")
-        .text(d => d.data.name || `ID ${d.data.id}`)
-        .style("font", "12px sans-serif");
-
-    console.log(`✅ Arbre dessiné à partir de la racine ID ${rootId}`);
+        .attr("dy", ".35em")
+        .attr("x", d => d.children ? -13 : 13)
+        .style("text-anchor", d => d.children ? "end" : "start")
+        .text(d => d.data.name);
 }
 // ===========================
 // Nouvelle fonction wrapper qui choisit la bonne méthode d’affichage selon la forme des données
