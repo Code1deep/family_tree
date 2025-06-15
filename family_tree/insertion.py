@@ -71,5 +71,27 @@ def initialize_data():
             if DB_PATH.exists():
                 print(f"Taille du fichier DB: {DB_PATH.stat().st_size} octets")
 
+def add_level_3():
+    with app.app_context():
+        try:
+            # Enfants de Hasan (niveau 3)
+            new_members = [
+                {'id': 6, 'first_name': 'Abdullah', 'last_name': 'Ibn Hasan', 'gender': 'male',
+                 'father_id': 4, 'mother_id': None},
+                {'id': 7, 'first_name': 'Fatima', 'last_name': 'bint Hasan', 'gender': 'female',
+                 'father_id': 4, 'mother_id': None}
+            ]
+
+            for member in new_members:
+                if not Person.query.get(member['id']):  # Évite les doublons
+                    db.session.add(Person(**member))
+
+            db.session.commit()
+            print("✅ 2 nouveaux membres ajoutés (niveau 3)")
+            
+        except Exception as e:
+            db.session.rollback()
+            print(f"❌ Erreur: {str(e)}")
+
 if __name__ == '__main__':
     initialize_data()
