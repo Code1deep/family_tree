@@ -327,9 +327,9 @@ function renderTreeFromRoot(rootId, nodeById, svg, width, height) {
         .attr("fill", "none")
         .attr("stroke", "#ccc")
         .attr("stroke-width", 2)
-        .attr("d", d3.linkVertical()
-            .x(d => d.x)
-            .y(d => d.y));
+        .attr("d", d3.linkHorizontal()
+            .x(d => d.y)
+            .y(d => d.x));
 
     // Noeuds
     const node = svg.selectAll("g.node")
