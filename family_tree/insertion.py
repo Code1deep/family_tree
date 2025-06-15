@@ -74,48 +74,85 @@ def initialize_data():
 def add_level_3():
     with app.app_context():
         try:
-            # Enfants de Hasan (niveau 3)
+            # Vérifie si Hasan existe (niveau 2)
+            hasan = Person.query.get(4)
+            if not hasan:
+                print("❌ Hasan (ID 4) non trouvé, vérifiez les niveaux 0-2")
+                return
+
+            # Vérifie si le niveau 3 existe déjà
+            if Person.query.filter(Person.id.in_([6, 7])).count() > 0:
+                print("ℹ️ Le niveau 3 existe déjà")
+                return
+
+            # Ajout des enfants de Hasan
             new_members = [
-                {'id': 6, 'first_name': 'Abdullah', 'last_name': 'Ibn Hasan', 'gender': 'male',
-                 'father_id': 4, 'mother_id': None},
-                {'id': 7, 'first_name': 'Fatima', 'last_name': 'bint Hasan', 'gender': 'female',
-                 'father_id': 4, 'mother_id': None}
+                {'id': 6, 'first_name': 'Abdullah', 'last_name': 'Ibn Hasan', 
+                 'gender': 'male', 'father_id': 4},
+                {'id': 7, 'first_name': 'Fatima', 'last_name': 'bint Hasan',
+                 'gender': 'female', 'father_id': 4}
             ]
 
+            # Insertion sécurisée
             for member in new_members:
-                if not Person.query.get(member['id']):  # Évite les doublons
+                if not Person.query.get(member['id']):
                     db.session.add(Person(**member))
 
             db.session.commit()
-            print("✅ 2 nouveaux membres ajoutés (niveau 3)")
-            
+            print("✅ Niveau 3 ajouté avec succès (2 personnes)")
+            print_all_persons("État après ajout")
+
         except Exception as e:
             db.session.rollback()
-            print(f"❌ Erreur: {str(e)}")
+            print(f"❌ Erreur niveau 3: {str(e)}")
 
-    # Niveau 4 (à exécuter après)
 def add_level_4():
     with app.app_context():
         try:
-            new_members2 = [
-                {'id': 8, 'first_name': 'Ali', 'last_name': 'Ibn Abdullah', 'gender': 'male',
-                 'father_id': 6, 'mother_id': None},
-                {'id': 9, 'first_name': 'Zaynab', 'last_name': 'bint Abdullah', 'gender': 'female',
-                 'father_id': 6, 'mother_id': None}
+            # Vérifie si Abdullah existe (niveau 3)
+            abdullah = Person.query.get(6)
+            if not abdullah:
+                print("❌ Abdullah (ID 6) non trouvé, ajoutez d'abord le niveau 3")
+                return
+
+            # Vérifie si le niveau 4 existe déjà
+            if Person.query.filter(Person.id.in_([8, 9])).count() > 0:
+                print("ℹ️ Le niveau 4 existe déjà")
+                return
+
+            # Ajout des enfants de Abdullah
+            new_members = [
+                {'id': 8, 'first_name': 'Ali', 'last_name': 'Ibn Abdullah',
+                 'gender': 'male', 'father_id': 6},
+                {'id': 9, 'first_name': 'Zaynab', 'last_name': 'bint Abdullah',
+                 'gender': 'female', 'father_id': 6}
             ]
-            for member in new_members2:
-                if not Person.query.get(member['id']):  # Évite les doublons
+
+            for member in new_members:
+                if not Person.query.get(member['id']):
                     db.session.add(Person(**member))
 
             db.session.commit()
-            print("✅ 2 nouveaux membres ajoutés (niveau 4)")
-            
+            print("✅ Niveau 4 ajouté avec succès (2 personnes)")
+            print_all_persons("État après ajout")
+
         except Exception as e:
             db.session.rollback()
-            print(f"❌ Erreur: {str(e)}")
-
+            print(f"❌ Erreur niveau 4: {str(e)}")
 
 if __name__ == '__main__':
-    initialize_data()  # Initialise les niveaux 0-2 (5 insertions)
-    add_level_3()      # Ajoute le niveau 3 (2 nouvelles insertions)
-    add_level_4()      # Ajoute le niveau 4 (2 nouvelles insertions)
+    print("\n=== Initialisation de l'arbre ===")
+    initialize_data()  # Niveaux 0-2
+    
+    print("\n=== Ajout des niveaux supplémentaires ===")
+    print("1. Ajouter uniquement le niveau 3")
+    print("2. Ajouter les niveaux 3 et 4")
+    choice = input("Votre choix (1-2): ").strip()
+    
+    if choice == "1":
+        add_level_3()
+    elif choice == "2":
+        add_level_3()
+        add_level_4()
+    else:
+        print("Option invalide")
