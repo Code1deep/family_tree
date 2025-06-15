@@ -37,12 +37,12 @@ const generationColors = [
 // Ajout en haut du fichier
 console.log("🎨 Initialisation des couleurs de génération");
 console.log("🌈 generationColors:", generationColors);
-d3.select("head").append("style")
-    .html(`
-        .ft-node {
-            fill: red !important;
-        }
-    `);
+//d3.select("head").append("style")
+    //.html(`
+      //  .ft-node {
+          //  fill: red !important;
+        //}
+    //`);
 // ===========================
 // Fonction principale d'affichage D3.js (version hiérarchique)
 export function initMainD3Tree(containerId, data) {
@@ -55,42 +55,56 @@ export function initMainD3Tree(containerId, data) {
 
     if (!document.getElementById("tree-style")) {
         d3.select("head").append("style")
-            .attr("id", "tree-style")
-            .html(`
-                .node circle {
-                    fill: #fff !important;
-                    stroke: steelblue !important;
-                    stroke-width: 5px !important;
-                    r: 55px !important;
-                }
-                .node text {
-                    font: 24px 'Arial', sans-serif !important;
-                    font-weight: bold !important;
-                    fill: #333 !important;
-                }
-                .link {
-                    stroke: #666 !important;
-                    stroke-width: 5px !important;
-                    stroke-opacity: 0.9 !important;
-                }
+        .attr("id", "tree-style")
+        .html(`
+            .node circle {
+                stroke: steelblue;
+                stroke-width: 5px;
+                r: 55px;
+            }
+            /* Supprimez le !important pour fill */
+            .ft-node {
+                fill: var(--node-fill);
+            }
+            .ft-gener-0 { --node-fill: #3498db; }
+            .ft-gener-1 { --node-fill: #e74c3c; }
+            .ft-gener-2 { --node-fill: #2ecc71; }
+            .ft-gener-3 { --node-fill: #9b59b6; }
+            .ft-gener-4 { --node-fill: #f39c12; }
+            .ft-gener-5 { --node-fill: #1abc9c; }
+            .ft-gener-6 { --node-fill: #d35400; }
+            .ft-gener-7 { --node-fill: #7f8c8d; }
+            .ft-gener-8 { --node-fill: #8e44ad; }
+            .ft-gener-9 { --node-fill: #27ae60; }
+            
+            .node text {
+                font: 24px 'Arial', sans-serif;
+                font-weight: bold;
+                fill: #333;
+            }
+            .link {
+                stroke: #666;
+                stroke-width: 5px;
+                stroke-opacity: 0.9;
+            }
+    
+            .tooltip { position: absolute; text-align: center; padding: 5px; font: 12px sans-serif; background: lightsteelblue; border: 1px solid #aaa; pointer-events: none; border-radius: 3px; }
+    
+            .tree-controls {
+                position: fixed;
+                top: 20px;
+                left: 20px;
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+                padding: 10px;
+                background: rgba(255, 255, 255, 0.9);
+                border: 1px solid #ccc;
+                border-radius: 8px;
+                box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+                z-index: 1000;
+            }
         
-                .tooltip { position: absolute; text-align: center; padding: 5px; font: 12px sans-serif; background: lightsteelblue; border: 1px solid #aaa; pointer-events: none; border-radius: 3px; }
-        
-                .tree-controls {
-                    position: fixed;
-                    top: 20px;
-                    left: 20px;
-                    display: flex;
-                    flex-direction: column;
-                    gap: 10px;
-                    padding: 10px;
-                    background: rgba(255, 255, 255, 0.9);
-                    border: 1px solid #ccc;
-                    border-radius: 8px;
-                    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-                    z-index: 1000;
-                }
-
                 .tree-controls input[type="text"] {
                     padding: 6px 8px;
                     font-size: 14px;
