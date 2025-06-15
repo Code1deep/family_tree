@@ -37,10 +37,51 @@ export function initMainD3Tree(containerId, data) {
                 .node text { font: 10px sans-serif; }
                 .link { fill: none; stroke: #ccc; stroke-width: 1.5px; }
                 .tooltip { position: absolute; text-align: center; padding: 5px; font: 12px sans-serif; background: lightsteelblue; border: 1px solid #aaa; pointer-events: none; border-radius: 3px; }
-                .tree-controls { margin: 10px 0; display: flex; gap: 10px; }
-                .tree-controls input[type="text"] { padding: 2px 6px; font-size: 14px; }
-                .tree-controls button { padding: 4px 10px; font-size: 14px; }
-        `);
+        
+                .tree-controls {
+                    position: fixed;
+                    top: 20px;
+                    left: 20px;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 10px;
+                    padding: 10px;
+                    background: rgba(255, 255, 255, 0.9);
+                    border: 1px solid #ccc;
+                    border-radius: 8px;
+                    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+                    z-index: 1000;
+                }
+
+                .tree-controls input[type="text"] {
+                    padding: 6px 8px;
+                    font-size: 14px;
+                    border: 1px solid #aaa;
+                    border-radius: 4px;
+                }
+
+                .tree-controls button {
+                    padding: 6px 12px;
+                    font-size: 14px;
+                    border: none;
+                    border-radius: 4px;
+                    background-color: #3498db;
+                    color: white;
+                    cursor: pointer;
+                }
+
+                .tree-controls button:hover {
+                    background-color: #2980b9;
+                }
+
+                select#rootSelector {
+                    padding: 6px 8px;
+                    font-size: 14px;
+                    border: 1px solid #aaa;
+                    border-radius: 4px;
+                }
+            `);
+
     }
 
     container.insert("div", ":first-child").attr("class", "tree-controls").html(`
