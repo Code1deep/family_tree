@@ -19,7 +19,7 @@ import {
 } from '/static/js/tree/utils.js';
 
 let currentScale = 1;
-// ===========================
+
 // Fonction principale d’affichage D3.js (version hiérarchique)
 export function initMainD3Tree(containerId, data) {
     const margin = { top: 50, right: 200, bottom: 50, left: 200 };
@@ -49,7 +49,6 @@ export function initMainD3Tree(containerId, data) {
                     stroke-width: 5px !important;
                     stroke-opacity: 0.9 !important;
                 }
-        
                 .tooltip { position: absolute; text-align: center; padding: 5px; font: 12px sans-serif; background: lightsteelblue; border: 1px solid #aaa; pointer-events: none; border-radius: 3px; }
         
                 .tree-controls {
@@ -312,6 +311,7 @@ export async function drawTree(data) {
             rootCandidates.push(data.nodes[0]);
             console.warn("⚠ Aucune racine trouvée, utilisation du premier noeud comme fallback");
         }
+
 
         // Ajouter sélecteur racine
         addRootSelector(rootCandidates, nodeById, data, svg, width, height);
