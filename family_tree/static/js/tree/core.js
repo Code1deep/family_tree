@@ -316,8 +316,7 @@ function renderTreeFromRoot(rootId, nodeById, svg, width, height) {
 
     const root = d3.hierarchy(rootData);
 
-    const treeLayout = d3.tree().size([height, width]);  // [y, x] pour vertical
-    
+    const treeLayout = d3.tree().size([height, width - 160]);
     treeLayout(root);
 
     // Liens
@@ -340,15 +339,15 @@ function renderTreeFromRoot(rootId, nodeById, svg, width, height) {
         .attr("transform", d => `translate(${d.y},${d.x})`);
 
     node.append("circle")
-        .attr("r", 12)
+        .attr("r", 5)
         .attr("fill", d => d.children ? "#555" : "#999");
 
     node.append("text")
         .attr("dy", "0.31em")
-        .attr("x", d => d.children ? -15 : 15)
+        .attr("x", d => d.children ? -10 : 10)
         .attr("text-anchor", d => d.children ? "end" : "start")
         .text(d => d.data.name || `ID ${d.data.id}`)
-        .style("font", "14px sans-serif");
+        .style("font", "12px sans-serif");
 
     console.log(`✅ Arbre dessiné à partir de la racine ID ${rootId}`);
 }
