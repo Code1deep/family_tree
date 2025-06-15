@@ -174,7 +174,7 @@ export function initMainD3Tree(containerId, data) {
             .attr("class", d => `ft-node ft-gener-${d.data.level}`)
             .attr("stroke", "steelblue")
             .attr("stroke-width", 2)
-            .style('fill', d => d._children ? "#555" : "#999");
+            .style('fill', d => generationColors[d.depth % generationColors.length]);
 
         nodeEnter.append('text')
             .attr("dy", 3)
@@ -184,7 +184,7 @@ export function initMainD3Tree(containerId, data) {
 
         const nodeUpdate = nodeEnter.merge(node);
         nodeUpdate.transition().duration(500).attr("transform", d => `translate(${d.y},${d.x})`);
-        nodeUpdate.select('circle').attr('r', 4).style('fill', d => d._children ? "#555" : "#999");
+        nodeUpdate.select('circle').attr('r', 4).style('fill', d => generationColors[d.depth % generationColors.length]);
 
         const nodeExit = node.exit().transition().duration(500)
             .attr("transform", d => `translate(${source.y},${source.x})`).remove();
@@ -369,6 +369,19 @@ function addRootSelector(rootCandidates, nodeById, data, svg, width, height) {
  * Render tree à partir d’une racine choisie
  */
 function renderTreeFromRoot(rootId, nodeById, svg, width, height) {
+    const generationColors = [
+        "#3498db", // Génération 0
+        "#e74c3c", // Génération 1
+        "#2ecc71", // Génération 2
+        "#9b59b6", // Génération 3
+        "#f39c12", // Génération 4
+        "#1abc9c", // Génération 5
+        "#d35400", // Génération 6
+        "#7f8c8d", // Génération 7
+        "#8e44ad", // Génération 8
+        "#27ae60"  // Génération 9
+        ];
+
     if (!nodeById[rootId]) return;
     
     svg.selectAll("*").remove();
@@ -410,7 +423,8 @@ function renderTreeFromRoot(rootId, nodeById, svg, width, height) {
     // Cercles de 55px
     node.append("circle")
         .attr("r", nodeRadius)
-        .attr("fill", "#fff")
+        .attr("class", d => `ft-node ft-gener-${d.data.level}`)
+        .attr("fill", d => generationColors[d.depth % generationColors.length])
         .attr("stroke", "steelblue")
         .attr("stroke-width", 5);
 
