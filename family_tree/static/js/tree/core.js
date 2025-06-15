@@ -37,12 +37,12 @@ const generationColors = [
 // Ajout en haut du fichier
 console.log("🎨 Initialisation des couleurs de génération");
 console.log("🌈 generationColors:", generationColors);
-//d3.select("head").append("style")
-    //.html(`
-      //  .ft-node {
-          //  fill: red !important;
-        //}
-    //`);
+d3.select("head").append("style")
+    .html(`
+        .ft-node {
+            fill: red !important;
+        }
+    `);
 // ===========================
 // Fonction principale d'affichage D3.js (version hiérarchique)
 export function initMainD3Tree(containerId, data) {
@@ -55,56 +55,42 @@ export function initMainD3Tree(containerId, data) {
 
     if (!document.getElementById("tree-style")) {
         d3.select("head").append("style")
-        .attr("id", "tree-style")
-        .html(`
-            .node circle {
-                /* Supprimez complètement la propriété fill ici */
-                stroke: steelblue;
-                stroke-width: 5px;
-                r: 55px;
-            }
-            
-            /* Optionnel : styles de base pour les classes de génération */
-            .ft-gener-0 { fill: #3498db; }
-            .ft-gener-1 { fill: #e74c3c; }
-            .ft-gener-2 { fill: #2ecc71; }
-            .ft-gener-3 { fill: #9b59b6; }
-            .ft-gener-4 { fill: #f39c12; }
-            .ft-gener-5 { fill: #1abc9c; }
-            .ft-gener-6 { fill: #d35400; }
-            .ft-gener-7 { fill: #7f8c8d; }
-            .ft-gener-8 { fill: #8e44ad; }
-            .ft-gener-9 { fill: #27ae60; }
-            
-            .node text {
-                font: 24px 'Arial', sans-serif !important;
-                font-weight: bold !important;
-                fill: #333 !important;
-            }
-            
-            .link {
-                stroke: #666 !important;
-                stroke-width: 5px !important;
-                stroke-opacity: 0.9 !important;
-            }
-
-            .tooltip { position: absolute; text-align: center; padding: 5px; font: 12px sans-serif; background: lightsteelblue; border: 1px solid #aaa; pointer-events: none; border-radius: 3px; }
-    
-            .tree-controls {
-                position: fixed;
-                top: 20px;
-                left: 20px;
-                display: flex;
-                flex-direction: column;
-                gap: 10px;
-                padding: 10px;
-                background: rgba(255, 255, 255, 0.9);
-                border: 1px solid #ccc;
-                border-radius: 8px;
-                box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-                z-index: 1000;
-            }
+            .attr("id", "tree-style")
+            .html(`
+                .node circle {
+                    fill: #fff !important;
+                    stroke: steelblue !important;
+                    stroke-width: 5px !important;
+                    r: 55px !important;
+                }
+                .node text {
+                    font: 24px 'Arial', sans-serif !important;
+                    font-weight: bold !important;
+                    fill: #333 !important;
+                }
+                .link {
+                    stroke: #666 !important;
+                    stroke-width: 5px !important;
+                    stroke-opacity: 0.9 !important;
+                }
         
+                .tooltip { position: absolute; text-align: center; padding: 5px; font: 12px sans-serif; background: lightsteelblue; border: 1px solid #aaa; pointer-events: none; border-radius: 3px; }
+        
+                .tree-controls {
+                    position: fixed;
+                    top: 20px;
+                    left: 20px;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 10px;
+                    padding: 10px;
+                    background: rgba(255, 255, 255, 0.9);
+                    border: 1px solid #ccc;
+                    border-radius: 8px;
+                    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+                    z-index: 1000;
+                }
+
                 .tree-controls input[type="text"] {
                     padding: 6px 8px;
                     font-size: 14px;
@@ -459,16 +445,16 @@ function renderTreeFromRoot(rootId, nodeById, svg, width, height) {
         .attr("transform", d => `translate(${d.x + xOffset},${d.y})`); // Inversion x/y
 
     // Cercles de 55px
-    // Dans la partie création des nœuds, remplacez par ceci :
     node.append("circle")
         .attr("r", nodeRadius)
         .attr("class", d => {
-            console.log(`📌 Nœud ${d.data.name} - Classe: ft-node ft-gener-${d.depth}`);
-            return `ft-node ft-gener-${d.depth}`;
+            console.log(`📌 Nœud ${d.data.name} (ID:${d.data.id}) - Profondeur: ${d.depth}`);
+            return `ft-node ft-gener-${d.depth}`;  // Utilisation de depth pour la génération
         })
-        .style("fill", d => {
-            const color = generationColors[d.depth % generationColors.length];
-            console.log(`🎨 Applique couleur ${color} via style() direct`);
+        .attr("fill", d => {
+            const colorIndex = d.depth % generationColors.length;
+            const color = generationColors[colorIndex];
+            console.log(`🎨 Nœud ${d.data.name} - Profondeur ${d.depth} → Couleur ${color} (index ${colorIndex})`);
             return color;
         })
         .attr("stroke", "steelblue")
