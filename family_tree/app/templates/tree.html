@@ -80,7 +80,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 <style>
 /* 🌳 Style D3.js */
 .node circle {
-  fill: #999;
   stroke: steelblue;
   stroke-width: 2px;
 }
@@ -92,16 +91,21 @@ document.addEventListener("DOMContentLoaded", async () => {
   stroke: #ccc;
   stroke-width: 2px;
 }
-/* 🎨 Styles personnalisés par génération */
+/* 🎨 Styles personnalisés par génération - MODIFIÉ */
 .ft-node {
-  border-radius: 5px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  border-radius: 50%; /* Pour des cercles parfaits */
 }
-.ft-gener-0 { background-color: #6a0dad; }
-.ft-gener-1 { background-color: #1e90ff; }
-.ft-gener-2 { background-color: #32cd32; }
-.ft-gener-3 { background-color: #ff8c00; }
-.ft-gener-4 { background-color: #ff1493; }
+.ft-gener-0 { fill: #6a0dad !important; }
+.ft-gener-1 { fill: #1e90ff !important; }
+.ft-gener-2 { fill: #32cd32 !important; }
+.ft-gener-3 { fill: #ff8c00 !important; }
+.ft-gener-4 { fill: #ff1493 !important; }
+.ft-gener-5 { fill: #1abc9c !important; }
+.ft-gener-6 { fill: #d35400 !important; }
+.ft-gener-7 { fill: #7f8c8d !important; }
+.ft-gener-8 { fill: #8e44ad !important; }
+.ft-gener-9 { fill: #27ae60 !important; }
+
 .node--highlight {
   stroke: #ff0000 !important;
   stroke-width: 4px;
