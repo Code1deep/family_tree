@@ -298,21 +298,31 @@ export async function drawTree(data) {
         });
 
         // Détecter racines
+        // Dans drawTree(), modifiez la détection des racines :
         const rootCandidates = data.nodes.filter(n => {
-            // Soit le noeud n'a pas de parent dans les edges
-            // Soit ses parents ne sont pas dans les nodes (cas des données incomplètes)
+        // Cas 1: Aucun parent dans les edges
+            const hasParentInEdges = data.edges.some(e => e.to === n.id);
+    
+            // Cas 2: Parents référencés mais absents des nodes
             const parentEdges = data.edges.filter(e => e.to === n.id);
-            return parentEdges.length === 0 || 
-                    parentEdges.some(e => !data.nodes.some(n => n.id === e.from));
+            const missingParents = parentEdges.some(e => 
+                !data.nodes.some(m => m.id === e.from)
+            );
+    
+            return !hasParentInEdges || missingParents;
         });
-        console.log("🌳 Ancêtres racines détectés :", rootCandidates.map(n => `${n.id} (${n.name || ''})`));
 
         if (rootCandidates.length === 0) {
-            // Fallback: prendre le premier noeud disponible
-            rootCandidates.push(data.nodes[0]);
-            console.warn("⚠ Aucune racine trouvée, utilisation du premier noeud comme fallback");
+            // Fallback amélioré : cherche les nodes sans father_id/mother_id
+            rootCandidates.push(...data.nodes.filter(n => 
+                n.father_id === null && n.mother_id === null
+            ));
+    
+            if (rootCandidates.length === 0) {
+                console.warn("⚠ Utilisation forcée du node 1 comme racine");
+                rootCandidates.push(data.nodes.find(n => n.id === 1) || data.nodes[0]);
+            }
         }
-
 
         // Ajouter sélecteur racine
         addRootSelector(rootCandidates, nodeById, data, svg, width, height);
