@@ -6,7 +6,6 @@ import { openModal } from '/static/js/modal.js';
 const style = document.createElement("style");
 style.innerHTML = `
 .node circle {
-    fill: #fff;
     stroke: steelblue;
     stroke-width: 2px;
 }
@@ -52,7 +51,7 @@ export function initSubD3Tree(containerId, data) {
             .attr("id", "subtree-style")
             .html(`
                 .link { fill: none; stroke: #ccc; stroke-width: 1.5px; }
-                .node circle { fill: #999; stroke: #555; stroke-width: 1.5px; }
+                .node circle { stroke: #555; stroke-width: 1.5px; }
                 .node text { font: 10px sans-serif; }
             `);
     }
