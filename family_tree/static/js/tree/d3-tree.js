@@ -88,9 +88,9 @@ export function initSubD3Tree(containerId, data) {
         .data(root.links())
         .enter().append("path")
         .attr("class", "link")
-        .attr("d", d3.linkHorizontal()
-            .x(d => d.x)
-            .y(d => d.y));
+        .attr("d", d3.linkVertical()
+            .x(d => d.y)
+            .y(d => d.x));
 
     const node = g.selectAll(".node")
         .data(root.descendants())
