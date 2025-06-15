@@ -34,20 +34,15 @@ export function initMainD3Tree(containerId, data) {
             .attr("id", "tree-style")
             .html(`
                 .node circle {
-                    fill: #fff !important;
-                    stroke: steelblue !important;
                     stroke-width: 5px !important;
                     r: 55px !important;
                 }
                 .node text {
                     font: 24px 'Arial', sans-serif !important;
                     font-weight: bold !important;
-                    fill: #333 !important;
                 }
                 .link {
-                    stroke: #666 !important;
                     stroke-width: 5px !important;
-                    stroke-opacity: 0.9 !important;
                 }
                 .tooltip { position: absolute; text-align: center; padding: 5px; font: 12px sans-serif; background: lightsteelblue; border: 1px solid #aaa; pointer-events: none; border-radius: 3px; }
         
