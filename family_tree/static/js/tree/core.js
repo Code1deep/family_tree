@@ -34,6 +34,15 @@ const generationColors = [
     "#27ae60"  // Génération 9 (vert foncé)
 ];
 
+// Ajout en haut du fichier
+console.log("🎨 Initialisation des couleurs de génération");
+console.log("🌈 generationColors:", generationColors);
+d3.select("head").append("style")
+    .html(`
+        .ft-node {
+            fill: red !important;
+        }
+    `);
 // ===========================
 // Fonction principale d'affichage D3.js (version hiérarchique)
 export function initMainD3Tree(containerId, data) {
@@ -185,10 +194,18 @@ export function initMainD3Tree(containerId, data) {
 
         nodeEnter.append('circle')
             .attr('r', 1e-6)
-            .attr("class", d => `ft-node ft-gener-${d.depth}`)  // Utilisation de depth pour la génération
+            .attr("class", d => {
+                console.log(`📌 [init] Nœud ${d.data.name} (ID:${d.data.id}) - Profondeur: ${d.depth}`);
+                return `ft-node ft-gener-${d.depth}`;
+            })  // Utilisation de depth pour la génération
             .attr("stroke", "steelblue")
             .attr("stroke-width", 2)
-            .style('fill', d => generationColors[d.depth % generationColors.length]);
+            .style('fill', d => {
+                const colorIndex = d.depth % generationColors.length;
+                const color = generationColors[colorIndex];
+                console.log(`🎨 [init] Nœud ${d.data.name} - Profondeur ${d.depth} → Couleur ${color} (index ${colorIndex})`);
+                return color;
+            });
 
         nodeEnter.append('text')
             .attr("dy", 3)
@@ -415,6 +432,11 @@ function renderTreeFromRoot(rootId, nodeById, svg, width, height) {
             .x(d => d.x + xOffset) // Position horizontale centrée
             .y(d => d.y)); // Position verticale
 
+    // Dans la fonction renderTreeFromRoot, avant la création des nœuds
+    console.log("🖌 Préparation des couleurs pour les nœuds");
+    console.log("📊 Profondeur de la racine:", root.depth);
+    console.log("📊 Descendants:", root.descendants().length);
+
     // Noeuds VERTICAUX
     const node = svg.selectAll("g.node")
         .data(root.descendants())
@@ -425,8 +447,16 @@ function renderTreeFromRoot(rootId, nodeById, svg, width, height) {
     // Cercles de 55px
     node.append("circle")
         .attr("r", nodeRadius)
-        .attr("class", d => `ft-node ft-gener-${d.depth}`)  // Utilisation de depth pour la génération
-        .attr("fill", d => generationColors[d.depth % generationColors.length])
+        .attr("class", d => {
+            console.log(`📌 Nœud ${d.data.name} (ID:${d.data.id}) - Profondeur: ${d.depth}`);
+            return `ft-node ft-gener-${d.depth}`;  // Utilisation de depth pour la génération
+        })
+        .attr("fill", d => {
+            const colorIndex = d.depth % generationColors.length;
+            const color = generationColors[colorIndex];
+            console.log(`🎨 Nœud ${d.data.name} - Profondeur ${d.depth} → Couleur ${color} (index ${colorIndex})`);
+            return color;
+        })
         .attr("stroke", "steelblue")
         .attr("stroke-width", 5);
 
