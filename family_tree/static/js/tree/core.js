@@ -316,7 +316,7 @@ function renderTreeFromRoot(rootId, nodeById, svg, width, height) {
 
     const root = d3.hierarchy(rootData);
 
-    const treeLayout = d3.tree().size([height, width - 160]);
+    const treeLayout = d3.tree().size([width - 160, height]);
     treeLayout(root);
 
     // Liens
@@ -327,7 +327,7 @@ function renderTreeFromRoot(rootId, nodeById, svg, width, height) {
         .attr("fill", "none")
         .attr("stroke", "#ccc")
         .attr("stroke-width", 2)
-        .attr("d", d3.linkHorizontal()
+        .attr("d", d3.linkVertical()
             .x(d => d.y)
             .y(d => d.x));
 
