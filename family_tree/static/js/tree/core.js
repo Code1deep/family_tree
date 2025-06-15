@@ -37,12 +37,7 @@ const generationColors = [
 // Ajout en haut du fichier
 console.log("🎨 Initialisation des couleurs de génération");
 console.log("🌈 generationColors:", generationColors);
-d3.select("head").append("style")
-    .html(`
-        .ft-node {
-            fill: red !important;
-        }
-    `);
+
 // ===========================
 // Fonction principale d'affichage D3.js (version hiérarchique)
 export function initMainD3Tree(containerId, data) {
@@ -58,7 +53,6 @@ export function initMainD3Tree(containerId, data) {
             .attr("id", "tree-style")
             .html(`
                 .node circle {
-                    fill: #fff !important;
                     stroke: steelblue !important;
                     stroke-width: 5px !important;
                     r: 55px !important;
