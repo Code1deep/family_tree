@@ -36,18 +36,18 @@ export function initMainD3Tree(containerId, data) {
                 .node circle { 
                     fill: #fff;
                     stroke: steelblue;
-                    stroke-width: 3px;
-                    r: 15px; /* Taille fixe des cercles */
+                    stroke-width: 5px;
+                    r: 25px; /* Taille fixe des cercles */
                 }
                 .node text { 
                     font: 16px sans-serif; /* Texte plus grand */
-                    font-weight: 600;
+                    font-weight: 700;
                     fill: #333;
                 }
                 .link { 
                     fill: none; 
                     stroke: #666; /* Couleur plus visible */
-                    stroke-width: 3px; /* Branches plus épaisses */
+                    stroke-width: 5px; /* Branches plus épaisses */
                     stroke-opacity: 0.9;
                 }
                 .tooltip { position: absolute; text-align: center; padding: 5px; font: 12px sans-serif; background: lightsteelblue; border: 1px solid #aaa; pointer-events: none; border-radius: 3px; }
@@ -363,61 +363,50 @@ function renderTreeFromRoot(rootId, nodeById, svg, width, height) {
     const rootData = nodeById[rootId];
     const root = d3.hierarchy(rootData);
 
-    // Configuration de l'arbre
+    // Configuration VERTICALE
     const treeLayout = d3.tree()
-        .nodeSize([100, 250]) // [espace vertical, espace horizontal]
-        .separation((a, b) => 1.5);
+        .size([height - 150, width - 200]) // [height, width] pour vertical
+        .nodeSize([120, 200]); // [vertical, horizontal]
 
     treeLayout(root);
 
-    // Calcul du centrage
-    const treeWidth = d3.max(root.descendants(), d => d.y);
-    const xOffset = (width - treeWidth) / 2;
-    const yOffset = 50;
+    // Centrage horizontal
+    const xOffset = (width - d3.max(root.descendants(), d => d.x)) / 2;
 
-    // Liens
+    // Liens VERTICAUX (inversion x/y)
+    const linkGenerator = d3.linkVertical()
+        .x(d => d.x + xOffset) // Position horizontale centrée
+        .y(d => d.y); // Position verticale
+
     svg.selectAll("path.link")
         .data(root.links())
         .join("path")
         .attr("class", "link")
-        .attr("d", d3.linkVertical()
-            .x(d => d.y + xOffset)
-            .y(d => d.x + yOffset));
+        .attr("d", linkGenerator);
 
-    // Noeuds
+    // Noeuds (inversion x/y pour vertical)
     const node = svg.selectAll("g.node")
         .data(root.descendants())
         .join("g")
         .attr("class", "node")
-        .attr("transform", d => `translate(${d.y + xOffset},${d.x + yOffset})`);
+        .attr("transform", d => `translate(${d.x + xOffset},${d.y})`); // Inversion ici
 
-    // Cercles plus grands
+    // Cercles
     node.append("circle")
         .attr("r", 15)
-        .attr("fill", d => d.children ? "#4a8fd9" : "#9bc2e6")
-        .attr("stroke", "#2c6cb1")
-        .attr("stroke-width", 3);
+        .attr("fill", d => d.children ? "#555" : "#999");
 
-    // Texte plus visible
+    // Texte
     node.append("text")
         .attr("dy", ".35em")
         .attr("x", d => d.children ? -20 : 20)
         .style("text-anchor", d => d.children ? "end" : "start")
         .style("font-size", "16px")
-        .style("font-weight", "600")
-        .style("fill", "#333")
         .text(d => d.data.name);
 
     // Ajustement automatique du viewport
     const padding = 50;
-    const bounds = {
-        x: d3.min(root.descendants(), d => d.y + xOffset - 15),
-        y: d3.min(root.descendants(), d => d.x + yOffset - 15),
-        width: treeWidth + 30,
-        height: d3.max(root.descendants(), d => d.x) + yOffset + 30
-    };
-    
-    svg.attr("viewBox", `${bounds.x-padding} ${bounds.y-padding} ${bounds.width+2*padding} ${bounds.height+2*padding}`);
+    svg.attr("viewBox", `0 0 ${width} ${height}`);
 }
 // ===========================
 // Nouvelle fonction wrapper qui choisit la bonne méthode d’affichage selon la forme des données
