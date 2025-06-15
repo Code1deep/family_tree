@@ -36,8 +36,8 @@ export function initMainD3Tree(containerId, data) {
                 .node circle { 
                     fill: #fff;
                     stroke: steelblue;
-                    stroke-width: 2px;
-                    r: 10px; /* Taille fixe des cercles */
+                    stroke-width: 6px;
+                    r: 80px; /* Taille fixe des cercles */
                 }
                 .node text { 
                     font: 14px sans-serif; /* Texte plus grand */
