@@ -42,56 +42,57 @@ def initialize_data():
 
             db.create_all()
 
-            # Fonction récursive pour générer l'arbre
-            def create_family_tree(parent_id, current_level, max_level=5):
-                if current_level > max_level:
+            # 1. Crée les parents initiaux (sans parents eux-mêmes)
+            ancestors = [
+                {'id': 2, 'first_name': 'Abu Talib', 'last_name': 'Ibn Abd al-Muttalib', 'gender': 'male'},
+                {'id': 3, 'first_name': 'Fatima', 'last_name': 'bint Asad', 'gender': 'female'}
+            ]
+
+            # 2. Crée la racine principale (Ali)
+            root = {
+                'id': 1, 
+                'first_name': 'Ali', 
+                'last_name': 'Ibn Abi Talib', 
+                'gender': 'male',
+                'father_id': 2, 
+                'mother_id': 3
+            }
+
+            # 3. Génération des 4 niveaux descendants (total 5 niveaux)
+            family_members = ancestors + [root]
+            current_id = 10  # Commence après les IDs existants
+
+            def add_children(parent_id, level):
+                nonlocal current_id
+                if level >= 5:  # S'arrête au 5ème niveau
                     return []
                 
-                members = []
-                # Crée 2 enfants pour chaque parent
-                for i in range(1, 3):
-                    child_id = parent_id * 10 + i
+                children = []
+                for i in range(2):  # 2 enfants par nœud
                     child = {
-                        'id': child_id,
-                        'first_name': f'Prénom-{child_id}',
-                        'last_name': f'Nom-{child_id}',
-                        'gender': 'male' if child_id % 2 else 'female',
+                        'id': current_id,
+                        'first_name': f'Enfant-{current_id}',
+                        'last_name': f'de-{parent_id}',
+                        'gender': 'male' if current_id % 2 else 'female',
                         'father_id': parent_id if parent_id % 2 else None,
                         'mother_id': parent_id if not parent_id % 2 else None
                     }
-                    members.append(child)
-                    # Appel récursif pour les niveaux suivants
-                    members.extend(create_family_tree(child_id, current_level + 1, max_level))
-                
-                return members
+                    children.append(child)
+                    current_id += 1
+                    
+                    # Ajoute récursivement les enfants des enfants
+                    children.extend(add_children(child['id'], level + 1))
+                return children
 
-            # Racine de l'arbre (Ali Ibn Abi Talib)
-            root_member = {
-                'id': 1,
-                'first_name': 'Ali',
-                'last_name': 'Ibn Abi Talib',
-                'gender': 'male',
-                'father_id': None,
-                'mother_id': None
-            }
-
-            # Génération de l'arbre complet
-            family_members = [root_member] + create_family_tree(1, 2)  # Niveau 1 = racine
-
-            # Ajout des parents initiaux (optionnel)
-            family_members.extend([
-                {'id': 2, 'first_name': 'Abu Talib', 'last_name': 'Ibn Abd al-Muttalib', 'gender': 'male'},
-                {'id': 3, 'first_name': 'Fatima', 'last_name': 'bint Asad', 'gender': 'female'}
-            ])
-            root_member['father_id'] = 2
-            root_member['mother_id'] = 3
+            # Génère l'arbre complet
+            family_members.extend(add_children(root['id'], 1))
 
             # Insertion en base
             for member in family_members:
                 db.session.add(Person(**member))
 
             db.session.commit()
-            print(f"✅ {len(family_members)} membres insérés avec succès!")
+            print(f"✅ {len(family_members)} membres insérés!")
             print_all_persons("📦 Arbre final")
 
         except Exception as e:
