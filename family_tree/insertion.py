@@ -66,9 +66,10 @@ def initialize_data():
 def add_level_3():
     with app.app_context():
         try:
-            if Person.query.filter(Person.id.in_([6, 7])).count() > 0:
+            existing = Person.query.filter(Person.id.in_([6,7])).all()
+            print(f"🔍 Niveau 3 : {len(existing)} personne(s) déjà présentes : {[p.id for p in existing]}")
+            if existing:
                 print("ℹ️ Le niveau 3 existe déjà")
-                print_all_persons("État actuel")
                 return
 
             new_members = [
@@ -93,9 +94,10 @@ def add_level_3():
 def add_level_4():
     with app.app_context():
         try:
-            if Person.query.filter(Person.id.in_([8, 9])).count() > 0:
+            existing = Person.query.filter(Person.id.in_([8,9])).all()
+            print(f"🔍 Niveau 4 : {len(existing)} personne(s) déjà présentes : {[p.id for p in existing]}")
+            if existing:
                 print("ℹ️ Le niveau 4 existe déjà")
-                print_all_persons("État actuel")
                 return
 
             new_members = [
