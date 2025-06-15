@@ -121,8 +121,19 @@ def add_level_4():
 
 if __name__ == '__main__':
     print("\n=== Initialisation de l'arbre ===")
+    print("\n=== Initialisation de l'arbre2 ===")
+    print("\n=== Initialisation de l'arbre 3 ===")
     initialize_data()
-    print("\n=== Ajout du niveau 3 ===")
-    add_level_3()
-    print("\n=== Ajout du niveau 4 ===")
-    add_level_4()
+    
+    print("\n=== Ajout des niveaux supplémentaires ===")
+    print("1. Ajouter uniquement le niveau 3")
+    print("2. Ajouter les niveaux 3 et 4")
+    choice = input("Votre choix (1-2): ").strip()
+
+    if choice == "1":
+        add_level_3()
+    elif choice == "2":
+        add_level_3()
+        add_level_4()
+    else:
+        print("Option invalide")
