@@ -42,15 +42,21 @@ def initialize_data():
                 return
 
             family_members = [
+                # Niveau 0 (ancêtres)
                 {'id': 2, 'first_name': 'Abu Talib', 'last_name': 'Ibn Abd al-Muttalib', 'gender': 'male'},
                 {'id': 3, 'first_name': 'Fatima', 'last_name': 'bint Asad', 'gender': 'female'},
+                
+                # Niveau 1 (racine)
                 {'id': 1, 'first_name': 'Ali', 'last_name': 'Ibn Abi Talib', 'gender': 'male',
                  'father_id': 2, 'mother_id': 3},
+                
+                # Niveau 2 (enfants)
                 {'id': 4, 'first_name': 'Hasan', 'last_name': 'Ibn Ali', 'gender': 'male',
-                 'father_id': 1, 'mother_id': 3},
+                 'father_id': 1, 'mother_id': None},  # Mère non spécifiée
                 {'id': 5, 'first_name': 'Hussein', 'last_name': 'Ibn Ali', 'gender': 'male',
-                 'father_id': 1, 'mother_id': 3}
+                 'father_id': 1, 'mother_id': None}
             ]
+
 
             for member in family_members:
                 db.session.add(Person(**member))
