@@ -33,7 +33,22 @@ const generationColors = [
     "#8e44ad", // Génération 8 (violet foncé)
     "#27ae60"  // Génération 9 (vert foncé)
 ];
+// Sous generationColors, ajoutez :
+const textColors = [
+    "#ffffff", // Blanc pour génération 0
+    "#ffffff", // Blanc pour génération 1
+    "#000000", // Noir pour génération 2
+    "#ffffff", // Blanc pour génération 3
+    "#000000", // Noir pour génération 4
+    "#ffffff", // Blanc pour génération 5
+    "#ffffff", // Blanc pour génération 6
+    "#000000", // Noir pour génération 7
+    "#ffffff", // Blanc pour génération 8
+    "#000000"  // Noir pour génération 9
+];
 
+console.log("🎨 Initialisation des couleurs de texte");
+console.log("🌈 textColors:", textColors);
 // Ajout en haut du fichier
 console.log("🎨 Initialisation des couleurs de génération");
 console.log("🌈 generationColors:", generationColors);
@@ -60,7 +75,7 @@ export function initMainD3Tree(containerId, data) {
                 .node text {
                     font: 24px 'Arial', sans-serif !important;
                     font-weight: bold !important;
-                    
+                    fill: inherit !important;
                 }
                 .link {
                     stroke: #666 !important;
@@ -205,6 +220,11 @@ export function initMainD3Tree(containerId, data) {
             .attr("dy", 3)
             .attr("x", d => d._children ? -10 : 10)
             .style("text-anchor", d => d._children ? "end" : "start")
+            .style("fill", d => {
+                const color = textColors[d.depth % textColors.length];
+                console.log(`🖋️ [init] Texte ${d.data.name} - Profondeur ${d.depth} → Couleur ${color}`);
+                return color;
+            }) // Couleur par génération
             .text(d => d.data.name);
 
         const nodeUpdate = nodeEnter.merge(node);
@@ -460,6 +480,11 @@ function renderTreeFromRoot(rootId, nodeById, svg, width, height) {
         .attr("x", d => d.children ? -nodeRadius-10 : nodeRadius+10)
         .style("text-anchor", d => d.children ? "end" : "start")
         .style("font-size", "24px")
+        .style("fill", d => {
+            const color = textColors[d.depth % textColors.length];
+            console.log(`🖋️ [render] Texte ${d.data.name} - Profondeur ${d.depth} → Couleur ${color}`);
+            return color;
+        }) // Couleur par génération
         .text(d => d.data.name);
 
     // Ajustement viewport
