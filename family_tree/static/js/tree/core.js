@@ -60,7 +60,7 @@ export function initMainD3Tree(containerId, data) {
                 .node text {
                     font: 24px 'Arial', sans-serif !important;
                     font-weight: bold !important;
-                    fill: #333 !important;
+                    
                 }
                 .link {
                     stroke: #666 !important;
