@@ -35,16 +35,16 @@ const generationColors = [
 ];
 // Sous generationColors, ajoutez :
 const textColors = [
-    "#ffffff", // Blanc pour génération 0
-    "#ffffff", // Blanc pour génération 1
-    "#000000", // Noir pour génération 2
+    "#2ecc71", // Blanc pour génération 0
+    "#e74c3c", // Blanc pour génération 1
+    "#e74c3c", // Noir pour génération 2
     "#ffffff", // Blanc pour génération 3
     "#000000", // Noir pour génération 4
     "#ffffff", // Blanc pour génération 5
-    "#ffffff", // Blanc pour génération 6
+    "#9b59b6", // Blanc pour génération 6
     "#000000", // Noir pour génération 7
-    "#ffffff", // Blanc pour génération 8
-    "#000000"  // Noir pour génération 9
+    "#9b59b6", // Blanc pour génération 8
+    "#9b59b6"  // Noir pour génération 9
 ];
 
 console.log("🎨 Initialisation des couleurs de texte");
