@@ -36,11 +36,11 @@ const generationColors = [
 // Sous generationColors, ajoutez :
 const textColors = [
     "#2ecc71", // Blanc pour génération 0
-    "#e74c3c", // Blanc pour génération 1
-    "#e74c3c", // Noir pour génération 2
-    "#ffffff", // Blanc pour génération 3
+    "#d35400", // Blanc pour génération 1
+    "#d35400", // Noir pour génération 2
+    "#d35400", // Blanc pour génération 3
     "#000000", // Noir pour génération 4
-    "#ffffff", // Blanc pour génération 5
+    "#9b59b6", // Blanc pour génération 5
     "#9b59b6", // Blanc pour génération 6
     "#000000", // Noir pour génération 7
     "#9b59b6", // Blanc pour génération 8
