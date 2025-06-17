@@ -128,12 +128,8 @@ function setupTreeSearch(root, g) {
 
     input.addEventListener('input', debounce(() => {
         const query = input.value.trim().toLowerCase();
-        g.selectAll('.node').classed('node--highlight', false);
-        if (query) {
-            g.selectAll('.node')
-                .filter(d => d.data.name.toLowerCase().includes(query))
-                .classed('node--highlight', true);
-        }
+        g.selectAll('.node')
+            .classed('node--highlight', d => d.data.name.toLowerCase().includes(query));
     }, 300));
 }
 
@@ -145,26 +141,22 @@ function setupCenterButton(containerId, g, svg, zoom) {
     const btn = document.getElementById('center-tree');
     if (!btn) return;
 
-    console.log("👀 g dans setupCenterButton", g);
     btn.addEventListener("click", () => {
-        const bbox = g.node()?.getBBox?.();
-        if (!bbox) return;
-
-        const x = bbox.x + bbox.width / 2;
-        const y = bbox.y + bbox.height / 2;
-
+        const bbox = g.node().getBBox();
         const container = document.getElementById(containerId);
         if (!container) return;
 
-        const dx = container.clientWidth / 2 - x;
-        const dy = container.clientHeight / 2 - y;
+        const width = container.clientWidth;
+        const height = container.clientHeight;
 
-        svg.transition()
-            .duration(750)
-            .call(
-                zoom.transform,
-                d3.zoomIdentity.translate(dx, dy).scale(1)
-            );
+        const scale = Math.min(width / bbox.width, height / bbox.height, 1);
+        const translate = [
+            (width - bbox.width * scale) / 2 - bbox.x * scale,
+            (height - bbox.height * scale) / 2 - bbox.y * scale
+        ];
+
+        svg.transition().duration(750)
+            .call(zoom.transform, d3.zoomIdentity.translate(...translate).scale(scale));
     });
 }
 
@@ -191,26 +183,42 @@ function exportAsSVG(containerId) {
 
 function exportAsPNG(containerId) {
     const svg = document.querySelector(`#${containerId} svg`);
+    if (!svg) {
+        console.error("❌ SVG introuvable pour export PNG");
+        return;
+    }
+
+    // Fix: définir une taille explicite
+    const width = svg.getAttribute("width") || 1200;
+    const height = svg.getAttribute("height") || 800;
+
     const serializer = new XMLSerializer();
     const svgString = serializer.serializeToString(svg);
 
     const canvas = document.createElement("canvas");
-    const bbox = svg.getBBox ? svg.getBBox() : { width: 1200, height: 800 };
-    canvas.width = bbox.width + 200;
-    canvas.height = bbox.height + 200;
+    canvas.width = width;
+    canvas.height = height;
     const ctx = canvas.getContext("2d");
 
     const img = new Image();
     const svgBlob = new Blob([svgString], { type: "image/svg+xml;charset=utf-8" });
     const url = URL.createObjectURL(svgBlob);
+
     img.onload = function () {
         ctx.fillStyle = "#ffffff";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(img, 100, 100);
+        ctx.drawImage(img, 0, 0);
         URL.revokeObjectURL(url);
+
         const imgURI = canvas.toDataURL("image/png").replace("image/png", "octet/stream");
         downloadURL(imgURI, "genealogy-tree.png");
     };
+
+    img.onerror = function (e) {
+        console.error("❌ Erreur de chargement image PNG", e);
+        URL.revokeObjectURL(url);
+    };
+
     img.src = url;
 }
 
