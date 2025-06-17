@@ -232,3 +232,12 @@ export function transformDataForD3(rawData) {
 function update(source) {}
 function zoomed(event) {}
 */
+
+/* Fonction inutilisée mais conservée si besoin futur */
+function update(source) {
+    // Logique de mise à jour optimisée (non utilisée ici)
+}
+
+function zoomed(event) {
+    // Inutilisé également, géré directement dans initD3Tree
+}
