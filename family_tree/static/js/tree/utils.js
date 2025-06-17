@@ -18,6 +18,48 @@ export function downloadURL(dataUrl, filename) {
     document.body.removeChild(a);
 }
 
+export function exportAsPNG(containerId) {
+    const svgNode = document.querySelector(`#${containerId} svg`);
+    if (!svgNode) {
+        console.error("❌ SVG introuvable pour export As PNG");
+        return;
+    }
+
+    const serializer = new XMLSerializer();
+    const svgString = serializer.serializeToString(svgNode);
+
+    // On remplace getBBox() par getBoundingClientRect()
+    const rect = svgNode.getBoundingClientRect();
+    const width = rect.width || 1200;
+    const height = rect.height || 800;
+
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext("2d");
+
+    const img = new Image();
+    const svgBlob = new Blob([svgString], { type: "image/svg+xml;charset=utf-8" });
+    const url = URL.createObjectURL(svgBlob);
+
+    img.onload = function () {
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0);
+        URL.revokeObjectURL(url);
+
+        const imgURI = canvas.toDataURL("image/png").replace("image/png", "octet/stream");
+        downloadURL(imgURI, "genealogy-tree.png");
+    };
+
+    img.onerror = function (e) {
+        console.error("❌ Erreur chargement image PNG", e);
+        URL.revokeObjectURL(url);
+    };
+
+    img.src = url;
+}
+
 export function exportPNG(svgNode) {
     console.log("✅ exportPNG exécuté");
     if (!svgNode) {
