@@ -191,7 +191,7 @@ function exportAsPNG(containerId) {
     const serializer = new XMLSerializer();
     const svgString = serializer.serializeToString(svgNode);
 
-    // Remplacer getBBox() par getBoundingClientRect() 
+    // On remplace getBBox() par getBoundingClientRect()
     const rect = svgNode.getBoundingClientRect();
     const width = rect.width || 1200;
     const height = rect.height || 800;
@@ -216,7 +216,7 @@ function exportAsPNG(containerId) {
     };
 
     img.onerror = function (e) {
-        console.error("❌ Erreur de chargement image PNG", e);
+        console.error("❌ Erreur chargement image PNG", e);
         URL.revokeObjectURL(url);
     };
 
