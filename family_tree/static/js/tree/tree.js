@@ -64,13 +64,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         const hierarchyData = convertToHierarchy(treeData);
         if (hierarchyData) {
             console.log("🌱 Appel initSubD3Tree (initial)");
-            initSubD3Tree("wrapper", hierarchyData); 
+            initSubD3Tree("wrapper", hierarchyData);
 
             // Active bouton centrer après initSubD3Tree
-            const svg = d3.select("#wrapper svg");
-            const g = svg.select("g.tree-group");
-            const zoom = d3.zoom(); // tu peux conserver l’instance réelle si elle est exportée depuis initSubD3Tree
-            setupCenterButton("wrapper", g, svg, zoom);
+            ////const svg = d3.select("#wrapper svg");
+            ////const g = svg.select("g.tree-group");
+            ////const zoom = d3.zoom(); // tu peux conserver l’instance réelle si elle est exportée depuis initSubD3Tree
+            ////setupCenterButton("wrapper", g, svg, zoom);
         }
 
     } catch (err) {
@@ -87,7 +87,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         console.log("📷 Clic bouton : Export PNG");
         exportAsPNG("wrapper");
     });
-
+    
     document.getElementById("svgBtn")?.addEventListener("click", () => {
         console.log("📐 Clic bouton : Export SVG");
         exportSVG(treeContainer);
