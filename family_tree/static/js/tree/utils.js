@@ -48,7 +48,6 @@ export function exportPNG(svgElementOrContainer) {
     const blob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
     const url = URL.createObjectURL(blob);
 
-    // Définir les dimensions pour éviter PNG vide
     const width = svgNode.clientWidth || 800;
     const height = svgNode.clientHeight || 600;
     canvas.width = width * 2;
@@ -107,25 +106,36 @@ export function buildTreeFromEdges(nodes, edges) {
     return nodeMap.get(rootNode.id);
 }
 
-export function centerTree(svgGroup, wrapper, zoomBehavior) {
+export function centerTree(g, container, zoom) {
     console.log("✅ centerTree exécuté");
-    if (!svgGroup || !svgGroup.node()) {
-        console.error("❌ svgGroup invalide dans centerTree");
+    console.log("🔎 g =", g);
+    console.log("🔎 container =", container);
+    console.log("🔎 zoom =", zoom);
+
+    if (!g || typeof g.node !== "function" || !g.node()) {
+        console.error("❌ g invalide dans centerTree");
         return;
     }
-    const bounds = svgGroup.node().getBBox();
+
+    const bbox = g.node().getBBox();
+    if (!bbox || isNaN(bbox.width) || isNaN(bbox.height)) {
+        console.error("❌ BBox invalide ou introuvable");
+        return;
+    }
+
     const scale = Math.min(
-        wrapper.clientWidth / bounds.width,
-        wrapper.clientHeight / bounds.height,
+        container.clientWidth / bbox.width,
+        container.clientHeight / bbox.height,
         1
     );
     const translate = [
-        (wrapper.clientWidth - bounds.width * scale) / 2 - bounds.x * scale,
-        (wrapper.clientHeight - bounds.height * scale) / 2 - bounds.y * scale
+        (container.clientWidth - bbox.width * scale) / 2 - bbox.x * scale,
+        (container.clientHeight - bbox.height * scale) / 2 - bbox.y * scale
     ];
-    d3.select(svgGroup.node().ownerSVGElement)
+
+    d3.select(g.node().ownerSVGElement)
         .transition().duration(750)
-        .call(zoomBehavior.transform, d3.zoomIdentity.translate(...translate).scale(scale));
+        .call(zoom.transform, d3.zoomIdentity.translate(...translate).scale(scale));
 }
 
 export function searchNode(query, svgRoot) {
