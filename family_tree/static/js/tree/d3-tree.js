@@ -114,12 +114,12 @@ export function initSubD3Tree(containerId, data) {
         .text("👁 Voir les détails")
         .on("click", showPersonDetails);
 
-    centerTree(g, container, svg);
+    centerTree(g, container, zoom);
     setupTreeSearch(root, g);
     setupExportButtons(containerId);
     setupFullscreen(container);
     setupResizeHandler(() => initSubD3Tree(containerId, data));
-    setupCenterButton(containerId, g, svg);
+    setupCenterButton(containerId, g, svg, zoom);
 }
 
 function setupTreeSearch(root, g) {
@@ -219,3 +219,12 @@ export function transformDataForD3(rawData) {
 function update(source) {}
 function zoomed(event) {}
 */
+
+/* Fonction inutilisée mais conservée si besoin futur */
+function update(source) {
+    // Logique de mise à jour optimisée (non utilisée ici)
+}
+
+function zoomed(event) {
+    // Inutilisé également, géré directement dans initD3Tree
+}
