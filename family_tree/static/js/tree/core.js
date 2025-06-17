@@ -14,9 +14,9 @@ import {
   exportSVG,
   toggleFullscreen,
   buildTreeFromEdges,
-  centerTree,
   searchNode
 } from '/static/js/tree/utils.js';
+import { centerTree } from '/static/js/tree/d3-tree.js';
 
 let currentScale = 1;
 
