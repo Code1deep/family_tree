@@ -121,37 +121,6 @@ export function initSubD3Tree(containerId, data) {
     setupResizeHandler(() => initSubD3Tree(containerId, data));
     setupCenterButton(containerId, g, svg, zoom);
 }
-function centerTree(g, container, zoom) {
-    console.log("✅ centerTree exécuté");
-    console.log("🔎 g =", g);
-    console.log("🔎 container =", container);
-    console.log("🔎 zoom =", zoom);
-
-    if (!g || typeof g.node !== "function" || !g.node()) {
-        console.error("❌ g invalide dans centerTree");
-        return;
-    }
-
-    const bbox = g.node().getBBox();
-    if (!bbox || isNaN(bbox.width) || isNaN(bbox.height)) {
-        console.error("❌ BBox invalide ou introuvable");
-        return;
-    }
-
-    const scale = Math.min(
-        container.clientWidth / bbox.width,
-        container.clientHeight / bbox.height,
-        1
-    );
-    const translate = [
-        (container.clientWidth - bbox.width * scale) / 2 - bbox.x * scale,
-        (container.clientHeight - bbox.height * scale) / 2 - bbox.y * scale
-    ];
-
-    d3.select(g.node().ownerSVGElement)
-        .transition().duration(750)
-        .call(zoom.transform, d3.zoomIdentity.translate(...translate).scale(scale));
-}
 
 function setupTreeSearch(root, g) {
     const input = document.getElementById('tree-search');
@@ -168,14 +137,27 @@ function setupResizeHandler(redrawFn) {
     window.addEventListener("resize", debounce(() => redrawFn(), 300));
 }
 
-function setupCenterButton(containerId, g, svg, zoom) {
-    const btn = document.getElementById('center-tree');
-    if (!btn) return;
+export function setupCenterButton(containerId, g, svg, zoom) {
+    const btn = document.getElementById("centerBtn");
+    if (!btn) {
+        console.warn("⚠️ Bouton centerBtn introuvable");
+        return;
+    }
 
     btn.addEventListener("click", () => {
-        const bbox = g.node().getBBox();
+        console.log("🎯 Clic bouton : Centrer arbre");
+        
         const container = document.getElementById(containerId);
-        if (!container) return;
+        if (!g || !container || !zoom) {
+            console.error("❌ Paramètres manquants pour centrer l'arbre");
+            return;
+        }
+
+        const bbox = g.node().getBBox();
+        if (!bbox || isNaN(bbox.width) || isNaN(bbox.height)) {
+            console.error("❌ BBox invalide ou introuvable");
+            return;
+        }
 
         const width = container.clientWidth;
         const height = container.clientHeight;
