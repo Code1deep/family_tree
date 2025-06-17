@@ -1,6 +1,7 @@
 // static/js/tree/d3-tree.js
 import { debounce, downloadURL, toggleFullscreen } from '/static/js/tree/utils.js';
 import { openModal } from '/static/js/modal.js';
+import { centerTree } from '/static/js/tree/utils.js';
 
 /** CSS intégré dynamiquement */
 const style = document.createElement("style");
