@@ -88,7 +88,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     document.getElementById("centerBtn")?.addEventListener("click", () => {
         console.log("🎯 Clic bouton : Centrer arbre");
-        centerTree();
+        centerTree(g, container, zoom);
     });
 });
-
