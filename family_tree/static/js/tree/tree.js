@@ -5,7 +5,7 @@ import { toggleFullscreen, exportAsPNG, exportSVG, searchNode } from '/static/js
 import { openModal } from '/static/js/modal.js';
 import { initMainD3Tree, initSubD3Tree } from '/static/js/tree/index.js';
 import { loadTreeData, drawTree, zoomIn, zoomOut } from '/static/js/tree/core.js';
-import { centerTree } from '/static/js/tree/d3-tree.js';
+
 
 console.log("✅ tree.js chargé depuis : ", import.meta.url);
 
@@ -84,10 +84,5 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.getElementById("treeSearch")?.addEventListener("input", (e) => {
         console.log("🔍 Recherche en cours :", e.target.value);
         searchNode(e.target.value, d3.select("svg"));
-    });
-
-    document.getElementById("centerBtn")?.addEventListener("click", () => {
-        console.log("🎯 Clic bouton : Centrer arbre");
-        centerTree(g, container, zoom);
     });
 });
