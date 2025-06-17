@@ -7,15 +7,16 @@ const wrapper = document.getElementById("wrapper");
 console.log("🔍 wrapper in core.js ?", wrapper);
 
 import { transformDataForD3 } from '/static/js/tree/d3-tree.js';
-// static/js/tree/controls.js
 import {
-  toggleFullscreen,
+  debounce,
+  throttle,
   exportPNG,
   exportSVG,
-  debounce,
+  toggleFullscreen,
+  buildTreeFromEdges,
   centerTree,
   searchNode
-} from './utils.js';
+} from '/static/js/tree/utils.js';
 
 let currentScale = 1;
 
@@ -499,18 +500,18 @@ export async function renderFamilyTree(containerId, data) {
     console.log("📌 D3 version :", d3.version);
     console.log("🛠 D3 fonctions : ", Object.keys(d3));
     try {
-    d3.select('body').append('div').text('D3 fonctionne!');
-    console.log('✅ Test D3 réussi');
+        d3.select('body').append('div').text('D3 fonctionne!');
+        console.log('✅ Test D3 réussi');
     } catch (e) {
-    console.error('❌ Échec test D3:', e);
+        console.error('❌ Échec test D3:', e);
     }
 
     if (data?.nodes && data?.edges) {
         console.log("➡️ Données au format {nodes, edges} détectées → drawTree()");
-        await drawTree(data);
+        return await drawTree(data);
     } else {
         console.log("➡️ Données au format hiérarchique → initMainD3Tree()");
-        initMainD3Tree(containerId, data);
+        return initMainD3Tree(containerId, data);
     }
 }
 
