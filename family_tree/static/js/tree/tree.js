@@ -1,11 +1,11 @@
 // static/js/tree/tree.js
 // ✅ Importation des modules
-import { renderFamilyTree } from '/static/js/tree/core.js';
+import { renderFamilyTree, centerTree, toggleFullscreen, loadTreeData, drawTree, zoomIn, zoomOut } from '/static/js/tree/core.js';
 import { toggleFullscreen, exportPNG, exportSVG, centerTree, searchNode } from '/static/js/tree/utils.js';
 import { openModal } from '/static/js/modal.js';
 import { initMainD3Tree, initSubD3Tree } from '/static/js/tree/index.js';
-import { loadTreeData, drawTree, zoomIn, zoomOut } from '/static/js/tree/core.js';
 import { exportAsPNG, exportAsSVG } from '/static/js/tree/d3-tree.js';
+
 
 console.log("✅ tree.js chargé depuis : ", import.meta.url);
 
