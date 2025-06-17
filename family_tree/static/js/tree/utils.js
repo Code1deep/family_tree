@@ -109,6 +109,10 @@ export function buildTreeFromEdges(nodes, edges) {
 
 export function centerTree(svgGroup, wrapper, zoomBehavior) {
     console.log("✅ centerTree exécuté");
+    if (!svgGroup || !svgGroup.node()) {
+        console.error("❌ svgGroup invalide dans centerTree");
+        return;
+    }
     const bounds = svgGroup.node().getBBox();
     const scale = Math.min(
         wrapper.clientWidth / bounds.width,
