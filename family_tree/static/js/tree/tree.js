@@ -36,9 +36,8 @@ function convertToHierarchy(data) {
     console.log("✅ Racine trouvée :", rootNode);
     return nodeById[rootNode.id];
 }
-window.skipAutoInit = true;
+// window.skipAutoInit = true;
 
-// ✅ DOMContentLoaded UNIQUE
 document.addEventListener("DOMContentLoaded", async () => {
     console.log("📦 DOMContentLoaded → Initialisation");
 
@@ -56,16 +55,16 @@ document.addEventListener("DOMContentLoaded", async () => {
         console.log("✅ Données reçues depuis API :", treeData);
 
         console.log("🌳 Appel à renderFamilyTree...");
-        const svg = await renderFamilyTree("wrapper", treeData);
+        const { svg, g, zoom } = await renderFamilyTree("wrapper", treeData);
         console.log("✅ Arbre affiché avec succès");
 
-        // Optionnel : créer la hiérarchie pour d'autres usages
+        // Conversion hiérarchie si besoin
         const hierarchy = convertToHierarchy(treeData);
         if (hierarchy) {
             console.log("✅ Hiérarchie prête :", hierarchy);
         }
 
-        // Activer boutons
+        // Boutons
         document.getElementById("fullscreenBtn")?.addEventListener("click", () => {
             toggleFullscreen(treeContainer);
         });
@@ -79,9 +78,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
 
         document.getElementById("centerBtn")?.addEventListener("click", () => {
-            // 📝 Passe les bonnes références : svg, g et zoom si tu les exposes
-            const g = d3.select("svg g");
-            const zoom = d3.zoom(); // ou récupère celui déjà appliqué si tu l'as
             centerTree(svg, g, zoom);
         });
 
