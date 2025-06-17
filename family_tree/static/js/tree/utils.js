@@ -19,7 +19,17 @@ export function downloadURL(dataUrl, filename) {
 }
 
 export function exportAsPNG(containerId) {
-    const svgNode = document.querySelector(`#${containerId} svg`);
+    let selector = "";
+    if (typeof containerId === "string") {
+        selector = `#${containerId} svg`;
+    } else if (containerId instanceof HTMLElement) {
+        selector = `#${containerId.id} svg`;
+    } else {
+        console.error("❌ Paramètre exportAsPNG invalide");
+        return;
+    }
+
+    const svgNode = document.querySelector(selector);
     if (!svgNode) {
         console.error("❌ SVG introuvable pour export As PNG");
         return;
@@ -28,7 +38,6 @@ export function exportAsPNG(containerId) {
     const serializer = new XMLSerializer();
     const svgString = serializer.serializeToString(svgNode);
 
-    // On remplace getBBox() par getBoundingClientRect()
     const rect = svgNode.getBoundingClientRect();
     const width = rect.width || 1200;
     const height = rect.height || 800;
