@@ -62,7 +62,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         console.log("✅ Arbre affiché avec succès");
 
         // 🚀 Appel direct à initSubD3Tree pour affichage + setup bouton centrer
-        const hierarchyData = convertToHierarchy(treeData);
+        // const hierarchyData = convertToHierarchy(treeData);
         if (hierarchyData) {
             console.log("🌱 Appel initSubD3Tree (initial)");
             initSubD3Tree("wrapper", hierarchyData); 
