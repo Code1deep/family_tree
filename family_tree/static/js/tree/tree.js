@@ -3,8 +3,9 @@
 import { renderFamilyTree } from '/static/js/tree/core.js';
 import { toggleFullscreen, exportAsPNG, exportSVG, centerTree, searchNode } from '/static/js/tree/utils.js';
 import { openModal } from '/static/js/modal.js';
-import { initMainD3Tree, initSubD3Tree, setupCenterButton } from '/static/js/tree/index.js';  // Ajout setupCenterButton
+import { initMainD3Tree, initSubD3Tree } from '/static/js/tree/index.js';  // Ajout setupCenterButton
 import { loadTreeData, drawTree, zoomIn, zoomOut } from '/static/js/tree/core.js';
+import { setupCenterButton } from '/static/js/tree/d3-tree.js';
 
 console.log("✅ tree.js chargé depuis : ", import.meta.url);
 
