@@ -1,9 +1,8 @@
 // static/js/tree/tree.js
 // ✅ Importation des modules
 import { renderFamilyTree } from '/static/js/tree/core.js';
-import { toggleFullscreen, exportSVG, centerTree, searchNode } from '/static/js/tree/utils.js';
+import { toggleFullscreen, exportAsPNG, exportSVG, centerTree, searchNode } from '/static/js/tree/utils.js';
 import { openModal } from '/static/js/modal.js';
-import { exportPNG } from '/static/js/tree/d3-tree.js';
 import { initMainD3Tree, initSubD3Tree } from '/static/js/tree/index.js';
 import { loadTreeData, drawTree, zoomIn, zoomOut } from '/static/js/tree/core.js';
 
@@ -74,7 +73,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     document.getElementById("pngBtn")?.addEventListener("click", () => {
         console.log("📷 Clic bouton : Export PNG");
-        exportPNG(treeContainer);
+        exportAsPNG(treeContainer);
     });
 
     document.getElementById("svgBtn")?.addEventListener("click", () => {
@@ -92,3 +91,4 @@ document.addEventListener("DOMContentLoaded", async () => {
         centerTree();
     });
 });
+
