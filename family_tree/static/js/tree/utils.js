@@ -46,7 +46,7 @@ export function exportAsPNG(containerId) {
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
         // Centrage calculé
-        const offsetX = (canvas.width - img.width) / 2;
+        const offsetX = (canvas.width - img.width) / 1;
         const offsetY = (canvas.height - img.height) / 2;
 
         ctx.drawImage(img, offsetX, offsetY);
