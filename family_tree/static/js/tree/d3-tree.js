@@ -121,6 +121,37 @@ export function initSubD3Tree(containerId, data) {
     setupResizeHandler(() => initSubD3Tree(containerId, data));
     setupCenterButton(containerId, g, svg, zoom);
 }
+function centerTree(g, container, zoom) {
+    console.log("✅ centerTree exécuté");
+    console.log("🔎 g =", g);
+    console.log("🔎 container =", container);
+    console.log("🔎 zoom =", zoom);
+
+    if (!g || typeof g.node !== "function" || !g.node()) {
+        console.error("❌ g invalide dans centerTree");
+        return;
+    }
+
+    const bbox = g.node().getBBox();
+    if (!bbox || isNaN(bbox.width) || isNaN(bbox.height)) {
+        console.error("❌ BBox invalide ou introuvable");
+        return;
+    }
+
+    const scale = Math.min(
+        container.clientWidth / bbox.width,
+        container.clientHeight / bbox.height,
+        1
+    );
+    const translate = [
+        (container.clientWidth - bbox.width * scale) / 2 - bbox.x * scale,
+        (container.clientHeight - bbox.height * scale) / 2 - bbox.y * scale
+    ];
+
+    d3.select(g.node().ownerSVGElement)
+        .transition().duration(750)
+        .call(zoom.transform, d3.zoomIdentity.translate(...translate).scale(scale));
+}
 
 function setupTreeSearch(root, g) {
     const input = document.getElementById('tree-search');
@@ -232,12 +263,3 @@ export function transformDataForD3(rawData) {
 function update(source) {}
 function zoomed(event) {}
 */
-
-/* Fonction inutilisée mais conservée si besoin futur */
-function update(source) {
-    // Logique de mise à jour optimisée (non utilisée ici)
-}
-
-function zoomed(event) {
-    // Inutilisé également, géré directement dans initD3Tree
-}
