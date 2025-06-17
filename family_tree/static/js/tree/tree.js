@@ -71,7 +71,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     document.getElementById("pngBtn")?.addEventListener("click", () => {
         console.log("📷 Clic bouton : Export PNG");
-        exportPNG(treeContainer);
+        exportAsPNG(treeContainer);
     });
 
     document.getElementById("svgBtn")?.addEventListener("click", () => {
