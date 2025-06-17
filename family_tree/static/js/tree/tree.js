@@ -8,7 +8,10 @@ import { loadTreeData, drawTree, zoomIn, zoomOut } from '/static/js/tree/core.js
 import { setupCenterButton } from '/static/js/tree/d3-tree.js';
 console.log("✅ tree.js chargé depuis : ", import.meta.url);
 
+console.log('✅ tree.js loaded');
+console.log("✅ tree.js chargé depuis : ", import.meta.url);
 window.initD3Tree = initMainD3Tree;
+import { renderFamilyTree, drawTree } from '/static/js/tree/core.js';
 
 // 👉 Utilisé si nécessaire pour un autre traitement (pas pour drawTree directement)
 function convertToHierarchy(data) {
@@ -17,7 +20,6 @@ function convertToHierarchy(data) {
     data.nodes.forEach(n => {
         nodeById[n.id] = { ...n, children: [] };
     });
-
     data.edges.forEach(e => {
         const parent = nodeById[e.from];
         const child = nodeById[e.to];
@@ -27,17 +29,18 @@ function convertToHierarchy(data) {
     });
 
     const allChildIds = new Set(data.edges.map(e => e.to));
-    const rootNode = data.nodes.find(n => !allChildIds.has(n.id));
-    if (!rootNode) {
+    const root = data.nodes.find(n => !allChildIds.has(n.id));
+    if (!root) {
         console.error("❌ Racine introuvable");
         return null;
     }
 
-    console.log("✅ Racine trouvée :", rootNode);
-    return nodeById[rootNode.id];
+    console.log("✅ Racine trouvée :", root);
+    return nodeById[root.id];
 }
-// window.skipAutoInit = true;
+window.skipAutoInit = true;
 
+// ✅ DOMContentLoaded UNIQUE
 document.addEventListener("DOMContentLoaded", async () => {
     console.log("📦 DOMContentLoaded → Initialisation");
 
@@ -55,37 +58,45 @@ document.addEventListener("DOMContentLoaded", async () => {
         console.log("✅ Données reçues depuis API :", treeData);
 
         console.log("🌳 Appel à renderFamilyTree...");
-        const { svg, g, zoom } = await renderFamilyTree("wrapper", treeData);
+        await renderFamilyTree("wrapper", treeData);
         console.log("✅ Arbre affiché avec succès");
 
-        // Conversion hiérarchie si besoin
-        const hierarchy = convertToHierarchy(treeData);
-        if (hierarchy) {
-            console.log("✅ Hiérarchie prête :", hierarchy);
+        // 🚀 Appel direct à initSubD3Tree pour affichage + setup bouton centrer
+        // const hierarchyData = convertToHierarchy(treeData);
+        if (hierarchyData) {
+            console.log("🌱 Appel initSubD3Tree (initial)");
+            initSubD3Tree("wrapper", hierarchyData); 
+
+            // Active bouton centrer après initSubD3Tree
+            const svg = d3.select("#wrapper svg");
+            const g = svg.select("g.tree-group");
+            const zoom = d3.zoom(); // tu peux conserver l’instance réelle si elle est exportée depuis initSubD3Tree
+            setupCenterButton("wrapper", g, svg, zoom);
         }
-
-        // Boutons
-        document.getElementById("fullscreenBtn")?.addEventListener("click", () => {
-            toggleFullscreen(treeContainer);
-        });
-
-        document.getElementById("pngBtn")?.addEventListener("click", () => {
-            exportAsPNG("wrapper");
-        });
-
-        document.getElementById("svgBtn")?.addEventListener("click", () => {
-            exportSVG(treeContainer);
-        });
-
-        document.getElementById("centerBtn")?.addEventListener("click", () => {
-            centerTree(svg, g, zoom);
-        });
-
-        document.getElementById("treeSearch")?.addEventListener("input", (e) => {
-            searchNode(e.target.value, d3.select("svg"));
-        });
 
     } catch (err) {
         console.error("❌ Erreur lors du chargement de l’arbre :", err);
     }
+
+    // ✅ Événements UI
+    document.getElementById("fullscreenBtn")?.addEventListener("click", () => {
+        console.log("🖥️ Clic bouton : Plein écran");
+        toggleFullscreen(treeContainer);
+    });
+
+    document.getElementById("pngBtn")?.addEventListener("click", () => {
+        console.log("📷 Clic bouton : Export PNG");
+        exportAsPNG("wrapper");
+    });
+
+    document.getElementById("svgBtn")?.addEventListener("click", () => {
+        console.log("📐 Clic bouton : Export SVG");
+        exportSVG(treeContainer);
+    });
+
+    document.getElementById("treeSearch")?.addEventListener("input", (e) => {
+        console.log("🔍 Recherche en cours :", e.target.value);
+        searchNode(e.target.value, d3.select("svg"));
+    });
+
 });
