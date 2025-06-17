@@ -182,18 +182,19 @@ function exportAsSVG(containerId) {
 }
 
 function exportAsPNG(containerId) {
-    const svg = document.querySelector(`#${containerId} svg`);
-    if (!svg) {
+    const svgNode = document.querySelector(`#${containerId} svg`);
+    if (!svgNode) {
         console.error("❌ SVG introuvable pour export PNG");
         return;
     }
 
-    // Fix: définir une taille explicite
-    const width = svg.getAttribute("width") || 1200;
-    const height = svg.getAttribute("height") || 800;
-
     const serializer = new XMLSerializer();
-    const svgString = serializer.serializeToString(svg);
+    const svgString = serializer.serializeToString(svgNode);
+
+    // Remplacer getBBox() par getBoundingClientRect() 
+    const rect = svgNode.getBoundingClientRect();
+    const width = rect.width || 1200;
+    const height = rect.height || 800;
 
     const canvas = document.createElement("canvas");
     canvas.width = width;
