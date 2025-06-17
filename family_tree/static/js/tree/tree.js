@@ -5,7 +5,7 @@ import { toggleFullscreen, exportAsPNG, exportSVG, centerTree, searchNode } from
 import { openModal } from '/static/js/modal.js';
 import { initMainD3Tree, initSubD3Tree } from '/static/js/tree/index.js';
 import { loadTreeData, drawTree, zoomIn, zoomOut } from '/static/js/tree/core.js';
-
+import { centerTree } from '/static/js/tree/d3-tree.js';
 
 console.log("✅ tree.js chargé depuis : ", import.meta.url);
 
