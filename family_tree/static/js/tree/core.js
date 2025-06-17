@@ -7,16 +7,15 @@ const wrapper = document.getElementById("wrapper");
 console.log("🔍 wrapper in core.js ?", wrapper);
 
 import { transformDataForD3 } from '/static/js/tree/d3-tree.js';
+// static/js/tree/controls.js
 import {
-  debounce,
-  throttle,
+  toggleFullscreen,
   exportPNG,
   exportSVG,
-  toggleFullscreen,
-  buildTreeFromEdges,
+  debounce,
   centerTree,
   searchNode
-}
+} from './utils.js';
 
 let currentScale = 1;
 
