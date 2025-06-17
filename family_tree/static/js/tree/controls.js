@@ -4,9 +4,9 @@ import {
   exportPNG,
   exportSVG,
   debounce,
-  centerTree,
   searchNode
 } from './utils.js';
+import { centerTree } from '/static/js/tree/d3-tree.js';
 
 /**
  * Attache les contrôles de l’arbre généalogique.
