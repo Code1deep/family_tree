@@ -141,24 +141,27 @@ function setupResizeHandler(redrawFn) {
     window.addEventListener("resize", debounce(() => redrawFn(), 300));
 }
 
-function setupCenterButton(containerId, g, svg) {
+function setupCenterButton(containerId, g, svg, zoom) {
     const btn = document.getElementById('center-tree');
     if (!btn) return;
 
     btn.addEventListener("click", () => {
         const bbox = g.node()?.getBBox?.();
         if (!bbox) return;
+
         const x = bbox.x + bbox.width / 2;
         const y = bbox.y + bbox.height / 2;
 
         const container = document.getElementById(containerId);
+        if (!container) return;
+
         const dx = container.clientWidth / 2 - x;
         const dy = container.clientHeight / 2 - y;
 
         svg.transition()
             .duration(750)
             .call(
-                d3.zoom().transform,
+                zoom.transform,
                 d3.zoomIdentity.translate(dx, dy).scale(1)
             );
     });
