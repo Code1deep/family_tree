@@ -6,13 +6,13 @@ import { openModal } from '/static/js/modal.js';
 import { initMainD3Tree, initSubD3Tree } from '/static/js/tree/index.js';  // Ajout setupCenterButton
 import { loadTreeData, drawTree, zoomIn, zoomOut } from '/static/js/tree/core.js';
 import { setupCenterButton } from '/static/js/tree/d3-tree.js';
-
 console.log("✅ tree.js chargé depuis : ", import.meta.url);
 
 console.log('✅ tree.js loaded');
+console.log("✅ tree.js chargé depuis : ", import.meta.url);
 window.initD3Tree = initMainD3Tree;
 
-// Fonction utilitaire
+// 👉 Utilisé si nécessaire pour un autre traitement (pas pour drawTree directement)
 function convertToHierarchy(data) {
     console.log("🔄 Conversion {nodes, edges} → hiérarchie");
     const nodeById = {};
@@ -37,7 +37,6 @@ function convertToHierarchy(data) {
     console.log("✅ Racine trouvée :", root);
     return nodeById[root.id];
 }
-
 window.skipAutoInit = true;
 
 // ✅ DOMContentLoaded UNIQUE
@@ -57,28 +56,22 @@ document.addEventListener("DOMContentLoaded", async () => {
         const treeData = await response.json();
         console.log("✅ Données reçues depuis API :", treeData);
 
+        // 🌳 Affichage arbre principal
         console.log("🌳 Appel à renderFamilyTree...");
         await renderFamilyTree("wrapper", treeData);
         console.log("✅ Arbre affiché avec succès");
 
-        // 🚀 Appel direct à initSubD3Tree pour affichage + setup bouton centrer
-        // const hierarchyData = convertToHierarchy(treeData);
-        if (hierarchyData) {
-            console.log("🌱 Appel initSubD3Tree (initial)");
-            initSubD3Tree("wrapper", hierarchyData); 
-
-            // Active bouton centrer après initSubD3Tree
-            const svg = d3.select("#wrapper svg");
-            const g = svg.select("g.tree-group");
-            const zoom = d3.zoom(); // tu peux conserver l’instance réelle si elle est exportée depuis initSubD3Tree
-            setupCenterButton("wrapper", g, svg, zoom);
+        // 🔄 Conversion en hiérarchie pour d'autres traitements éventuels
+        const hierarchy = convertToHierarchy(treeData);
+        if (hierarchy) {
+            console.log("✅ Hiérarchie générée pour usage interne :", hierarchy);
         }
 
     } catch (err) {
         console.error("❌ Erreur lors du chargement de l’arbre :", err);
     }
 
-    // ✅ Événements UI
+    // ✅ Activation des boutons
     document.getElementById("fullscreenBtn")?.addEventListener("click", () => {
         console.log("🖥️ Clic bouton : Plein écran");
         toggleFullscreen(treeContainer);
@@ -94,9 +87,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         exportSVG(treeContainer);
     });
 
+    document.getElementById("centerBtn")?.addEventListener("click", () => {
+        console.log("🎯 Clic bouton : Centrer arbre");
+        centerTree(d3.select("svg"));
+    });
+
     document.getElementById("treeSearch")?.addEventListener("input", (e) => {
         console.log("🔍 Recherche en cours :", e.target.value);
         searchNode(e.target.value, d3.select("svg"));
     });
-
 });
