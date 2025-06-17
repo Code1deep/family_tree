@@ -19,17 +19,7 @@ export function downloadURL(dataUrl, filename) {
 }
 
 export function exportAsPNG(containerId) {
-    let selector = "";
-    if (typeof containerId === "string") {
-        selector = `#${containerId} svg`;
-    } else if (containerId instanceof HTMLElement) {
-        selector = `#${containerId.id} svg`;
-    } else {
-        console.error("❌ Paramètre exportAsPNG invalide");
-        return;
-    }
-
-    const svgNode = document.querySelector(selector);
+    const svgNode = document.querySelector(`#${containerId} svg`);
     if (!svgNode) {
         console.error("❌ SVG introuvable pour export As PNG");
         return;
@@ -54,7 +44,12 @@ export function exportAsPNG(containerId) {
     img.onload = function () {
         ctx.fillStyle = "#ffffff";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(img, 0, 0);
+
+        // Centrage calculé
+        const offsetX = (canvas.width - img.width) / 2;
+        const offsetY = (canvas.height - img.height) / 2;
+
+        ctx.drawImage(img, offsetX, offsetY);
         URL.revokeObjectURL(url);
 
         const imgURI = canvas.toDataURL("image/png").replace("image/png", "octet/stream");
