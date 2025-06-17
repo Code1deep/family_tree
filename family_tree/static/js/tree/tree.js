@@ -9,11 +9,9 @@ import { setupCenterButton } from '/static/js/tree/d3-tree.js';
 console.log("✅ tree.js chargé depuis : ", import.meta.url);
 
 console.log('✅ tree.js loaded');
-console.log("✅ tree.js chargé depuis : ", import.meta.url);
 window.initD3Tree = initMainD3Tree;
-import { renderFamilyTree, drawTree } from '/static/js/tree/core.js';
 
-// 👉 Utilisé si nécessaire pour un autre traitement (pas pour drawTree directement)
+// Fonction utilitaire
 function convertToHierarchy(data) {
     console.log("🔄 Conversion {nodes, edges} → hiérarchie");
     const nodeById = {};
@@ -38,6 +36,7 @@ function convertToHierarchy(data) {
     console.log("✅ Racine trouvée :", root);
     return nodeById[root.id];
 }
+
 window.skipAutoInit = true;
 
 // ✅ DOMContentLoaded UNIQUE
@@ -62,7 +61,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         console.log("✅ Arbre affiché avec succès");
 
         // 🚀 Appel direct à initSubD3Tree pour affichage + setup bouton centrer
-        // const hierarchyData = convertToHierarchy(treeData);
+        const hierarchyData = convertToHierarchy(treeData);
         if (hierarchyData) {
             console.log("🌱 Appel initSubD3Tree (initial)");
             initSubD3Tree("wrapper", hierarchyData); 
