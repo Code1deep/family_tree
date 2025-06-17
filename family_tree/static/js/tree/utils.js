@@ -9,17 +9,6 @@ export function debounce(func, wait) {
     };
 }
 
-export function throttle(func, limit) {
-    let inThrottle;
-    return function (...args) {
-        if (!inThrottle) {
-            func.apply(this, args);
-            inThrottle = true;
-            setTimeout(() => inThrottle = false, limit);
-        }
-    };
-}
-
 export function downloadURL(dataUrl, filename) {
     const a = document.createElement("a");
     a.href = dataUrl;
@@ -29,38 +18,58 @@ export function downloadURL(dataUrl, filename) {
     document.body.removeChild(a);
 }
 
-export function exportPNG(svgElementOrContainer) {
+export function exportPNG(svgNode) {
     console.log("✅ exportPNG exécuté");
-
-    const svgNode = svgElementOrContainer?.tagName === 'svg'
-        ? svgElementOrContainer
-        : svgElementOrContainer?.querySelector?.('svg');
-
     if (!svgNode) {
-        console.error("❌ SVG introuvable pour PNG");
+        console.error("❌ SVG introuvable pour export PNG");
         return;
     }
 
     const svgData = new XMLSerializer().serializeToString(svgNode);
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
     const img = new Image();
-    const blob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
 
-    const width = svgNode.clientWidth || 800;
-    const height = svgNode.clientHeight || 600;
-    canvas.width = width * 2;
-    canvas.height = height * 2;
-    ctx.scale(2, 2);
+    const bbox = svgNode.getBBox();
+    canvas.width = bbox.width + 40;
+    canvas.height = bbox.height + 40;
 
-    img.onload = () => {
-        ctx.drawImage(img, 0, 0);
+    const svgBlob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
+    const url = URL.createObjectURL(svgBlob);
+
+    img.onload = function () {
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 20, 20);
         URL.revokeObjectURL(url);
-        const pngUrl = canvas.toDataURL("image/png");
-        downloadURL(pngUrl, "tree.png");
+        const png = canvas.toDataURL("image/png");
+        downloadURL(png, "tree.png");
     };
+
+    img.onerror = function (e) {
+        console.error("❌ Erreur chargement image SVG", e);
+    };
+
     img.src = url;
+}
+
+export function toggleFullscreen(container) {
+    if (!document.fullscreenElement) {
+        container.requestFullscreen().catch(err => console.error("❌ Fullscreen:", err));
+    } else {
+        document.exitFullscreen();
+    }
+}
+
+export function throttle(func, limit) {
+    let inThrottle;
+    return function (...args) {
+        if (!inThrottle) {
+            func.apply(this, args);
+            inThrottle = true;
+            setTimeout(() => inThrottle = false, limit);
+        }
+    };
 }
 
 export function exportSVG(svgNode) {
@@ -74,17 +83,6 @@ export function exportSVG(svgNode) {
     const blob = new Blob([source], { type: "image/svg+xml;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     downloadURL(url, "tree.svg");
-}
-
-export function toggleFullscreen(container) {
-    console.log("✅ toggleFullscreen exécuté");
-    if (!document.fullscreenElement) {
-        container.requestFullscreen().catch(err => {
-            console.error("❌ Échec du mode plein écran :", err);
-        });
-    } else {
-        document.exitFullscreen();
-    }
 }
 
 export function buildTreeFromEdges(nodes, edges) {
