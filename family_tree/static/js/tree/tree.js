@@ -60,6 +60,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         await renderFamilyTree("wrapper", treeData);
         console.log("✅ Arbre affiché avec succès");
 
+        // 🚀 Setup bouton centrer
+        const svg = d3.select("#wrapper svg");
+        const g = svg.select("g.tree-group");
+        const zoom = d3.zoom();  // ou récupère ton vrai zoom
+        setupCenterButton("wrapper", g, svg, zoom);
+
     } catch (err) {
         console.error("❌ Erreur lors du chargement de l’arbre :", err);
     }
