@@ -14,27 +14,40 @@ window.initD3Tree = initMainD3Tree;
 // Fonction utilitaire
 function convertToHierarchy(data) {
     console.log("🔄 Conversion {nodes, edges} → hiérarchie");
+    
+    // 1. Vérification des données
+    if (!data?.nodes || !data?.edges) {
+        console.error("❌ Données manquantes");
+        return null;
+    }
+
+    // 2. Construction de la structure parent-enfant
     const nodeById = {};
     data.nodes.forEach(n => {
         nodeById[n.id] = { ...n, children: [] };
     });
+
+    // 3. Vérification des edges
     data.edges.forEach(e => {
-        const parent = nodeById[e.from];
-        const child = nodeById[e.to];
-        if (parent && child) {
-            parent.children.push(child);
+        if (!nodeById[e.from] || !nodeById[e.to]) {
+            console.warn(`⚠ Edge invalide entre ${e.from}→${e.to}`);
+            return;
         }
+        nodeById[e.from].children.push(nodeById[e.to]);
     });
 
+    // 4. Trouver la racine (version améliorée)
     const allChildIds = new Set(data.edges.map(e => e.to));
-    const root = data.nodes.find(n => !allChildIds.has(n.id));
-    if (!root) {
-        console.error("❌ Racine introuvable");
-        return null;
+    const roots = data.nodes.filter(n => !allChildIds.has(n.id));
+    
+    if (roots.length === 0) {
+        // Fallback: premier nœud disponible
+        console.warn("⚠ Aucune racine trouvée, utilisation du premier nœud");
+        return nodeById[data.nodes[0]?.id] || null;
     }
 
-    console.log("✅ Racine trouvée :", root);
-    return nodeById[root.id];
+    console.log(`✅ ${roots.length} racine(s) trouvée(s)`);
+    return roots[0]; // Prend la première racine trouvée
 }
 
 window.skipAutoInit = true;
@@ -67,10 +80,10 @@ document.addEventListener("DOMContentLoaded", async () => {
             initSubD3Tree("wrapper", hierarchyData);
 
             // Active bouton centrer après initSubD3Tree
-            ////const svg = d3.select("#wrapper svg");
-            ////const g = svg.select("g.tree-group");
-            ////const zoom = d3.zoom(); // tu peux conserver l’instance réelle si elle est exportée depuis initSubD3Tree
-            ////setupCenterButton("wrapper", g, svg, zoom);
+            const svg = d3.select("#wrapper svg");
+            const g = svg.select("g.tree-group");
+            const zoom = d3.zoom(); // tu peux conserver l’instance réelle si elle est exportée depuis initSubD3Tree
+            setupCenterButton("wrapper", g, svg, zoom);
         }
 
     } catch (err) {
