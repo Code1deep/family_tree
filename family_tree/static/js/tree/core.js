@@ -343,6 +343,7 @@ export async function drawTree(data) {
             .style("width", "100%")
             .style("height", "90vh")
             .append("g")
+            .attr("class", "tree-group")
             .attr("transform", "translate(80,40)");
 
         // Indexation des noeuds
