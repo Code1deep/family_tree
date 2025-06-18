@@ -138,41 +138,26 @@ function setupResizeHandler(redrawFn) {
 }
 
 export function setupCenterButton(containerId, g, svg, zoom) {
-    const btn = document.getElementById("centerBtn");
-    if (!btn) {
-        console.warn("⚠️ Bouton centerBtn introuvable");
+    // 1. Vérifier que le bouton existe
+    const centerBtn = document.getElementById('centerBtn');
+    if (!centerBtn) {
+        console.error("❌ ERREUR : Le bouton #centerBtn est introuvable");
         return;
     }
 
-    btn.addEventListener("click", () => {
-        console.log("🎯 Clic bouton : Centrer arbre");
-        
+    // 2. Nettoyer les anciens événements (éviter les doublons)
+    centerBtn.onclick = null;
+
+    // 3. Ajouter le gestionnaire d'événement
+    centerBtn.onclick = () => {
         const container = document.getElementById(containerId);
-        if (!g || !container || !zoom) {
-            console.error("❌ Paramètres manquants pour centrer l'arbre");
+        if (!container || !g?.node()) {
+            console.error("❌ ERREUR : Conteneur ou groupe SVG invalide");
             return;
         }
-
-        const bbox = g.node().getBBox();
-        if (!bbox || isNaN(bbox.width) || isNaN(bbox.height)) {
-            console.error("❌ BBox invalide ou introuvable");
-            return;
-        }
-
-        const width = container.clientWidth;
-        const height = container.clientHeight;
-
-        const scale = Math.min(width / bbox.width, height / bbox.height, 1);
-        const translate = [
-            (width - bbox.width * scale) / 2 - bbox.x * scale,
-            (height - bbox.height * scale) / 2 - bbox.y * scale
-        ];
-
-        svg.transition().duration(750)
-            .call(zoom.transform, d3.zoomIdentity.translate(...translate).scale(scale));
-    });
+        centerTree(g, container, zoom); // Votre fonction qui marche déjà
+    };
 }
-
 function setupExportButtons(containerId) {
     const exportSvgBtn = document.getElementById("svgBtn");
     const exportPngBtn = document.getElementById("pngBtn");
