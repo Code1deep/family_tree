@@ -60,19 +60,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         await renderFamilyTree("wrapper", treeData);
         console.log("✅ Arbre affiché avec succès");
 
-        // 🚀 Appel direct à initSubD3Tree pour affichage + setup bouton centrer
-        const hierarchyData = convertToHierarchy(treeData);
-        if (hierarchyData) {
-            console.log("🌱 Appel initSubD3Tree (initial)");
-            initSubD3Tree("wrapper", hierarchyData);
-
-            // Active bouton centrer après initSubD3Tree
-            const svg = d3.select("#wrapper svg");
-            const g = svg.select("g.tree-group");
-            const zoom = d3.zoom(); // tu peux conserver l’instance réelle si elle est exportée depuis initSubD3Tree
-            setupCenterButton("wrapper", g, svg, zoom);
-        }
-
     } catch (err) {
         console.error("❌ Erreur lors du chargement de l’arbre :", err);
     }
@@ -87,7 +74,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         console.log("📷 Clic bouton : Export PNG");
         exportAsPNG("wrapper");
     });
-    
+
     document.getElementById("svgBtn")?.addEventListener("click", () => {
         console.log("📐 Clic bouton : Export SVG");
         exportSVG(treeContainer);
@@ -97,5 +84,4 @@ document.addEventListener("DOMContentLoaded", async () => {
         console.log("🔍 Recherche en cours :", e.target.value);
         searchNode(e.target.value, d3.select("svg"));
     });
-
 });
