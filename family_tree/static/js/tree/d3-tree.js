@@ -138,25 +138,32 @@ function setupResizeHandler(redrawFn) {
 }
 
 export function setupCenterButton(containerId, g, svg, zoom) {
-    // 1. Vérifier que le bouton existe
+    // Solution robuste avec vérifications
     const centerBtn = document.getElementById('centerBtn');
     if (!centerBtn) {
-        console.error("❌ ERREUR : Le bouton #centerBtn est introuvable");
+        console.error("❌ ERREUR CRITIQUE : Bouton #centerBtn introuvable");
         return;
     }
 
-    // 2. Nettoyer les anciens événements (éviter les doublons)
+    // Réinitialisation complète des événements
     centerBtn.onclick = null;
+    centerBtn.removeEventListener('click', centerTree); 
+    
+    // Nouvel événement avec vérifications
+    centerBtn.addEventListener('click', () => {
+        console.log("🔄 Tentative de centrage...");
+        try {
+            const container = document.getElementById(containerId);
+            if (!container) throw new Error("Conteneur introuvable");
+            if (!g?.node()) throw new Error("Groupe SVG invalide");
+            if (!zoom) throw new Error("Zoom non initialisé");
 
-    // 3. Ajouter le gestionnaire d'événement
-    centerBtn.onclick = () => {
-        const container = document.getElementById(containerId);
-        if (!container || !g?.node()) {
-            console.error("❌ ERREUR : Conteneur ou groupe SVG invalide");
-            return;
+            console.log("✅ Éléments valides, appel à centerTree");
+            centerTree(g, container, zoom);
+        } catch (err) {
+            console.error("❌ Échec du centrage :", err.message);
         }
-        centerTree(g, container, zoom); // Votre fonction qui marche déjà
-    };
+    });
 }
 function setupExportButtons(containerId) {
     const exportSvgBtn = document.getElementById("svgBtn");
