@@ -11,10 +11,10 @@ def init_person_resources(db_session):
     service = PersonService(PersonRepository(db_session))
     
     # Tu passes le service explicitement partout
-    register_crud_routes(person_api, service)
-    register_api_routes(person_api, service)
-    register_tree_routes(person_api, service)
-    register_misc_routes(person_api, service)
+    register_crud_routes(person_api)
+    register_api_routes(person_api)
+    register_tree_routes(person_api)
+    register_misc_routes(person_api)
 
 def create_person_api():
     return person_api
