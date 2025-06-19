@@ -2,30 +2,10 @@
 import logging
 from datetime import datetime
 from flask import render_template, request, jsonify, abort
-from family_tree.domain.services.person_service import PersonService
-from family_tree.app.extensions import db
 from family_tree.interfaces.api.serializers.person_serializer import PersonSerializer
-
-person_service = None
-
-def check_service():
-    print(f"🔍 check_service : person_service = {person_service}")
-    if person_service is None:
-        raise RuntimeError("❌ person_service is not initialized. Please inject_service() before using routes.")
-
-
-def inject_service(service):
-    global person_service
-    print(f"✅ inject_service() appelé avec {service}")
-    person_service = service
+from family_tree.app.extensions import db
 
 def register_crud_routes(person_api, person_service):
-    @person_api.route('/crud/person/<int:person_id>', methods=['DELETE'])
-    def delete_person(person_id):
-        if person_service.delete(person_id):
-            return jsonify({'success': True}), 204
-        abort(404, "Person not found")
-
     @person_api.route('/persons', methods=['POST'])
     def create_person():
         data = request.get_json()
@@ -43,13 +23,11 @@ def register_crud_routes(person_api, person_service):
                     try:
                         return datetime.strptime(value, "%Y-%m-%d").date()
                     except ValueError:
-                        return jsonify({'error': f"Invalid date format for {field}, expected YYYY-MM-DD"}), 400
+                        abort(400, f"Invalid date format for {field}, expected YYYY-MM-DD")
                 return None
 
             birth_date = parse_date('birth_date')
-            if isinstance(birth_date, tuple): return birth_date
             death_date = parse_date('death_date')
-            if isinstance(death_date, tuple): return death_date
 
             person = person_service.create_person(
                 first_name=data['first_name'],
@@ -104,10 +82,11 @@ def register_crud_routes(person_api, person_service):
                 return jsonify({'error': 'Person not found'}), 404
             return '', 204
         except Exception as e:
-            person_service.repo.rollback()
+            db.session.rollback()
             logging.error(f"Error deleting person: {str(e)}")
             return jsonify({'error': 'Internal server error'}), 500
 
     @person_api.route('/add')
     def add_person():
         return render_template('add_person.html')
+
