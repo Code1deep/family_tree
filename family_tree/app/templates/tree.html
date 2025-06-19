@@ -25,7 +25,7 @@
 <div class="modal fade" id="personModal" tabindex="-1" aria-labelledby="personModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
-      <form method="POST" action="{{ url_for('person_api.create_person') }}">
+      <form method="POST" action="/api/person/persons">
         {% include "tree_form.html" %}
         <div class="modal-footer">
           <button type="submit" class="btn btn-primary">Enregistrer</button>
