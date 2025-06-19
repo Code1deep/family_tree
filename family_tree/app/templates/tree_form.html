@@ -1,62 +1,47 @@
 <!-- app/templates/tree_form.html -->
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Formulaire Personne</title>
-</head>
-<body>
-    <h1>Créer une Personne</h1>
+{{ form.hidden_tag() }}
 
-    <form method="POST" action="{{ url_for('person_api.create_person') }}">
-  {{ form.hidden_tag() }}
+<div class="mb-3">
+  {{ form.first_name.label(class="form-label") }}
+  {{ form.first_name(class="form-control") }}
+</div>
 
-  <div class="mb-3">
-    {{ form.first_name.label(class="form-label") }}
-    {{ form.first_name(class="form-control") }}
-  </div>
+<div class="mb-3">
+  {{ form.last_name.label(class="form-label") }}
+  {{ form.last_name(class="form-control") }}
+</div>
 
-  <div class="mb-3">
-    {{ form.last_name.label(class="form-label") }}
-    {{ form.last_name(class="form-control") }}
-  </div>
+<div class="mb-3">
+  {{ form.gender.label(class="form-label") }}
+  {{ form.gender(class="form-select") }}
+</div>
 
-  <div class="mb-3">
-    {{ form.gender.label(class="form-label") }}
-    {{ form.gender(class="form-select") }}
-  </div>
+<div class="mb-3">
+  {{ form.birth_date.label(class="form-label") }}
+  {{ form.birth_date(class="form-control", type="date") }}
+</div>
 
-  <div class="mb-3">
-    {{ form.birth_date.label(class="form-label") }}
-    {{ form.birth_date(class="form-control", type="date") }}
-  </div>
+<div class="mb-3">
+  {{ form.death_date.label(class="form-label") }}
+  {{ form.death_date(class="form-control", type="date") }}
+</div>
 
-  <div class="mb-3">
-    {{ form.death_date.label(class="form-label") }}
-    {{ form.death_date(class="form-control", type="date") }}
-  </div>
+<div class="mb-3">
+  {{ form.mother_id.label(class="form-label") }}
+  {{ form.mother_id(class="form-control") }}
+</div>
 
-  <div class="mb-3">
-    {{ form.mother_id.label(class="form-label") }}
-    {{ form.mother_id(class="form-control") }}
-  </div>
+<div class="mb-3">
+  {{ form.father_id.label(class="form-label") }}
+  {{ form.father_id(class="form-control") }}
+</div>
 
-  <div class="mb-3">
-    {{ form.father_id.label(class="form-label") }}
-    {{ form.father_id(class="form-control") }}
-  </div>
-
-  <button type="submit" class="btn btn-success">Enregistrer</button>
-</form>
-
-
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        <ul>
-          {% for category, message in messages %}
-            <li><strong>{{ category }}:</strong> {{ message }}</li>
-          {% endfor %}
-        </ul>
-      {% endif %}
-    {% endwith %}
-</body>
-</html>
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <ul>
+      {% for category, message in messages %}
+        <li><strong>{{ category }}:</strong> {{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
