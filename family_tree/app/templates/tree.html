@@ -18,16 +18,26 @@
 <main id="wrapper" class="tree-wrapper mb-5" style="width: 100%; height: 70vh; position: relative;"></main>
 
 <!-- 🧍 Modal Bootstrap : formulaire -->
+<!-- Bouton qui ouvre le modal -->
 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#personModal">
   Créer une personne
 </button>
 
+<!-- Le modal -->
 <div class="modal fade" id="personModal" tabindex="-1" aria-labelledby="personModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <form method="POST" action="/api/person/persons">
-        {% include "tree_form.html" %}
+        <div class="modal-header">
+          <h5 class="modal-title" id="personModalLabel">Créer une personne</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+        </div>
+        <div class="modal-body">
+          <input type="text" name="first_name" class="form-control mb-2" placeholder="Prénom" required>
+          <input type="text" name="last_name" class="form-control mb-2" placeholder="Nom" required>
+        </div>
         <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
           <button type="submit" class="btn btn-primary">Enregistrer</button>
         </div>
       </form>
