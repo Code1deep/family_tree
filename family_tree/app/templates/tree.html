@@ -25,15 +25,8 @@
 <div class="modal fade" id="personModal" tabindex="-1" aria-labelledby="personModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
-      <form action="/add_person_modal" method="POST">
-        <div class="modal-header">
-          <h5 class="modal-title" id="personModalLabel">Créer une personne</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
-        </div>
-        <div class="modal-body">
-          {% include "tree_form.html" %}
-          <input type="text" name="name" class="form-control" placeholder="Nom">
-        </div>
+      <form method="POST" action="{{ url_for('person_api.create_person') }}">
+        {% include "tree_form.html" %}
         <div class="modal-footer">
           <button type="submit" class="btn btn-primary">Enregistrer</button>
         </div>
