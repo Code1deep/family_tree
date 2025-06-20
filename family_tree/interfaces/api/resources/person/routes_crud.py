@@ -117,3 +117,20 @@ def register_crud_routes(person_api):
         from family_tree.interfaces.forms.person_form import PersonForm
         form = PersonForm()
         return render_template('add_person.html', form=form)
+    
+    @person_api.route('/persons', methods=['POST'])
+    def create_person():
+        from family_tree.interfaces.forms.person_form import PersonForm
+        form = PersonForm()
+        if form.validate_on_submit():
+            person = person_service.create_person(
+                first_name=form.first_name.data,
+                last_name=form.last_name.data,
+                gender=form.gender.data,
+                birth_date=form.birth_date.data,
+                death_date=form.death_date.data,
+                mother_id=form.mother_id.data,
+                father_id=form.father_id.data
+            )
+            return jsonify(person.to_dict()), 201  # OU redirect selon ton besoin
+        return render_template('add_person.html', form=form), 400
