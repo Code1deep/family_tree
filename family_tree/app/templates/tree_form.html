@@ -2,130 +2,130 @@
 {% extends "base_template.html" %}
 
 {% block content %}
-<h1 class="text-center mb-4">Créer une nouvelle personne</h1>
+<h1 class="text-center mb-4">إنشاء شخص جديد</h1>
 
 <form method="post">
   {{ form.hidden_tag() }}
 
-  <!-- Identité -->
+  <!-- الهوية -->
   <div class="mb-3">
-    {{ form.first_name.label(class="form-label") }}
+    {{ form.first_name.label('الاسم الأول', class="form-label") }}
     {{ form.first_name(class="form-control") }}
   </div>
   <div class="mb-3">
-    {{ form.last_name.label(class="form-label") }}
+    {{ form.last_name.label('اسم العائلة', class="form-label") }}
     {{ form.last_name(class="form-control") }}
   </div>
   <div class="mb-3">
-    {{ form.friends_name.label(class="form-label") }}
+    {{ form.friends_name.label('اسم الأصدقاء', class="form-label") }}
     {{ form.friends_name(class="form-control") }}
   </div>
   <div class="mb-3">
-    {{ form.fitan.label(class="form-label") }}
+    {{ form.fitan.label('فتن', class="form-label") }}
     {{ form.fitan(class="form-control") }}
   </div>
 
-  <!-- Sexe -->
+  <!-- الجنس -->
   <div class="mb-3">
-    {{ form.gender.label(class="form-label") }}
+    {{ form.gender.label('الجنس', class="form-label") }}
     {{ form.gender(class="form-select") }}
   </div>
 
-  <!-- Dates -->
+  <!-- التواريخ -->
   <div class="mb-3">
-    {{ form.birth_date.label(class="form-label") }}
+    {{ form.birth_date.label('تاريخ الميلاد', class="form-label") }}
     {{ form.birth_date(class="form-control", type="date") }}
   </div>
   <div class="mb-3">
-    {{ form.death_date.label(class="form-label") }}
+    {{ form.death_date.label('تاريخ الوفاة', class="form-label") }}
     {{ form.death_date(class="form-control", type="date") }}
   </div>
 
-  <!-- Lieux -->
+  <!-- الأماكن -->
   <div class="mb-3">
-    {{ form.birth_place.label(class="form-label") }}
+    {{ form.birth_place.label('مكان الميلاد', class="form-label") }}
     {{ form.birth_place(class="form-control") }}
   </div>
   <div class="mb-3">
-    {{ form.residence.label(class="form-label") }}
+    {{ form.residence.label('مكان الإقامة', class="form-label") }}
     {{ form.residence(class="form-control") }}
   </div>
 
-  <!-- Famille -->
+  <!-- العائلة -->
   <div class="mb-3">
-    {{ form.mother_id.label(class="form-label") }}
+    {{ form.mother_id.label('معرف الأم', class="form-label") }}
     {{ form.mother_id(class="form-control") }}
   </div>
   <div class="mb-3">
-    {{ form.father_id.label(class="form-label") }}
+    {{ form.father_id.label('معرف الأب', class="form-label") }}
     {{ form.father_id(class="form-control") }}
   </div>
 
-  <!-- Biographie -->
+  <!-- السيرة -->
   <div class="mb-3">
-    {{ form.short_bio.label(class="form-label") }}
+    {{ form.short_bio.label('نبذة قصيرة', class="form-label") }}
     {{ form.short_bio(class="form-control") }}
   </div>
   <div class="mb-3">
-    {{ form.full_bio.label(class="form-label") }}
+    {{ form.full_bio.label('سيرة كاملة', class="form-label") }}
     {{ form.full_bio(class="form-control") }}
   </div>
   <div class="mb-3">
-    {{ form.profession.label(class="form-label") }}
+    {{ form.profession.label('المهنة', class="form-label") }}
     {{ form.profession(class="form-control") }}
   </div>
   <div class="mb-3">
-    {{ form.notes.label(class="form-label") }}
+    {{ form.notes.label('ملاحظات', class="form-label") }}
     {{ form.notes(class="form-control") }}
   </div>
 
-  <!-- Statut -->
+  <!-- الحالة -->
   <div class="form-check mb-3">
     {{ form.has_offspring(class="form-check-input") }}
-    {{ form.has_offspring.label(class="form-check-label") }}
+    {{ form.has_offspring.label('لديه نسل', class="form-check-label") }}
   </div>
   <div class="form-check mb-3">
     {{ form.alive(class="form-check-input") }}
-    {{ form.alive.label(class="form-check-label") }}
+    {{ form.alive.label('على قيد الحياة', class="form-check-label") }}
   </div>
   <div class="mb-3">
-    {{ form.death_reason.label(class="form-label") }}
+    {{ form.death_reason.label('سبب الوفاة', class="form-label") }}
     {{ form.death_reason(class="form-control") }}
   </div>
   <div class="form-check mb-3">
     {{ form.died_in_battle(class="form-check-input") }}
-    {{ form.died_in_battle.label(class="form-check-label") }}
+    {{ form.died_in_battle.label('توفي في معركة', class="form-check-label") }}
   </div>
 
-  <!-- Médias & liens -->
+  <!-- الوسائط والروابط -->
   <div class="mb-3">
-    {{ form.external_link.label(class="form-label") }}
+    {{ form.external_link.label('رابط خارجي', class="form-label") }}
     {{ form.external_link(class="form-control") }}
   </div>
   <div class="mb-3">
-    {{ form.image_url.label(class="form-label") }}
+    {{ form.image_url.label('رابط الصورة', class="form-label") }}
     {{ form.image_url(class="form-control") }}
   </div>
   <div class="mb-3">
-    {{ form.photo_url.label(class="form-label") }}
+    {{ form.photo_url.label('رابط الصورة الشخصية', class="form-label") }}
     {{ form.photo_url(class="form-control") }}
   </div>
 
-  <!-- Autres -->
+  <!-- آخر -->
   <div class="mb-3">
-    {{ form.known_enemies.label(class="form-label") }}
+    {{ form.known_enemies.label('الأعداء المعروفون', class="form-label") }}
     {{ form.known_enemies(class="form-control") }}
   </div>
   <div class="mb-3">
-    {{ form.image.label(class="form-label") }}
+    {{ form.image.label('اسم الصورة', class="form-label") }}
     {{ form.image(class="form-control") }}
   </div>
 
-  <!-- Soumission -->
-  <button type="submit" class="btn btn-primary">Enregistrer</button>
+  <!-- الإرسال -->
+  <button type="submit" class="btn btn-primary">حفظ</button>
 </form>
 
-<!-- Messages flash -->
+<!-- رسائل التنبيه -->
 {% with messages = get_flashed_messages(with_categories=true) %}
   {% if messages %}
     <ul class="mt-3">
