@@ -122,4 +122,4 @@ def register_crud_routes(person_api):
     def new_person_form():
         from family_tree.interfaces.forms.person_form import PersonForm
         form = PersonForm()
-        return render_template('form.tree.html', form=form)
+        return render_template('tree_form.html', form=form)
