@@ -1,6 +1,7 @@
 # family_tree/interfaces/api/resources/tree/init_tree_service.py
 
 from flask import Blueprint, jsonify, render_template
+
 from .routes_tree_api import register_tree_api_routes
 from .routes_tree_views import register_tree_view_routes
 from family_tree.interfaces.api.resources.person.routes_tree import register_tree_routes, inject_service
@@ -35,3 +36,10 @@ def init_tree_resources(app, person_service):
     viz_bp = Blueprint("tree_visualization_api", __name__)
     register_tree_routes(viz_bp)
     app.register_blueprint(viz_bp)
+
+    # ✅ 4. HOME PAGE
+    try:
+        from ..home.routes_home import register_home_routes
+        register_home_routes(app)
+    except ImportError as e:
+        print(f"Erreur d'importation des routes home: {e}")
