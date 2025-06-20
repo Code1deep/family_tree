@@ -7,8 +7,7 @@
 <!-- 🔘 Boutons de contrôle -->
 <div class="header-actions text-center mb-3">
   <a href="/api/person/add" class="btn btn-success me-2">➕ إضافة فرد جديد</a>
-  <a href="{{ url_for('person_api.create_person') }}" class="btn btn-primary mb-3">
-  Créer une personne </a>
+  <a href="{{ url_for('person_api.new_person_form') }}" class="btn btn-primary mb-3">Créer une personne</a>
   <button id="fullscreenBtn" class="btn btn-secondary me-2">🖼️ ملء الشاشة</button>
   <button id="centerBtn" class="btn btn-info me-2">🎯 توسيط</button>
   <button id="pngBtn" class="btn btn-warning me-2">⬇️ تصدير PNG</button>
