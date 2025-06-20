@@ -1,4 +1,4 @@
-# interfaces/home/routes_home.py
+# interfaces/api/resources/home/routes_home.py
 from flask import Blueprint, render_template
 
 def register_home_routes(app):
