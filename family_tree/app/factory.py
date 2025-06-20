@@ -123,11 +123,6 @@ def create_app(config_object='config.Config', testing=False):
     
             if request.form:
                 current_app.logger.info(f"[FORM] {request.form}")
-    
-        # Route de base
-        @app.route('/')
-        def home():
-            return "Bienvenue sur Family Tree API", 200
 
         @app.route('/static/js/tree/<path:filename>')
         def serve_js_tree(filename):
