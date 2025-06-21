@@ -1,14 +1,14 @@
 # C:\family_tree\app\factory.py
+from family_tree.app.extensions import db, babel, login_manager
+
+# Ensuite seulement les autres imports
 from family_tree.infrastructure.persistence.db import db_session
 import os
-#import sys
 from pathlib import Path
 from flask_wtf.csrf import CSRFProtect
 from flask import Flask, request, current_app, send_from_directory, url_for
-from family_tree.app.extensions import db, babel, login_manager
 import logging.config
 from family_tree.app.config import LOGGING_CONFIG
-from pathlib import Path
 import psycopg2  
 
 from family_tree.interfaces.auth import auth_bp, load_user
