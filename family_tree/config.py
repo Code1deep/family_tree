@@ -1,4 +1,4 @@
-# app/config.py
+# config.py
 import os
 
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -9,8 +9,10 @@ class Config:
     WTF_CSRF_ENABLED = False  # désactive CSRF pour les tests
     
     """Configuration de base commune à tous les environnements."""
+    
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
-        f"sqlite:///{os.path.join(instance_path, 'family.db')}"
+    "postgresql://postgres:123@localhost:5432/family"
+
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ECHO = True  # Active les logs SQL pour le débogage
 
@@ -22,7 +24,10 @@ class TestingConfig(Config):
     """Configuration utilisée pour les tests unitaires."""
     TESTING = True
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = f"sqlite:///{os.path.join(instance_path, 'family.db')}"
+
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
+    "postgresql://postgres:123@localhost:5432/family"
+
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 LOGGING_CONFIG = {
