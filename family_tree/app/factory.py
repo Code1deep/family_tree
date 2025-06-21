@@ -9,6 +9,7 @@ from family_tree.app.extensions import db, babel, login_manager
 import logging.config
 from family_tree.app.config import LOGGING_CONFIG
 from pathlib import Path
+import psycopg2  
 
 from family_tree.interfaces.auth import auth_bp, load_user
 print("✓ Import auth_bp & load_user OK")
@@ -42,7 +43,7 @@ for root, dirs, files in os.walk(str(BASE_DIR / 'static')):
 
 
 def create_app(config_object='config.Config', testing=False):
-    """Factory d'application Flask avec debug complet"""
+    """Factory d'application Flask avec configuration PostgreSQL"""
     global _app_creation_count
     _app_creation_count += 1
     print(f"create_app() appelé {_app_creation_count} fois")
@@ -83,12 +84,27 @@ def create_app(config_object='config.Config', testing=False):
         app.config.from_object(config_object)
         app.secret_key = 'super secret string'  # 🔐 sécurise ensuite
         db_path = os.path.join(app.instance_path, 'family.db')
-        app.config.update(
-            SQLALCHEMY_DATABASE_URI=f'sqlite:///{db_path}',
-            SQLALCHEMY_TRACK_MODIFICATIONS=False
-        )
-        print(f"DB path: {db_path}")
 
+        print(f"DB path: {db_path}")
+        app.config.update(
+            SQLALCHEMY_DATABASE_URI=(
+                f"postgresql+psycopg2://"
+                f"{os.getenv('DB_USER', 'postgres')}:"
+                f"{os.getenv('DB_PASSWORD', '123')}@"
+                f"{os.getenv('DB_HOST', 'localhost')}:"
+                f"{os.getenv('DB_PORT', '5432')}/"
+                f"{os.getenv('DB_NAME', 'family_tree')}"
+            ),
+            SQLALCHEMY_TRACK_MODIFICATIONS=False,
+            SQLALCHEMY_ENGINE_OPTIONS={
+                'pool_size': 10,
+                'max_overflow': 20,
+                'pool_pre_ping': True,
+                'pool_recycle': 3600
+            }
+        )
+
+        print(f"PostgreSQL URI: {app.config['SQLALCHEMY_DATABASE_URI']}")
 
         # Vérification des dossiers
         os.makedirs(app.instance_path, exist_ok=True)
@@ -124,6 +140,16 @@ def create_app(config_object='config.Config', testing=False):
             if request.form:
                 current_app.logger.info(f"[FORM] {request.form}")
 
+        @app.teardown_appcontext
+        def shutdown_session(exception=None):
+            """Ferme proprement les sessions SQLAlchemy"""
+            db.session.remove()
+
+        # Route de base
+        @app.route('/')
+        def home():
+            return "Bienvenue sur Family Tree API", 200
+
         @app.route('/static/js/tree/<path:filename>')
         def serve_js_tree(filename):
             return send_from_directory(os.path.join(BASE_DIR, 'static', 'js', 'tree'), filename)
@@ -133,18 +159,28 @@ def create_app(config_object='config.Config', testing=False):
             print(url_for('static', filename='js/tree/core.js'))
             print(url_for('static', filename='js/tree/d3-tree.js'))
             print(url_for('static', filename='images/logo.png'))
-
-    
+        
         with app.app_context():
-            # Test de connexion DB
+            # Test de connexion DB avec PostgreSQL
             try:
-                db.create_all()
-                # Méthode moderne pour lister les tables
-                inspector = db.inspect(db.engine)
-                print(f"Tables in DB: {inspector.get_table_names()}")
-                print("✓ Connexion DB ÉTABLIE")
+                # Vérification de la connexion PostgreSQL - Version corrigée
+                with db.engine.connect() as conn:
+                    # Utilisation de text() pour créer une expression SQL correcte
+                    from sqlalchemy import text
+                    result = conn.execute(text("SELECT 1"))
+                    print(f"✓ Test PostgreSQL réussi - Résultat: {result.scalar()}")
+
+                    # Création des tables si elles n'existent pas
+                    db.create_all()
+
+                    # Inspection des tables
+                    inspector = db.inspect(db.engine)
+                    print(f"Tables in DB: {inspector.get_table_names()}")
+
+                print("✓ Connexion PostgreSQL ÉTABLIE et fermée proprement")
             except Exception as e:
-                print(f"❌ Erreur DB: {str(e)}")
+                print(f"❌ Erreur de connexion PostgreSQL: {str(e)}")
+                raise
 
             # Vérification des templates
             try:
