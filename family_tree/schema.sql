@@ -2,7 +2,7 @@
 DROP TABLE IF EXISTS persons;
 
 CREATE TABLE persons (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id SERIAL PRIMARY KEY,
     first_name TEXT NOT NULL,
     last_name TEXT NOT NULL,
     friends_name TEXT,
