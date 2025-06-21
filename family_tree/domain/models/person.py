@@ -16,72 +16,78 @@ class Person(db.Model):
 
     # Identifiers
     id = Column(Integer, primary_key=True, autoincrement=True)
+    id = db.Column(db.Integer, primary_key=True)  # PostgreSQL gère l'auto-incrément
 
     # Names
-    first_name = Column(String(100), nullable=False)
-    last_name = Column(String(100), nullable=False)
-    friends_name = Column(String(100))
-    fitan = Column(String(100))
+    first_name = db.Column(db.Text, nullable=False)
+    last_name = db.Column(db.Text, nullable=False)
+    friends_name = db.Column(db.Text)
+    fitan = db.Column(db.Text)
 
     # Family relationships
-    mother_id = Column(Integer, ForeignKey('persons.id'))
-    father_id = Column(Integer, ForeignKey('persons.id'))
+    mother_id = db.Column(db.Integer, db.ForeignKey('persons.id'), nullable=True)
+    father_id = db.Column(db.Integer, db.ForeignKey('persons.id'), nullable=True)
 
-    mother = relationship(
+    mother = db.relationship(
         'Person',
         remote_side=[id],
         foreign_keys=[mother_id],
-        back_populates='children_from_mother'
+        post_update=True,
+        backref='children_from_mother'
     )
-    father = relationship(
+
+    father = db.relationship(
         'Person',
         remote_side=[id],
         foreign_keys=[father_id],
-        back_populates='children_from_father'
+        post_update=True,
+        backref='children_from_father'
     )
 
-    children_from_mother = relationship(
+    children_from_mother = db.relationship(
         'Person',
-        back_populates='mother',
+        post_update=True,
+        backref='mother',
         foreign_keys=[mother_id],
         lazy='select'
     )
-    children_from_father = relationship(
+    children_from_father = db.relationship(
         'Person',
-        back_populates='father',
+        post_update=True,
+        backref='father',
         foreign_keys=[father_id],
         lazy='select'
     )
 
     # Vital dates
-    birth_date = Column(Date)
-    death_date = Column(Date)
+    birth_date = db.Column(db.Text)
+    death_date = db.Column(db.Text)
 
     # Location
-    birth_place = Column(String(200))
-    residence = Column(String(100))
+    birth_place = db.Column(db.Text)
+    residence = db.Column(db.Text)
 
     # Biography
-    short_bio = Column(Text)
-    full_bio = Column(Text)
-    profession = Column(String(200))
-    notes = Column(Text)
+    short_bio = db.Column(db.Text)
+    full_bio = db.Column(db.Text)
+    profession = db.Column(db.Text)
+    notes = db.Column(db.Text)
 
     # Status
-    has_offspring = Column(Boolean, default=False)
-    alive = Column(Boolean, default=True)
-    death_reason = Column(String(255))
-    died_in_battle = Column(Boolean, default=False)
+    has_offspring = db.Column(db.Boolean, default=False)
+    alive = db.Column(db.Boolean, default=True)
+    death_reason = db.Column(db.Text)
+    died_in_battle = db.Column(db.Boolean, default=False)
 
     # Media & links
-    external_link = Column(String(255))
-    image_url = Column(String(255))
-    photo_url = Column(String(500))
+    external_link = db.Column(db.Text)
+    image_url = db.Column(db.Text)
+    photo_url = db.Column(db.Text)
 
     # Characteristics
-    gender = Column(String(10))
-    known_enemies = Column(Text)
-    image = Column(String(100))
+    gender = db.Column(db.Text)
+    known_enemies = db.Column(db.Text)
+    image = db.Column(db.Text)
 
     __module__ = "domain.models.person"
 
@@ -97,10 +103,12 @@ class Person(db.Model):
 
     @property
     def children(self) -> List['Person']:
-        """Retourne tous les enfants distincts (union des deux relations)"""
-        combined = (self.children_from_father or []) + (self.children_from_mother or [])
-        return list({child.id: child for child in combined if child and child.id is not None}.values())
-
+        combined = list(self.children_from_father) + list(self.children_from_mother)
+        return list({
+            child.id: child
+            for child in combined if child and child.id is not None
+        }.values())
+    
     def to_dict(self) -> Dict[str, Any]:
         if self.birth_date is not None:
             birth_str = self.birth_date.isoformat()
