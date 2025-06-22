@@ -44,13 +44,6 @@ class Person(db.Model):
         backref='children_from_father'
     )
 
-    children_from_mother = db.relationship(
-        'Person',
-        post_update=True,
-        backref='mother',
-        foreign_keys=[mother_id],
-        lazy='select'
-    )
     children_from_father = db.relationship(
         'Person',
         post_update=True,
