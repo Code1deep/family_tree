@@ -6,8 +6,10 @@ services:
       pip install -r requirements.txt
       # Copie les fichiers statiques explicitement au bon endroit
       cp -r static/ /opt/render/project/src/family_tree/static/
-      startCommand: gunicorn family_tree.wsgi:app
+    startCommand: gunicorn app:app
     plan: free
     envVars:
       - key: DATABASE_URL
-        value: sqlite:///family.db
+        value: postgresql://hassaniyine_user:MTzpda6BklFr8W0rLUIn1ohgFaN1xfLL@db:5432/hassaniyine
+      - key: SQLALCHEMY_TRACK_MODIFICATIONS
+        value: "False"
