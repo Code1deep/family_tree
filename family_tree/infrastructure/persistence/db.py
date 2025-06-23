@@ -11,7 +11,7 @@ from sqlalchemy.orm import sessionmaker, scoped_session, declarative_base
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'instance'))
 DATABASE_PATH = os.path.join(BASE_DIR, "family.db")
 
-DATABASE_URL = f"sqlite:///{DATABASE_PATH}" 
+DATABASE_URL = os.getenv('DATABASE_URL')
 
 
 print("DB PATH:", os.path.abspath("family.db"))
