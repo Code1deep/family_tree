@@ -1,6 +1,4 @@
 # infrastructure/persistence/db.py
-
-
 import os
 from family_tree.app.extensions import db
 from sqlalchemy import create_engine
