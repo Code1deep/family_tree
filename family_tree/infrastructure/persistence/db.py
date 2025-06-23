@@ -4,12 +4,21 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session, declarative_base
 
 # On récupère l'URL de connexion à PostgreSQL depuis les variables d'environnement
+# Essaie de récupérer DATABASE_URL directement
 DATABASE_URL = os.getenv('DATABASE_URL')
 
 if not DATABASE_URL:
-    raise RuntimeError("DATABASE_URL n'est pas défini dans l'environnement !")
-
-print(f"DATABASE_URL utilisé : {DATABASE_URL}")
+    print("🌐 DATABASE_URL absent, construction dynamique...")
+    DB_USER = os.getenv('DB_USER', 'hassaniyine_user')
+    DB_PASSWORD = os.getenv('DB_PASSWORD', 'MTzpda6BklFr8W0rLUIn1ohgFaN1xfLL')
+    DB_HOST = os.getenv('DB_HOST', 'db')
+    DB_PORT = os.getenv('DB_PORT', '5432')
+    DB_NAME = os.getenv('DB_NAME', 'hassaniyine')
+    
+    DATABASE_URL = (
+        f"postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+    )
+    print(f"✅ DATABASE_URL construit : {DATABASE_URL}")
 
 # Création de l'engine PostgreSQL
 engine = create_engine(DATABASE_URL, echo=True)
