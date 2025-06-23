@@ -44,14 +44,6 @@ class Person(db.Model):
         backref='children_from_father'
     )
 
-    children_from_father = db.relationship(
-        'Person',
-        post_update=True,
-        backref='father',
-        foreign_keys=[father_id],
-        lazy='select'
-    )
-
     # Vital dates
     birth_date = db.Column(db.Text)
     death_date = db.Column(db.Text)
