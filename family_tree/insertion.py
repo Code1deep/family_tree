@@ -1,30 +1,20 @@
 # family_tree/insertion.py 
 import os
-from pathlib import Path
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-
-# 📌 Chemin de la base de données
-BASE_DIR = Path(__file__).parent
-DB_PATH = BASE_DIR / "instance" / "family.db"
-os.makedirs(DB_PATH.parent, exist_ok=True)
-
-# 📦 App Flask temporaire pour initialiser le contexte
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
-    'connect_args': {
-        'timeout': 30,
-        'check_same_thread': False,
-        'uri': True
-    }
-}
-
-# 🔁 Import après config
 from family_tree.app.extensions import db
 from family_tree.domain.models.person import Person
 
+# 📦 App Flask temporaire pour initialiser le contexte
+app = Flask(__name__)
+
+DATABASE_URL = os.getenv('DATABASE_URL')
+if not DATABASE_URL:
+    raise RuntimeError("DATABASE_URL n'est pas défini dans l'environnement !")
+
+app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# 🔁 Initialisation de SQLAlchemy
 db.init_app(app)
 
 def print_all_persons(msg="📋 Contenu actuel de la base"):
@@ -49,6 +39,7 @@ def initialize_data():
     for member in family_members:
         db.session.add(Person(**member))
     db.session.commit()
+
     print("✅ Données niveaux 0-2 insérées avec succès!")
     print_all_persons("Après insertion niveaux 0-2")
 
@@ -99,6 +90,6 @@ def full_initialize():
         add_level_4()
 
 # ✅ Tu peux appeler full_initialize() depuis ton serveur Flask ou ton script principal.
-#if __name__ == '__main__':
-   # print("\n=== appeler full_initialize() depuis ton serveur Flask ou ton script principal ===")
-    #full_initialize()
+if __name__ == '__main__':
+    print("\n=== appeler full_initialize() depuis ton serveur Flask ou ton script principal ===")
+    full_initialize()
