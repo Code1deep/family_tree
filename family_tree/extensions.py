@@ -1,6 +1,6 @@
 # \extensions.py
-from setup_path import setup_sys_path
-setup_sys_path(__file__)
+# from setup_path import setup_sys_path
+# setup_sys_path(__file__)
 
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
