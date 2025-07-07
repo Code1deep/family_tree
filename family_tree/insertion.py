@@ -33,8 +33,10 @@ def clean_database():
 
 def initialize_data():
     logger.info("Initialisation des données démarrée")
-    
-    if not current_app:
+
+    # VRAI test de contexte
+    from flask import has_app_context
+    if not has_app_context():
         logger.error("Erreur: Doit être exécuté dans un contexte Flask")
         raise RuntimeError("Doit être exécuté dans un contexte Flask")
 
@@ -124,14 +126,17 @@ def initialize_data():
         logger.error(f"❌ Erreur : {str(e)}")
         raise
     
+from flask import has_app_context
+
 def full_initialize():
-    if current_app:
+    if has_app_context():
         initialize_data()
     else:
         from app.factory import create_app
         app = create_app()
         with app.app_context():
             initialize_data()
+
 
 if __name__ == '__main__':
     print("⚠ Utilisez 'flask init-db' ou appelez full_initialize()")
