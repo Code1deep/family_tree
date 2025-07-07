@@ -201,43 +201,64 @@ def create_app(config_object='config.Config', testing=False):
             #print("✓ full_initialize() exécuté avec succès dans le contexte Flask")
             #print("✓ fix_names() exécuté avec succès dans le contexte Flask")
             
-            # Initialisation du service
-            from domain.services.person_service import PersonService
-            from infrastructure.persistence.repositories.person_repo import PersonRepository
-            repo = PersonRepository(db.session)
-            person_service = PersonService(repo)
-    
-            # Initialisation des ressources Person
-            from interfaces.api.resources.person_resource import create_person_api, init_resources
-        
-            person_api = create_person_api(person_service)
-    
-            # Enregistrement des blueprints
-            print("Blueprints enregistrés avant:", list(app.blueprints.keys()))
-            if 'person_api' not in app.blueprints:
-                app.register_blueprint(person_api)
-                print("Blueprints enregistrés après:", list(app.blueprints.keys()))
-    
-            # Arbre
-            from interfaces.api.resources.tree_resource import create_tree_api
-            app.register_blueprint(create_tree_api(person_service), url_prefix="/api")
-    
-            # Enregistrement des commandes CLI
-            from commands import register_commands
-            register_commands(app)
-    
-            # Enregistrer le blueprint pour les erreurs
-            from app.errors import errors
-            app.register_blueprint(errors)
-            # Test de connexion
+            # Initialisation des services
             try:
-                db.engine.connect()
-                print("✓ Connexion DB ÉTABLIE")
+                from domain.services.person_service import PersonService
+                from infrastructure.persistence.repositories.person_repo import PersonRepository
+                from interfaces.api.resources.person.init_person_service import init_person_resources, create_person_api
+
+                from interfaces.api.resources.tree.init_tree_service import init_tree_resources
+
+                repo = PersonRepository(db.session)
+                person_service = PersonService(repo)
+                
+                init_person_resources(db.session)
+                init_tree_resources(app, person_service)
+                print("✓ init_tree_resources exécuté")
+                print("✓ Services initialisés")
+
             except Exception as e:
-                print(f"Erreur connexion DB : {e}")
-    
-        except Exception as e:  # AJOUT DU BLOC EXCEPT MANQUANT
-            print(f"Erreur lors de la création de l'application: {str(e)}")
-            raise
+                print(f"❌ Erreur initialisation services: {str(e)}")
+                raise
+
+            # Enregistrement des blueprints
+            try:
+                
+                app.register_blueprint(create_person_api(), url_prefix='/api/person')
+
+                print("✓ Blueprints enregistrés")
+                print("Routes disponibles:")
+                for rule in app.url_map.iter_rules():
+                    print(f" - {rule}")
+            except Exception as e:
+                print(f"❌ Erreur enregistrement blueprints: {str(e)}")
+                raise
+
+        # Middleware de debug pour les requêtes (corrigé)
+        @app.after_request
+        def log_request(response):
+            if request:  # Vérification supplémentaire
+                print(f"[REQUEST] {request.method} {request.path} -> {response.status}")
+            return response
+
+        # Route générique pour tous les fichiers statiques
+        @app.route('/static/js/tree/<filename>')
+        def serve_tree_js(filename):
+            return send_from_directory(os.path.join(BASE_DIR, 'static', 'js', 'tree'), filename)
+
+        # Route spécifique pour les JS (double sécurité)
+        @app.route('/js/tree/<filename>')
+        def serve_js(filename):
+            js_dir = Path(__file__).parent.parent / 'static' / 'js' / 'tree'
+            return send_from_directory(js_dir, filename)
+        
+        print("✅ create_app terminé !")
 
         return app
+
+    except Exception as e:
+        print(f"\n❌ ERREUR CRITIQUE dans create_app(): {str(e)}")
+        print("Traceback complet:")
+        import traceback
+        traceback.print_exc()
+        raise
