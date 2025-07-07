@@ -3,11 +3,15 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, DateField, SelectField, IntegerField, TextAreaField, BooleanField
 from wtforms.validators import DataRequired, Optional
+from wtforms_sqlalchemy.fields import QuerySelectField
+from domain.models.person import Person
 
 class PersonForm(FlaskForm):
     # Identité
     first_name = StringField('First Name', validators=[DataRequired()])
     last_name = StringField('Last Name', validators=[DataRequired()])
+    full_name = StringField('Full Name', validators=[DataRequired()]) 
+    father_full_name = StringField('Father Full Name', validators=[DataRequired()]) 
     friends_name = StringField('Friends Name', validators=[Optional()])
     fitan = StringField('Fitan', validators=[Optional()])
 
@@ -23,8 +27,19 @@ class PersonForm(FlaskForm):
     residence = StringField('Residence', validators=[Optional()])
 
     # Famille
-    mother_id = IntegerField('Mother ID', validators=[Optional()])
-    father_id = IntegerField('Father ID', validators=[Optional()])
+    father_id = QuerySelectField(
+        'Father',
+        query_factory=lambda: Person.query.filter_by(gender='male').all(),
+        get_label=lambda p: p.full_name,
+        allow_blank=True
+    )
+
+    mother_id = QuerySelectField(
+        'Mother',
+        query_factory=lambda: Person.query.filter_by(gender='female').all(),
+        get_label=lambda p: p.full_name,
+        allow_blank=True
+    )
 
     # Biographie
     short_bio = TextAreaField('Short Bio', validators=[Optional()])
@@ -46,4 +61,3 @@ class PersonForm(FlaskForm):
     # Autres
     known_enemies = TextAreaField('Known Enemies', validators=[Optional()])
     image = StringField('Image', validators=[Optional()])
-
