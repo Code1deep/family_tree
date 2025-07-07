@@ -119,8 +119,6 @@ def create_app(config_object='config.Config', testing=False):
         babel.init_app(app)
         login_manager.init_app(app)
         login_manager.login_view = 'auth.login'
-
-            # User loader
         login_manager.user_loader(load_user)
 
         # Enregistrement des blueprints
@@ -238,4 +236,8 @@ def create_app(config_object='config.Config', testing=False):
             except Exception as e:
                 print(f"Erreur connexion DB : {e}")
     
+        except Exception as e:  # AJOUT DU BLOC EXCEPT MANQUANT
+            print(f"Erreur lors de la création de l'application: {str(e)}")
+            raise
+
         return app
