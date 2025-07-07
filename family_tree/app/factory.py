@@ -191,7 +191,15 @@ def create_app(config_object='config.Config', testing=False):
             except Exception as e:
                 print(f"❌ Erreur accès templates: {str(e)}")
             from family_tree.domain.models.person import Person   
+            from family_tree.database.create_persons import create_persons_table
             
+            try:
+                create_persons_table()  # Crée juste la table vide
+                print("✓ Structure de la table créée")
+            except Exception as e:
+                app.logger.error(f"Erreur création table: {str(e)}")
+                raise
+                
             from family_tree.insertion import full_initialize
             full_initialize()
             
