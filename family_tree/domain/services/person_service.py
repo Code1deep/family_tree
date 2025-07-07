@@ -1,7 +1,6 @@
 # domain/services/person_service.py
 
 from typing import Optional
-from venv import logger
 from family_tree.infrastructure.persistence.repositories.person_repo import PersonRepository
 from family_tree.app.extensions import db
 from family_tree.domain.models.person import Person
@@ -13,27 +12,7 @@ class PersonService:
     def get_by_id(self, person_id: int) -> Optional[Person]:
         return self.repo.get_by_id(person_id)
     
-    def count_persons(self):
-        """Retourne le nombre total de personnes"""
-        return self.repo.count_persons()
-    
-    def get_tree_depth(self):
-        """Calcule la profondeur maximale de l'arbre"""
-        return self.repo.get_max_generation()
-    
-    def count_living(self):
-        """Compte les personnes vivantes"""
-        return self.repo.count_by_status(alive=True)
-    
-    def count_by_gender(self):
-        """Retourne les comptes par genre"""
-        return {
-            'male': self.repo.count_by_gender('male'),
-            'female': self.repo.count_by_gender('female')
-        }
-       
     def get_children(self, person_id):
-        logger.info(f"[METHOD] get_children({person_id})")
         """
         Renvoie les enfants (objets Person) pour un parent donné.
         Utilisée par TreeService pour générer l'arbre.
@@ -41,7 +20,6 @@ class PersonService:
         return self.repo.get_children(person_id)
 
     def get_person_by_id(self, person_id):
-        logger.info(f"[METHOD] get_person_by_id({person_id})")
         return self.repo.get(person_id)
 
     def get_all_persons(self, gender=None):
@@ -65,7 +43,6 @@ class PersonService:
         return person
 
     def get_person(self, person_id):
-        logger.info(f"[METHOD] get_person({person_id})")
         return self.repo.get(person_id)
 
     def get_children_details(self, person_id):
