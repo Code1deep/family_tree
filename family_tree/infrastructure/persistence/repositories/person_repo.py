@@ -1,10 +1,10 @@
 # infrastructure/persistence/repositories/person_repo.py
-from family_tree.domain.models.person import Person
-from family_tree.app.extensions import db
+from domain.models.person import Person
+from app.extensions import db
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import func, literal, literal_column
-from family_tree.domain.services.tree_service import TreeService
+from domain.services.tree_service import TreeService
 from typing import Dict, List, Optional
 import logging
 from sqlalchemy.orm.scoping import scoped_session
@@ -157,3 +157,4 @@ class PersonRepository:
 
         self.session.commit()
         return person
+
