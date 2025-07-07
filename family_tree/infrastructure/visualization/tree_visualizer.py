@@ -1,14 +1,14 @@
 # infrastructure/visualization/tree_visualizer.py
 from platform import node
 from typing import Optional
-from family_tree.app.factory import db
-from family_tree.infrastructure.persistence.repositories.person_repo import PersonRepository 
+from app.factory import db
+from infrastructure.persistence.repositories.person_repo import PersonRepository 
 
-from family_tree.domain.services.person_service import PersonService
+from domain.services.person_service import PersonService
 from flask import current_app, url_for
 from interfaces.api.serializers.person_serializer import PersonSerializer
-from family_tree.domain.models.person import Person
-from family_tree.domain.services.tree_service import TreeService 
+from domain.models.person import Person
+from domain.services.tree_service import TreeService 
 
 def get_visualizer():
     return FamilyTreeVisualizer(current_app, PersonRepository(db.session))
@@ -131,4 +131,3 @@ class FamilyTreeVisualizer:
         first = self._get_attr(parent, 'first_name') or ''
         last = self._get_attr(parent, 'last_name') or ''
         return f"{first} {last}".strip()
-
