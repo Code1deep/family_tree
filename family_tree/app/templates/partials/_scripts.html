@@ -11,32 +11,43 @@
 (function () {
     'use strict';
 
-    // ✅ 1. Graphique de statistiques (si ID présent)
-    function initChart() {
-        const chartEl = document.getElementById('quickStatsChart');
-        if (!chartEl) return;
+// ✅ 1. Graphique de statistiques (si ID présent)
+function initChart() {
+    const chartEl = document.getElementById('quickStatsChart');
+    if (!chartEl) return;
 
-        fetch('{{ url_for("person_api.get_stats") }}')
-            .then(response => response.json())
-            .then(stats => {
-                new Chart(chartEl.getContext('2d'), {
-                    type: 'doughnut',
-                    data: {
-                        labels: ['ذكور', 'إناث', 'أحياء', 'متوفون'],
-                        datasets: [{
-                            data: [stats.males, stats.females, stats.living, stats.deceased],
-                            backgroundColor: ['#3498db', '#e83e8c', '#28a745', '#6c757d'],
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        plugins: { legend: { position: 'bottom', rtl: true } }
+    fetch('{{ url_for("person_api.get_stats") }}')
+        .then(response => response.json())
+        .then(stats => {
+            // ✅ Vérification correcte avant destroy()
+            if (window.quickStatsChart && typeof window.quickStatsChart.destroy === 'function') {
+                window.quickStatsChart.destroy();
+            }
+
+            // ✅ Création du graphique
+            window.quickStatsChart = new Chart(chartEl.getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['ذكور', 'إناث', 'أحياء', 'متوفون'],
+                    datasets: [{
+                        data: [stats.males, stats.females, stats.living, stats.deceased],
+                        backgroundColor: ['#3498db', '#e83e8c', '#28a745', '#6c757d'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            rtl: true
+                        }
                     }
-                });
-            })
-            .catch(err => console.error("❌ Erreur fetch stats:", err));
-    }
+                }
+            });
+        })
+        .catch(err => console.error("❌ Erreur fetch stats:", err));
+}
 
     // ✅ 2. Gestion changement de langue
     function initLanguageSelector() {
