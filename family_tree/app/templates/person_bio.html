@@ -1,123 +1,241 @@
+<!-- app/templates/person_bio.html -->
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>السيرة الذاتية - {{ person.first_name }} {{ person.last_name }}</title>
+    <title>معلومات موجزة - {{ person.name }}</title>
+    <!-- Police Cairo pour un meilleur rendu arabe -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <style>
+        body {
+            font-family: 'Cairo', 'Arial', sans-serif;
+            background-color: #f2f4f8;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+            line-height: 1.7;
+        }
+
         .bio-container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 30px;
-            font-family: Arial, sans-serif;
-            background: white;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            max-width: 900px;
+            margin: 20px auto;
+            background: #fff;
             border-radius: 8px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+            overflow: hidden;
         }
-        
+
         .bio-header {
+            background: #34495e;
+            color: white;
+            padding: 25px;
             text-align: center;
-            margin-bottom: 30px;
-            border-bottom: 2px solid #3498db;
-            padding-bottom: 20px;
         }
-        
+
         .bio-header h1 {
-            color: #2c3e50;
-            margin-bottom: 10px;
+            margin: 0 0 10px;
+            font-size: 30px;
         }
-        
+
+        .bio-nav {
+            background: #ecf0f1;
+            padding: 10px 20px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .bio-nav a {
+            color: #2980b9;
+            text-decoration: none;
+            font-weight: bold;
+            margin-left: 15px;
+        }
+
+        .bio-content {
+            padding: 30px;
+        }
+
         .bio-section {
             margin-bottom: 25px;
-            padding: 15px;
-            background: #f9f9f9;
-            border-radius: 5px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
         }
-        
+
+        .bio-section:last-child {
+            border-bottom: none;
+        }
+
         .bio-section h2 {
-            color: #3498db;
+            color: #2c3e50;
             margin-top: 0;
-            border-bottom: 1px solid #ddd;
-            padding-bottom: 5px;
+            font-size: 22px;
         }
-        
-        .back-link {
-            display: inline-block;
-            margin-bottom: 20px;
-            color: #3498db;
+
+        .family-link {
+            color: #16a085;
             text-decoration: none;
             font-weight: bold;
         }
-        
-        .children-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
+
+        .family-link:hover {
+            text-decoration: underline;
         }
-        
+
+        .children-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
         .child-card {
-            padding: 10px;
-            background: #e6f7ff;
+            background: #f9f9f9;
+            padding: 12px;
+            border-radius: 6px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .child-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+        }
+
+        .btn-details {
+            display: inline-block;
+            background: #27ae60;
+            color: white;
+            padding: 12px 25px;
             border-radius: 5px;
-            min-width: 200px;
+            text-decoration: none;
+            margin-top: 25px;
+            transition: background 0.3s;
+        }
+
+        .btn-details:hover {
+            background: #1e8449;
+        }
+
+        @media (max-width: 600px) {
+            .children-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .bio-container {
+                margin: 10px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="bio-container">
-        <a href="/tree" class="back-link">← العودة إلى شجرة العائلة</a>
-        
+        <div class="bio-nav">
+            <a href="/tree">← العودة إلى شجرة العائلة</a>
+        </div>
+
         <div class="bio-header">
-            <h1>{{ person.first_name }} {{ person.last_name }}</h1>
+            <h1>{{ person.name }}</h1>
             {% if person.birth_date %}
-                <p>تاريخ الميلاد: {{ person.birth_date }} (العمر: {{ person.age }} سنة)</p>
+                <p>{{ person.birth_date }} (العمر: {{ person.age }})</p>
             {% endif %}
         </div>
-        
-        <div class="bio-section">
-            <h2>المعلومات الأساسية</h2>
-            <p><strong>الأب:</strong> {{ person.father_name or "غير معروف" }}</p>
-            <p><strong>الأم:</strong> {{ person.mother_name or "غير معروفة" }}</p>
-            <p><strong>مكان الميلاد:</strong> {{ person.birth_place or "غير معروف" }}</p>
-            {% if person.death_date %}
-                <p><strong>تاريخ الوفاة:</strong> {{ person.death_date }}</p>
-                <p><strong>سبب الوفاة:</strong> {{ person.death_reason or "غير معروف" }}</p>
-            {% endif %}
-        </div>
-        
-        {% if person.residence %}
-        <div class="bio-section">
-            <h2>مكان الإقامة</h2>
-            <p>{{ person.residence }}</p>
-        </div>
-        {% endif %}
-        
-        {% if children %}
-        <div class="bio-section">
-            <h2>الأبناء</h2>
-            <div class="children-list">
-                {% for child in children %}
-                    <div class="child-card">
-                        <a href="/person/{{ child.id }}" style="font-weight: bold;">
-                            {{ child.first_name }} {{ child.last_name }}
-                        </a>
-                        {% if child.birth_date %}
-                            <p>تاريخ الميلاد: {{ child.birth_date }}</p>
-                        {% endif %}
-                    </div>
-                {% endfor %}
+
+        <div class="bio-content">
+            <div class="bio-section">
+                <h2>المعلومات الأساسية</h2>
+                <p><strong>الأب:</strong>
+                    {% if person.father_id %}
+                        <a href="/api/person/person/{{ person.father_id }}" class="family-link">{{ person.father_name }}</a>
+                    {% else %}
+                        {{ person.father_name or "غير معروف" }}
+                    {% endif %}
+                </p>
+
+                <p><strong>الأم:</strong>
+                    {% if person.mother_id %}
+                        <a href="/api/person/person/{{ person.mother_id }}" class="family-link">{{ person.mother_name }}</a>
+                    {% else %}
+                        {{ person.mother_name or "غير معروفة" }}
+                    {% endif %}
+                </p>
+
+                <p><strong>مكان الميلاد:</strong> {{ person.birth_place or "غير معروف" }}</p>
+
+                {% if person.death_date %}
+                    <p><strong>تاريخ الوفاة:</strong> {{ person.death_date }}</p>
+                    <p><strong>سبب الوفاة:</strong> {{ person.death_reason or "غير معروف" }}</p>
+                {% endif %}
             </div>
+
+            {% if person.residence %}
+            <div class="bio-section">
+                <h2>مكان الإقامة</h2>
+                <p>{{ person.residence }}</p>
+            </div>
+            {% endif %}
+
+            {% if children %}
+            <div class="bio-section">
+                <h2>الأبناء</h2>
+                <div class="children-grid">
+                    {% for child in children %}
+                        <div class="child-card">
+                            <a href="/api/person/person/{{ child.id }}" class="family-link">{{ child.name }}</a>
+                            {% if child.birth_date %}
+                                <p>تاريخ الميلاد: {{ child.birth_date }}</p>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            {% if siblings %}
+            <div class="bio-section">
+                <h2>الإخوة والأخوات</h2>
+                <div class="children-grid">
+                    {% for sibling in siblings %}
+                        <div class="child-card">
+                            <a href="/api/person/person/{{ sibling.id }}" class="family-link">{{ sibling.name }}</a>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            {% if uncles %}
+            <div class="bio-section">
+                <h2>الأعمام</h2>
+                <div class="children-grid">
+                    {% for uncle in uncles %}
+                        <div class="child-card">
+                            <a href="/api/person/person/{{ uncle.id }}" class="family-link">{{ uncle.name }}</a>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            {% if aunts %}
+            <div class="bio-section">
+                <h2>العمات</h2>
+                <div class="children-grid">
+                    {% for aunt in aunts %}
+                        <div class="child-card">
+                            <a href="/api/person/person/{{ aunt.id }}" class="family-link">{{ aunt.name }}</a>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            {% if person.bio_short %}
+            <div class="bio-section">
+                <h2>نبذة مختصرة</h2>
+                <p>{{ person.bio_short }}</p>
+            </div>
+            {% endif %}
+
+            <a href="/api/person/person/{{ person.id }}/details" class="btn-details">عرض الملف الكامل</a>
         </div>
-        {% endif %}
-        
-        {% if person.notes %}
-        <div class="bio-section">
-            <h2>السيرة الذاتية</h2>
-            <p style="white-space: pre-line;">{{ person.notes }}</p>
-        </div>
-        {% endif %}
     </div>
-
-    <a href="/person_details/{{ person.id }}" class="btn">عرض التفاصيل الكاملة</a>
-
 </body>
 </html>
