@@ -1,331 +1,212 @@
 // static/js/tree/core.js
-console.log("✔ core.js initialisé");
-console.log("🧠 core.js chargé");
-console.log("📦 [core.js] D3 dispo ?", window.d3, typeof d3);
 
 const wrapper = document.getElementById("wrapper");
 console.log("🔍 wrapper in core.js ?", wrapper);
 
+import { setupGenerationJump } from '/static/js/tree/d3-tree.js';
 import { transformDataForD3 } from '/static/js/tree/d3-tree.js';
+console.log("✅✅✅ VERSION core.js ACTIVE ✅✅✅");
+console.log("✔ core.js initialisé");
+console.log("📦 [core.js] D3 dispo ?", window.d3, typeof d3);
+import { setupTreeControls } from './controls.js';
 import {
-  debounce,
-  throttle,
+  centerTree,
   exportPNG,
   exportSVG,
   toggleFullscreen,
-  buildTreeFromEdges,
-  centerTree,
   searchNode
-} from '/static/js/tree/utils.js';
+} from './utils.js';
+
+let svgRootGlobal = null; // Exposé pour que SearchHandler l'utilise
+
+/**
+ * Affiche l'arbre à partir de données au format { nodes, edges }.
+ * @param {Object} data 
+ */
 
 let currentScale = 1;
 
 // Définition des couleurs pour chaque génération (0 à 9)
+
 const generationColors = [
-    "#3498db", // Génération 0 (bleu)
-    "#e74c3c", // Génération 1 (rouge)
-    "#2ecc71", // Génération 2 (vert)
-    "#9b59b6", // Génération 3 (violet)
-    "#f39c12", // Génération 4 (orange)
-    "#1abc9c", // Génération 5 (turquoise)
-    "#d35400", // Génération 6 (orange foncé)
-    "#7f8c8d", // Génération 7 (gris)
-    "#8e44ad", // Génération 8 (violet foncé)
-    "#27ae60"  // Génération 9 (vert foncé)
-];
-// Sous generationColors, ajoutez :
-const textColors = [
-    "#2ecc71", // Blanc pour génération 0
-    "#d35400", // Blanc pour génération 1
-    "#d35400", // Noir pour génération 2
-    "#d35400", // Blanc pour génération 3
-    "#000000", // Noir pour génération 4
-    "#9b59b6", // Blanc pour génération 5
-    "#9b59b6", // Blanc pour génération 6
-    "#000000", // Noir pour génération 7
-    "#9b59b6", // Blanc pour génération 8
-    "#9b59b6"  // Noir pour génération 9
+  "#F1C40F", // Jaune clair
+  "#E67E22", // Orange clair
+  "#1ABC9C", // Turquoise clair
+  "#F39C12", // Orange doux
+  "#2ECC71", // Vert clair
+  "#c9f8fc", // Bleu clair
+  "#fabebe", // Violet clair
+  "#f76c59", // Rouge vif mais lumineux
+  "#d3fcbd", // Gris clair
+  "#b9c26b"  // Bleu pastel
 ];
 
-console.log("🎨 Initialisation des couleurs de texte");
-console.log("🌈 textColors:", textColors);
-// Ajout en haut du fichier
-console.log("🎨 Initialisation des couleurs de génération");
-console.log("🌈 generationColors:", generationColors);
+
+const textColors = [
+  "#1754e3", // 
+  "#1754e3", // 
+  "#1754e3", // 
+  "#1754e3", // 
+  "#1754e3", // 
+  "#1754e3", // 
+  "#1754e3", // 
+  "#1754e3", // 
+  "#1754e3", // 
+  "#1754e3", // 
+];
 
 // ===========================
-// Fonction principale d'affichage D3.js (version hiérarchique)
+// Fonction principale D3.js
+// ===========================
 export function initMainD3Tree(containerId, data) {
-    const margin = { top: 50, right: 200, bottom: 50, left: 200 };
-    const width = 2000 - margin.left - margin.right;
-    const height = 1200 - margin.top - margin.bottom;
+  console.log("🚀 Initialisation de l'arbre principal...");
 
-    const container = d3.select(`#${containerId}`);
-    container.selectAll("*").remove(); // Clear previous tree
+  const margin = { top: 50, right: 200, bottom: 50, left: 200 };
+  const width = 2000 - margin.left - margin.right;
+  const height = 1200 - margin.top - margin.bottom;
 
-    if (!document.getElementById("tree-style")) {
-        d3.select("head").append("style")
-            .attr("id", "tree-style")
-            .html(`
-                .node circle {
-                    stroke: steelblue !important;
-                    stroke-width: 5px !important;
-                    r: 55px !important;
-                }
-                .node text {
-                    font: 24px 'Arial', sans-serif !important;
-                    font-weight: bold !important;
-                    fill: inherit !important;
-                }
-                .link {
-                    stroke: #666 !important;
-                    stroke-width: 5px !important;
-                    stroke-opacity: 0.9 !important;
-                }
-        
-                .tooltip { position: absolute; text-align: center; padding: 5px; font: 12px sans-serif; background: lightsteelblue; border: 1px solid #aaa; pointer-events: none; border-radius: 3px; }
-        
-                .tree-controls {
-                    position: fixed;
-                    top: 20px;
-                    left: 20px;
-                    display: flex;
-                    flex-direction: column;
-                    gap: 10px;
-                    padding: 10px;
-                    background: rgba(255, 255, 255, 0.9);
-                    border: 1px solid #ccc;
-                    border-radius: 8px;
-                    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-                    z-index: 1000;
-                }
+  const container = d3.select(`#${containerId}`);
+  container.selectAll("*").remove();
 
-                .tree-controls input[type="text"] {
-                    padding: 6px 8px;
-                    font-size: 14px;
-                    border: 1px solid #aaa;
-                    border-radius: 4px;
-                }
+  // Ajout des contrôles UI
+    // 1) Insère le HTML UNE FOIS
+    container.insert("div", ":first-child")
+        .attr("class", "tree-controls")
+        .html(`
+            <input id="treeSearch" placeholder="Rechercher une personne..." />
+            <button id="centerBtn">Centrer</button>
+            <button id="pngBtn">Export PNG</button>
+            <button id="svgBtn">Export SVG</button>
+            <button id="fullscreenBtn">Plein écran</button>
+            <label for="goto-generation">Aller à la génération :</label>
+            <select id="goto-generation"></select>
+            <button id="genBtn">Aller</button>
+        `);
 
-                .tree-controls button {
-                    padding: 6px 12px;
-                    font-size: 14px;
-                    border: none;
-                    border-radius: 4px;
-                    background-color: #3498db;
-                    color: white;
-                    cursor: pointer;
-                }
-
-                .tree-controls button:hover {
-                    background-color: #2980b9;
-                }
-
-                select#rootSelector {
-                    padding: 6px 8px;
-                    font-size: 14px;
-                    border: 1px solid #aaa;
-                    border-radius: 4px;
-                }
-            `);
-    }
-
-    container.insert("div", ":first-child").attr("class", "tree-controls").html(`
-        <input id="treeSearch" placeholder="Rechercher une personne..." />
-        <button id="centerBtn">Centrer</button>
-        <button id="pngBtn">Export PNG</button>
-        <button id="svgBtn">Export SVG</button>
-        <button id="fullscreenBtn">Plein écran</button>
-    `);
-
-    const svg = container.append("svg")
+    // Création du SVG et du groupe interne <g>
+    const svgRoot = container.append("svg")
         .attr("viewBox", [0, 0, width + margin.left + margin.right, height + margin.top + margin.bottom])
         .style("width", "100%")
-        .style("height", "90vh")
-        .style("border", "1px solid #ccc")
-        .call(d3.zoom().scaleExtent([0.05, 4]).on("zoom", zoomed))
-        .append("g")
+        .style("height", "90vh");
+
+    const svg = svgRoot.append("g")
         .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    const hierarchyData = d3.hierarchy(data);
-    setNodeLevels(hierarchyData); // `root` est ton nœud racine D3
+    // Définir et activer le zoom
+    const zoom = d3.zoom().on("zoom", (event) => {
+        svg.attr("transform", event.transform);
+    });
+    svgRoot.call(zoom);
 
+    // Préparer la hiérarchie et le layout
     const treeLayout = d3.tree().nodeSize([30, 300]);
-
-    const root = d3.hierarchy(data, d => d.children || d._children);
+    const root = d3.hierarchy(data);
     root.x0 = 0;
     root.y0 = 0;
 
-    function collapse(d) {
-        if (d.children) {
-            d._children = d.children;
-            d._children.forEach(collapse);
-            d.children = null;
-        }
-    }
+    treeLayout(root);
+    root.descendants().forEach(d => d.y = d.depth * 180);
 
-    root.children?.forEach(collapse);
+    // Ton update() doit exister quelque part
     update(root);
 
-    const tooltip = container.append("div")
-        .attr("class", "tooltip")
-        .style("position", "absolute")
-        .style("opacity", 0);
+    // ⏩ Appel correct du jump avec le bon zoom et g
+    setupGenerationJump(root, svg, zoom);
 
-    function setNodeLevels(node, level = 0) {
-        node.level = level;
-        if (node.children) {
-            node.children.forEach(child => setNodeLevels(child, level + 1));
-        }
-    }
+    // Tu peux aussi brancher tes autres boutons ici si besoin
 
-    function update(source) {
-        const treeData = treeLayout(root);
-        const nodes = treeData.descendants();
-        const links = treeData.links();
+  function update(source) {
+    const nodes = root.descendants();
+    const links = treeLayout(root).links();
 
-        nodes.forEach(d => { d.y = d.depth * 180; });
+    nodes.forEach(d => d.y = d.depth * 180);
 
-        const node = svg.selectAll('g.node')
-            .data(nodes, d => d.data.id);
+    const node = svg.selectAll("g.node")
+      .data(nodes, d => d.data.id);
 
-        const nodeEnter = node.enter().append('g')
-            .attr('class', 'node')
-            .attr("transform", d => `translate(${source.y0},${source.x0})`)
-            .on('click', onClick)
-            .on('mouseover', function(event, d) {
-                tooltip.transition().duration(200).style("opacity", .9);
-                tooltip.html(`<strong>${d.data.name}</strong><br>ID: ${d.data.id}`)
-                    .style("left", (event.pageX + 10) + "px")
-                    .style("top", (event.pageY - 20) + "px");
-            })
-            .on('mouseout', () => tooltip.transition().duration(300).style("opacity", 0));
-
-        nodeEnter.append('circle')
-            .attr('r', 1e-6)
-            .attr("class", d => {
-                console.log(`📌 [init] Nœud ${d.data.name} (ID:${d.data.id}) - Profondeur: ${d.depth}`);
-                return `ft-node ft-gener-${d.depth}`;
-            })  // Utilisation de depth pour la génération
-            .attr("stroke", "steelblue")
-            .attr("stroke-width", 2)
-            .style('fill', d => {
-                const colorIndex = d.depth % generationColors.length;
-                const color = generationColors[colorIndex];
-                console.log(`🎨 [init] Nœud ${d.data.name} - Profondeur ${d.depth} → Couleur ${color} (index ${colorIndex})`);
-                return color;
-            });
-
-        nodeEnter.append('text')
-            .attr("dy", 3)
-            .attr("x", d => d._children ? -10 : 10)
-            .style("text-anchor", d => d._children ? "end" : "start")
-            .style("fill", d => {
-                const color = textColors[d.depth % textColors.length];
-                console.log(`🖋️ [init] Texte ${d.data.name} - Profondeur ${d.depth} → Couleur ${color}`);
-                return color;
-            }) // Couleur par génération
-            .text(d => d.data.name);
-
-        const nodeUpdate = nodeEnter.merge(node);
-        nodeUpdate.transition().duration(500).attr("transform", d => `translate(${d.y},${d.x})`);
-        nodeUpdate.select('circle').attr('r', 4).style('fill', d => generationColors[d.depth % generationColors.length]);
-
-        const nodeExit = node.exit().transition().duration(500)
-            .attr("transform", d => `translate(${source.y},${source.x})`).remove();
-        nodeExit.select('circle').attr('r', 0);
-        nodeExit.select('text').style('fill-opacity', 0);
-
-        const link = svg.selectAll('path.link')
-            .data(links, d => d.target.data.id);
-        const linkEnter = link.enter().insert('path', "g")
-            .attr("class", "link")
-            .attr('d', d => {
-                const o = { x: source.x0, y: source.y0 };
-                return diagonal(o, o);
-            });
-        linkEnter.merge(link).transition().duration(500).attr('d', d => diagonal(d.source, d.target));
-        link.exit().transition().duration(500).attr('d', d => {
-            const o = { x: source.x, y: source.y };
-            return diagonal(o, o);
-        }).remove();
-
-        nodes.forEach(d => {
-            d.x0 = d.x;
-            d.y0 = d.y;
-        });
-    }
-
-    function diagonal(s, d) {
-        return `M ${s.y} ${s.x}
-                C ${(s.y + d.y) / 2} ${s.x},
-                  ${(s.y + d.y) / 2} ${d.x},
-                  ${d.y} ${d.x}`;
-    }
-
-    async function onClick(event, d) {
+    const nodeEnter = node.enter().append("g")
+      .attr("class", "node")
+      .attr("transform", d => `translate(${source.y0},${source.x0})`)
+      .on("click", (event, d) => {
         if (d.children) {
-            d._children = d.children;
-            d.children = null;
+          d.children = null;
         } else if (d._children) {
-            d.children = d._children;
-            d._children = null;
+          d.children = d._children;
+          d._children = null;
         } else {
-            try {
-                const response = await fetch(`/api/person/visualize/tree/${d.data.id}`);
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                const newData = await response.json();
-                const newChildren = newData.children.map(transformDataForD3);
-                d.children = newChildren.map(c => d3.hierarchy(c));
-            } catch (error) {
-                console.error("Erreur de chargement des enfants :", error);
-            }
+          window.location.href = `/api/person/person/${d.data.id}`;
         }
         update(d);
+      });
+
+    nodeEnter.append("circle")
+      .attr("r", 4)
+      .style("fill", d => generationColors[d.depth % generationColors.length]);
+
+    nodeEnter.append("text")
+      .attr("dy", 3)
+      .attr("x", d => d.children ? -10 : 10)
+      .style("text-anchor", d => d.children ? "end" : "start")
+      .style("fill", d => textColors[d.depth % textColors.length])
+      .text(d => d.data.name);
+
+    node.merge(nodeEnter).transition().duration(500)
+      .attr("transform", d => `translate(${d.y},${d.x})`);
+
+    node.exit().remove();
+
+    const link = svg.selectAll("path.link")
+      .data(links, d => d.target.data.id);
+
+    link.enter().insert("path", "g")
+      .attr("class", "link")
+      .attr("d", d3.linkHorizontal().x(d => d.y).y(d => d.x));
+
+    link.merge(link).transition().duration(500)
+      .attr("d", d3.linkHorizontal().x(d => d.y).y(d => d.x));
+
+    link.exit().remove();
+  }
+
+    // Setup UI
+    // Ajoutez en tête du fichier (avec les autres imports)
+    async function checkFullscreenPermission() {
+        try {
+            if (navigator.permissions?.query) {
+                const permissionStatus = await navigator.permissions.query({name: 'fullscreen'});
+                permissionStatus.onchange = () => console.log('Permission fullscreen:', permissionStatus.state);
+                return permissionStatus.state === 'granted';
+            }
+            return true; // Fallback pour les navigateurs sans API Permissions
+        } catch (err) {
+            console.warn("Erreur de vérification des permissions:", err);
+            return true;
+        }
     }
 
-    function zoomed(event) {
-        svg.attr("transform", event.transform);
-    }
-
-    // Controls
-    d3.select("#centerBtn").on("click", () => {
-        const svgNode = container.select("svg").node();
-        centerTree(d3.select(svgNode).select("g"), svgNode.parentElement);
+    // Puis modifiez la section des contrôles UI :
+    d3.select("#centerBtn").on("click", () => centerTree(svg));
+    d3.select("#pngBtn").on("click", () => exportPNG(containerId));
+    d3.select("#svgBtn").on("click", () => exportSVG(containerId));
+    d3.select("#fullscreenBtn").on("click", async () => {
+        if (await checkFullscreenPermission()) {
+            toggleFullscreen(containerId);
+        } else {
+            console.warn("Plein écran bloqué par les permissions");
+            // Optionnel : Afficher un message à l'utilisateur
+            alert("Veuillez autoriser le plein écran dans les paramètres de votre navigateur");
+        }
     });
 
-    d3.select("#pngBtn").on("click", () => {
-        exportTreeAsPNG(container.select("svg").node());
-    });
-
-    d3.select("#svgBtn").on("click", () => {
-        exportTreeAsSVG(container.select("svg").node());
-    });
-
-    d3.select("#fullscreenBtn").on("click", () => {
-        toggleFullscreen(container.node());
-    });
-
-    d3.select("#treeSearch").on("input", function () {
-        const name = this.value.toLowerCase();
-        svg.selectAll("g.node").select("text").each(function (d) {
-            const match = d.data.name.toLowerCase().includes(name);
-            d3.select(this).style("fill", match ? "red" : "#000");
-        });
-    });
-
-    setTimeout(() => {
-        const svgNode = container.select("svg").node();
-        centerTree(d3.select(svgNode).select("g"), svgNode.parentElement);
-    }, 700);
 }
 
-/**
- * Fonction d'affichage D3.js (version nodes+edges avec sélection dynamique de racine)
- */
+// ===========================
+// Export de secours pour structure edges/nodes
+// ===========================
 export async function drawTree(data) {
     console.log("✅ drawTree() started...");
     console.log("🟢 Données reçues pour dessiner l'arbre :", data);
+    
     try {
         if (!data || !data.nodes || !data.edges) {
             console.error("❌ Données invalides pour drawTree:", data);
@@ -338,53 +219,97 @@ export async function drawTree(data) {
         const width = 1600;
         const height = 1000;
 
-        const svg = container.append("svg")
+        const svgRoot = container.append("svg")
             .attr("viewBox", [0, 0, width, height])
             .style("width", "100%")
             .style("height", "90vh")
-            .append("g")
+            //.attr("class", "tree-group")
+
+        const g = svgRoot.append("g")
             .attr("class", "tree-group")
             .attr("transform", "translate(80,40)");
+
+        const baseTranslate = d3.zoomIdentity.translate(80, 40);
+        console.log("🔎 baseTranslate dans drawTree(data) =", baseTranslate);
+
+        // Ton zoom setup
+        const zoom = d3.zoom().on("zoom", (event) => {
+        g.attr("transform", event.transform);
+        });
+        svgRoot.call(zoom).call(zoom.transform, baseTranslate);
+
+        // ✅ Expose globalement pour SearchHandler
+        window.svgRoot = g;
+        svgRootGlobal = g;
+        console.log("✅ svgRoot exposé :", window.svgRoot);
 
         // Indexation des noeuds
         const nodeById = {};
         data.nodes.forEach(n => nodeById[n.id] = { ...n, children: [] });
 
         // Construction des liens enfants
+        // Créer les relations
         data.edges.forEach(e => {
             const parent = nodeById[e.from];
             const child = nodeById[e.to];
-            if (parent && child) parent.children.push(child);
+            if (parent && child) {
+            parent.children.push(child);
+            }
         });
 
         // Détecter racines
         const rootCandidates = data.nodes.filter(n => {
-            // Soit le noeud n'a pas de parent dans les edges
-            // Soit ses parents ne sont pas dans les nodes (cas des données incomplètes)
-            const parentEdges = data.edges.filter(e => e.to === n.id);
-            return parentEdges.length === 0 || 
-                    parentEdges.some(e => !data.nodes.some(n => n.id === e.from));
+        const parentEdges = data.edges.filter(e => e.to === n.id);
+        return parentEdges.length === 0 ||
+                parentEdges.some(e => !data.nodes.some(n2 => n2.id === e.from));
         });
-        console.log("🌳 Ancêtres racines détectés :", rootCandidates.map(n => `${n.id} (${n.name || ''})`));
+
+        console.log("🌳 Ancêtres racines détectés :", rootCandidates);
 
         if (rootCandidates.length === 0) {
-            // Fallback: prendre le premier noeud disponible
+        if (data.nodes.length > 0) {
             rootCandidates.push(data.nodes[0]);
-            console.warn("⚠ Aucune racine trouvée, utilisation du premier noeud comme fallback");
+            console.warn("⚠ Aucune racine trouvée, fallback = premier noeud");
+        } else {
+            console.error("⛔ Aucun noeud dans data.nodes → arrêt !");
+            return;
+        }
+        }
+
+        if (!rootCandidates[0]) {
+        console.error("⛔ Fallback racine = undefined !");
+        return;
         }
 
         // Ajouter sélecteur racine
-        addRootSelector(rootCandidates, nodeById, data, svg, width, height);
+        addRootSelector(rootCandidates, nodeById, data, g, width, height, zoom);
 
+    // Juste avant setupTreeControls, récupérez le selector existant
+    const selector = document.getElementById("rootSelector");
+
+    if (selector) {
+    window.setupTreeControls({
+    container: d3.select("#wrapper"),
+    svgRoot: g,
+    svgNode: document.querySelector("#wrapper svg"),
+    root: nodeById[rootCandidates[0].id],
+    update: () => renderTreeFromRoot(selector.value, nodeById, g, width, height, zoom),
+    g: g,
+    zoom: zoom,
+    baseTranslate: baseTranslate   // ✅✅✅ AJOUT INDISPENSABLE
+    });
+
+    } else {
+    console.warn("⚠ Selector non trouvé, chargement des contrôles ignoré");
+    }
+        return { g, svgRoot, zoom, baseTranslate }; // ✅ DANS le try
     } catch (err) {
         console.error("❌ Erreur drawTree():", err);
+        throw err; // ⚡ Important : rejette pour bloquer la suite
     }
 }
-
-/**
- * Ajoute un sélecteur dynamique de racine à l'interface
- */
-function addRootSelector(rootCandidates, nodeById, data, svg, width, height) {
+//Ajoute un sélecteur dynamique de racine à l'interface
+function addRootSelector(rootCandidates, nodeById, data, g, width, height, zoom) {
     let selector = document.getElementById("rootSelector");
     if (!selector) {
         selector = document.createElement("select");
@@ -396,75 +321,62 @@ function addRootSelector(rootCandidates, nodeById, data, svg, width, height) {
         document.body.appendChild(selector);
     }
     selector.innerHTML = ""; // Clear previous
-
     rootCandidates.forEach(n => {
         const opt = document.createElement("option");
         opt.value = n.id;
-        opt.textContent = `${n.name || 'ID ' + n.id} (ID: ${n.id})`;
+        opt.textContent = `${n.name} (ID:${n.id})`;
         selector.appendChild(opt);
     });
 
     selector.addEventListener("change", () => {
-        renderTreeFromRoot(selector.value, nodeById, svg, width, height);
+        renderTreeFromRoot(selector.value, nodeById, g, width, height, zoom);
     });
 
     // Afficher le premier racine par défaut
-    renderTreeFromRoot(selector.value || rootCandidates[0].id, nodeById, svg, width, height);
+    renderTreeFromRoot(selector.value || rootCandidates[0].id, nodeById, g, width, height, zoom);
 }
-
-/**
- * Render tree à partir d'une racine choisie
- */
-function renderTreeFromRoot(rootId, nodeById, svg, width, height) {
+/* Render tree à partir d'une racine choisie*/
+function renderTreeFromRoot(rootId, nodeById, g, width, height, zoom) {
     if (!nodeById[rootId]) return;
-    
-    svg.selectAll("*").remove();
+        g.selectAll("*").remove();
     const rootData = nodeById[rootId];
     const root = d3.hierarchy(rootData);
-
-    // Configuration VERTICALE
+    // Configuration VERTICALE reglage distance entre noeuds horizontal et vertical
     const nodeRadius = 55;
-    const verticalSpacing = 200;
-    const horizontalSpacing = 250;
-
+    const verticalSpacing = 350; // Espace vertical plus large
+    const horizontalSpacing = 250; // Espace horizontal suffisant
     const treeLayout = d3.tree()
-        .size([height - 200, width - 200]) // [height, width] pour vertical
+        //.size([height - 200, width - 200]) // [height, width] pour vertical
         .nodeSize([verticalSpacing, horizontalSpacing]);
-
     treeLayout(root);
-
     // Centrage HORIZONTAL
     const minX = d3.min(root.descendants(), d => d.x);
     const maxX = d3.max(root.descendants(), d => d.x);
     const xOffset = (width - (maxX - minX)) / 2 - minX;
-
     // Liens VERTICAUX (inversion x/y)
-    svg.selectAll("path.link")
+    g.selectAll("path.link")
         .data(root.links())
         .join("path")
         .attr("class", "link")
         .attr("d", d3.linkVertical()
             .x(d => d.x + xOffset) // Position horizontale centrée
             .y(d => d.y)); // Position verticale
-
     // Dans la fonction renderTreeFromRoot, avant la création des nœuds
     console.log("🖌 Préparation des couleurs pour les nœuds");
     console.log("📊 Profondeur de la racine:", root.depth);
     console.log("📊 Descendants:", root.descendants().length);
-
     // Noeuds VERTICAUX
-    const node = svg.selectAll("g.node")
+    const node = g.selectAll("g.node")
         .data(root.descendants())
         .join("g")
         .attr("class", "node")
-        .attr("transform", d => `translate(${d.x + xOffset},${d.y})`); // Inversion x/y
-
+        .attr("transform", d => `translate(${d.x + xOffset},${d.y})`);
     // Cercles de 55px
     node.append("circle")
         .attr("r", nodeRadius)
         .attr("class", d => {
             console.log(`📌 Nœud ${d.data.name} (ID:${d.data.id}) - Profondeur: ${d.depth}`);
-            return `ft-node ft-gener-${d.depth}`;  // Utilisation de depth pour la génération
+            return `ft-node ft-gener-${d.depth}`; // Utilisation de depth pour la génération
         })
         .attr("fill", d => {
             const colorIndex = d.depth % generationColors.length;
@@ -473,8 +385,13 @@ function renderTreeFromRoot(rootId, nodeById, svg, width, height) {
             return color;
         })
         .attr("stroke", "steelblue")
-        .attr("stroke-width", 5);
-
+        .attr("stroke-width", 5)
+        .style("cursor", "pointer")   // ✅ Visuel
+        .on("click", (event, d) => {  // ✅ Action click
+            console.log("💥 CLICK TEST a partir d core.js !", d);
+            opt.textContent = `${n.name || 'ID ' + n.id} (ID: ${n.id})`;
+            window.location.href = `/api/person/person/${d.data.id}`;
+        });
     // Texte
     node.append("text")
         .attr("dy", ".35em")
@@ -486,17 +403,34 @@ function renderTreeFromRoot(rootId, nodeById, svg, width, height) {
             console.log(`🖋️ [render] Texte ${d.data.name} - Profondeur ${d.depth} → Couleur ${color}`);
             return color;
         }) // Couleur par génération
+        .style("paint-order", "stroke")
+        .style("stroke", "#000")           // contour noir
+        .style("stroke-width", "2px")      // épaisseur du contour
+        .style("stroke-linejoin", "round")
         .text(d => d.data.name);
+
+            // ✅ CLIC actif sur le groupe entier (nœud)
+    node.on("click", (event, d) => {
+        console.log(`👆 Clic sur ${d.data.name} (ID: ${d.data.id}) → Redirection...`);
+        window.location.href = `/api/person/person/${d.data.id}`;
+    });
 
     // Ajustement viewport
     const padding = 50;
-    svg.attr("viewBox", `0 0 ${width} ${height}`)
+    g.attr("viewBox", `0 0 ${width} ${height}`)
        .attr("preserveAspectRatio", "xMidYMid meet");
-}
 
-// ===========================
+    // ✅ Setup du jump pour cette racine visible
+    setupGenerationJump(root, g, zoom);
+}
 // Nouvelle fonction wrapper qui choisit la bonne méthode d'affichage selon la forme des données
+// Wrapper pour choisir le bon affichage
 export async function renderFamilyTree(containerId, data) {
+    
+    console.log("🚀 renderFamilyTree() appelée");
+    console.log("📦 containerId =", containerId);
+    console.log("📦 data =", data);
+
     console.log("✅ D3 chargé :", typeof d3); 
     console.log("📌 D3 version :", d3.version);
     console.log("🛠 D3 fonctions : ", Object.keys(d3));
@@ -509,11 +443,18 @@ export async function renderFamilyTree(containerId, data) {
 
     if (data?.nodes && data?.edges) {
         console.log("➡️ Données au format {nodes, edges} détectées → drawTree()");
-        return await drawTree(data);
+        const { g, svgRoot, zoom, baseTranslate } = await drawTree(data);
+        return { g, svgRoot, zoom, baseTranslate };
     } else {
         console.log("➡️ Données au format hiérarchique → initMainD3Tree()");
         return initMainD3Tree(containerId, data);
     }
+}
+
+export async function loadTreeData(rootId) {
+    const response = await fetch(`/api/person/api/visualize/tree/${rootId}`);
+    if (!response.ok) throw new Error("Erreur lors du chargement des données");
+    return await response.json();
 }
 
 // Fonctions exportées restantes (zoom, export, recherche, chargement...)
@@ -526,10 +467,4 @@ export function zoomIn() {
 export function zoomOut() {
     currentScale = Math.max(currentScale / 1.2, 0.05);
     // svgRoot.transition().duration(300).call(zoomBehavior.scaleTo, currentScale);
-}
-
-export async function loadTreeData(rootId) {
-    const response = await fetch(`/api/person/api/visualize/tree/${rootId}`);
-    if (!response.ok) throw new Error("Erreur lors du chargement des données");
-    return await response.json();
 }
