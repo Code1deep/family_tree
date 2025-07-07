@@ -1,19 +1,19 @@
-# family_tree/database/create_persons.py
-
-from app.extensions import db 
+# family_tree/create_persons.py
+from flask import current_app
 from family_tree.domain.models.person import Person
 
 def create_persons_table():
-    """Crée uniquement la table persons en utilisant les imports existants"""
+    """Crée la table persons dans le contexte applicatif"""
     try:
-        # Solution 1 (simple) - Utilise db.create_all()
-        db.create_all()  # Crée toutes les tables non existantes
+        # Utilise db depuis current_app.extensions
+        db = current_app.extensions['sqlalchemy'].db
         
-        # Solution 2 (alternative) - Création contrôlée
-        # if not db.engine.dialect.has_table(db.engine, Person.__tablename__):
-        #     Person.__table__.create(db.engine)
-        
-        print("✓ Table 'persons' créée avec succès")
+        # Vérifie si la table existe déjà
+        if not db.engine.dialect.has_table(db.engine, Person.__tablename__):
+            db.create_all()
+            print("✓ Table 'persons' créée avec succès")
+        else:
+            print("✓ Table 'persons' existe déjà")
     except Exception as e:
         print(f"❌ Erreur création table: {str(e)}")
         raise
