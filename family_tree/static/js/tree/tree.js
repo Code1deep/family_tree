@@ -1,93 +1,88 @@
 // static/js/tree/tree.js
 // ✅ Importation des modules
 import { renderFamilyTree } from '/static/js/tree/core.js';
-import { toggleFullscreen, exportAsPNG, exportSVG, centerTree, searchNode } from '/static/js/tree/utils.js';
+import {
+  toggleFullscreen,
+  exportAsPNG,
+  exportSVG,
+  centerTree,
+  searchNode
+} from '/static/js/tree/utils.js';
 import { openModal } from '/static/js/modal.js';
-import { initMainD3Tree, initSubD3Tree } from '/static/js/tree/index.js';  // Ajout setupCenterButton
-import { loadTreeData, drawTree, zoomIn, zoomOut } from '/static/js/tree/core.js';
+import { initMainD3Tree, initSubD3Tree } from '/static/js/tree/index.js';
 import { setupCenterButton } from '/static/js/tree/d3-tree.js';
-console.log("✅ tree.js chargé depuis : ", import.meta.url);
 
-console.log('✅ tree.js loaded');
+console.log("✅ tree.js chargé depuis :", import.meta.url);
 window.initD3Tree = initMainD3Tree;
 
-// Fonction utilitaire
+/* ✅ Conversion utile au besoin — non utilisée si l'API est prête */
 function convertToHierarchy(data) {
-    console.log("🔄 Conversion {nodes, edges} → hiérarchie");
-    const nodeById = {};
-    data.nodes.forEach(n => {
-        nodeById[n.id] = { ...n, children: [] };
-    });
-    data.edges.forEach(e => {
-        const parent = nodeById[e.from];
-        const child = nodeById[e.to];
-        if (parent && child) {
-            parent.children.push(child);
-        }
-    });
+  console.log("🔄 Conversion {nodes, edges} → hiérarchie");
+  const nodeById = {};
+  data.nodes.forEach(n => {
+    nodeById[n.id] = { ...n, children: [] };
+  });
+  data.edges.forEach(e => {
+    const parent = nodeById[e.from];
+    const child = nodeById[e.to];
+    if (parent && child) parent.children.push(child);
+  });
 
-    const allChildIds = new Set(data.edges.map(e => e.to));
-    const root = data.nodes.find(n => !allChildIds.has(n.id));
-    if (!root) {
-        console.error("❌ Racine introuvable");
-        return null;
-    }
+  const allChildIds = new Set(data.edges.map(e => e.to));
+  const root = data.nodes.find(n => !allChildIds.has(n.id));
+  if (!root) {
+    console.error("❌ Racine introuvable");
+    return null;
+  }
 
-    console.log("✅ Racine trouvée :", root);
-    return nodeById[root.id];
+  console.log("✅ Racine trouvée :", root);
+  return nodeById[root.id];
 }
 
 window.skipAutoInit = true;
 
-// ✅ DOMContentLoaded UNIQUE
+/* ✅ DOMContentLoaded = point d'entrée unique */
 document.addEventListener("DOMContentLoaded", async () => {
-    console.log("📦 DOMContentLoaded → Initialisation");
+  console.log("📦 DOMContentLoaded → Initialisation");
 
-    const treeContainer = document.getElementById("wrapper");
-    if (!treeContainer) {
-        console.error("❌ Échec : élément #wrapper introuvable");
-        return;
-    }
+  const treeContainer = document.getElementById("wrapper");
+  if (!treeContainer) {
+    console.error("❌ Échec : élément #wrapper introuvable");
+    return;
+  }
 
-    try {
-        console.log("📡 Requête vers /api/tree/ ...");
-        const response = await fetch("/api/tree/");
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        const treeData = await response.json();
-        console.log("✅ Données reçues depuis API :", treeData);
+  try {
+    console.log("📡 Fetch vers /api/tree/ ...");
+    const response = await fetch("/api/tree/");
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const treeData = await response.json();
+    console.log("✅ Données reçues :", treeData);
 
-        console.log("🌳 Appel à renderFamilyTree...");
-        await renderFamilyTree("wrapper", treeData);
-        console.log("✅ Arbre affiché avec succès");
+    console.log("🌳 Appel à renderFamilyTree ...");
+    const { g, svgRoot, zoom, baseTranslate } = await renderFamilyTree("wrapper", treeData);
 
-        // 🚀 Setup bouton centrer
-        const svg = d3.select("#wrapper svg");
-        const g = svg.select("g.tree-group");
-        const zoom = d3.zoom();  // ou récupère ton vrai zoom
-        setupCenterButton("wrapper", g, svg, zoom);
+    console.log("✅ Arbre affiché avec succès");
 
-    } catch (err) {
-        console.error("❌ Erreur lors du chargement de l’arbre :", err);
-    }
+    /* ⚡ setupCenterButton reçoit les bons paramètres */
+    setupCenterButton("wrapper", g, svgRoot, zoom, baseTranslate);
 
-    // ✅ Événements UI
-    document.getElementById("fullscreenBtn")?.addEventListener("click", () => {
-        console.log("🖥️ Clic bouton : Plein écran");
-        toggleFullscreen(treeContainer);
-    });
+  } catch (err) {
+    console.error("❌ Erreur chargement arbre :", err);
+  }
 
-    document.getElementById("pngBtn")?.addEventListener("click", () => {
-        console.log("📷 Clic bouton : Export PNG");
-        exportAsPNG("wrapper");
-    });
+  /* ✅ Boutons UI directs */
+  document.getElementById("fullscreenBtn")?.addEventListener("click", () => {
+    console.log("🖥️ Clic : Plein écran");
+    toggleFullscreen(treeContainer);
+  });
 
-    document.getElementById("svgBtn")?.addEventListener("click", () => {
-        console.log("📐 Clic bouton : Export SVG");
-        exportSVG(treeContainer);
-    });
+  document.getElementById("pngBtn")?.addEventListener("click", () => {
+    console.log("📷 Clic : Export PNG");
+    exportAsPNG("wrapper");
+  });
 
-    document.getElementById("treeSearch")?.addEventListener("input", (e) => {
-        console.log("🔍 Recherche en cours :", e.target.value);
-        searchNode(e.target.value, d3.select("svg"));
-    });
+  document.getElementById("svgBtn")?.addEventListener("click", () => {
+    console.log("📐 Clic : Export SVG");
+    exportSVG(document.querySelector("#wrapper svg"));
+  });
 });
