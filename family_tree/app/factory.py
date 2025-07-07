@@ -194,8 +194,14 @@ def create_app(config_object='config.Config', testing=False):
                 print(f"❌ Erreur accès templates: {str(e)}")
             from family_tree.domain.models.person import Person   
             
-            from family_tree.insertion import full_initialize
-            full_initialize()
+            #from family_tree.insertion import full_initialize
+            #full_initialize()
+            
+            #from family_tree.fix_names import fix_names
+            #fix_names()
+            
+            #print("✓ full_initialize() exécuté avec succès dans le contexte Flask")
+            #print("✓ fix_names() exécuté avec succès dans le contexte Flask")
             
             # Initialisation du service
             from domain.services.person_service import PersonService
