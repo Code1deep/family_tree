@@ -3,21 +3,16 @@ from sqlalchemy import create_engine
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.schema import CreateTable
 from family_tree.domain.models.person import Person
-from app.extensions import db
 
 def create_persons_table():
-    """
-    Crée la table 'persons' avec toutes les colonnes définies dans Person
-    sans insérer de données.
-    """
+    """Crée uniquement la table persons basée sur le modèle existant"""
     try:
-        # Génère le SQL de création de table
-        table_creation_sql = str(CreateTable(Person.__table__))
-        
-        # Exécute la création
-        db.engine.execute(table_creation_sql)
-        print("✓ Table 'persons' créée avec succès")
-        
-    except SQLAlchemyError as e:
-        print(f"❌ Erreur lors de la création de la table: {str(e)}")
+        # Vérifie si la table existe déjà
+        if not db.engine.dialect.has_table(db.engine, Person.__tablename__):
+            Person.__table__.create(db.engine)
+            print("✓ Table 'persons' créée avec succès")
+        else:
+            print("✓ Table 'persons' existe déjà")
+    except Exception as e:
+        print(f"❌ Erreur création table: {str(e)}")
         raise
