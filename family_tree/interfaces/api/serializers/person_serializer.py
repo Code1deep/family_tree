@@ -1,7 +1,7 @@
 # C:\family_tree\interfaces\api\serializers\person_serializer.py 
 
 from datetime import datetime
-from family_tree.domain.models.person import Person  # Import clair depuis le domaine
+from domain.models.person import Person  # Import clair depuis le domaine
 
 class PersonSerializer:
     """Sérialiseur dédié à la conversion des objets Person dans différents formats"""
