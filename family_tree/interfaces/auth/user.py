@@ -1,6 +1,6 @@
 # interfaces/auth/user.py
 from flask_login import UserMixin
-from family_tree.app.extensions import login_manager
+from app.extensions import login_manager
 
 # Simuler un utilisateur
 users = {'foo@bar.com': {'password': 'secret'}}
