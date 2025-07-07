@@ -19,4 +19,3 @@ export function closeModal() {
         modal.style.display = "none";
     }
 }
-
