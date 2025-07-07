@@ -1,7 +1,10 @@
 <!-- app/templates/form.html -->
 {% extends "base_template.html" %}
+<!-- DEBUG: {{ url_for('person_api.add_person') }} -->
 
 {% block content %}
+<!-- DEBUG: {{ url_for('person_api.add_person') }} -->
+
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-lg-12">
@@ -12,7 +15,7 @@
                     </h3>
                 </div>
                 <div class="card-body">
-                    <form method="POST" enctype="multipart/form-data" id="personForm">
+                    <form id="personForm" method="POST" enctype="multipart/form-data" action="{{ url_for('person_api.add_person') }}">
                         {{ form.hidden_tag() }}
                         <!-- Navigation par onglets -->
                         <ul class="nav nav-tabs nav-fill mb-4" id="myTab" role="tablist">
@@ -48,57 +51,51 @@
                             <div class="tab-pane fade show active" id="identity" role="tabpanel">
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
-                                        <label class="form-label">الاسم الأول <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control" name="first_name" value="{{ person.first_name if person else '' }}" required>
+                                        {{ form.first_name.label(class="form-label") }}
+                                        {{ form.first_name(class="form-control", required=true) }}
                                     </div>
                                     <div class="col-md-6 mb-3">
-                                        <label class="form-label">اسم العائلة <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control" name="last_name" value="{{ person.last_name if person else '' }}" required>
+                                        {{ form.last_name.label(class="form-label") }}
+                                        {{ form.last_name(class="form-control", required=true) }}
+                                    </div>
+
+                                    <div class="col-md-6 mb-3">
+                                        {{ form.full_name.label(class="form-label") }}
+                                        {{ form.full_name(class="form-control", required=true) }}
                                     </div>
                                     <div class="col-md-6 mb-3">
-                                        <label class="form-label">الاسم المستعار (إن وجد)</label>
-                                        <input type="text" class="form-control" name="friends_name" value="{{ person.friends_name if person else '' }}">
+                                        {{ form.father_full_name.label(class="form-label") }}
+                                        {{ form.father_full_name(class="form-control", required=true) }}
                                     </div>
+
                                     <div class="col-md-6 mb-3">
-                                        <label class="form-label">الجنس <span class="text-danger">*</span></label>
-                                        <select class="form-select" name="gender" required>
-                                            <option value="">-- اختر الجنس --</option>
-                                            <option value="male" {% if person and person.gender == 'male' %}selected{% endif %}>ذكر</option>
-                                            <option value="female" {% if person and person.gender == 'female' %}selected{% endif %}>أنثى</option>
-                                        </select>
+                                        {{ form.friends_name.label(class="form-label") }}
+                                        {{ form.friends_name(class="form-control") }}
+                                    </div>
+
+                                    <div class="col-md-6 mb-3">
+                                        {{ form.gender.label(class="form-label") }}
+                                        {{ form.gender(class="form-select", required=true) }}
                                     </div>
                                 </div>
                             </div>
+                        </div>
 
                             <!-- Onglet 2: Informations familiales -->
                             <div class="tab-pane fade" id="family" role="tabpanel">
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
-                                        <label class="form-label">الأب</label>
-                                        <select class="form-select select2" name="father_id">
-                                            <option value="">-- اختر الأب --</option>
-                                            {% for p in males %}
-                                            <option value="{{ p.id }}" {% if person and person.father_id == p.id %}selected{% endif %}>
-                                                {{ p.first_name }} {{ p.last_name }}
-                                            </option>
-                                            {% endfor %}
-                                        </select>
+                                        {{ form.father_id.label }}
+                                        {{ form.father_id(class="form-select") }}
                                     </div>
                                     <div class="col-md-6 mb-3">
-                                        <label class="form-label">الأم</label>
-                                        <select class="form-select select2" name="mother_id">
-                                            <option value="">-- اختر الأم --</option>
-                                            {% for p in females %}
-                                            <option value="{{ p.id }}" {% if person and person.mother_id == p.id %}selected{% endif %}>
-                                                {{ p.first_name }} {{ p.last_name }}
-                                            </option>
-                                            {% endfor %}
-                                        </select>
+                                        {{ form.mother_id.label }}
+                                        {{ form.mother_id(class="form-select") }}
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" name="has_offspring" {% if person and person.has_offspring %}checked{% endif %}>
-                                            <label class="form-check-label">لديه أبناء</label>
+                                            {{ form.has_offspring(class="form-check-input") }}
+                                            {{ form.has_offspring.label(class="form-check-label") }}
                                         </div>
                                     </div>
                                 </div>
@@ -108,31 +105,31 @@
                             <div class="tab-pane fade" id="life" role="tabpanel">
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
-                                        <label class="form-label">تاريخ الميلاد</label>
-                                        <input type="date" class="form-control" name="birth_date" value="{{ person.birth_date if person else '' }}">
+                                        {{ form.birth_date.label(class="form-label") }}
+                                        {{ form.birth_date(class="form-control") }}
                                     </div>
                                     <div class="col-md-6 mb-3">
-                                        <label class="form-label">مكان الميلاد</label>
-                                        <input type="text" class="form-control" name="birth_place" value="{{ person.birth_place if person else '' }}">
+                                        {{ form.birth_place.label(class="form-label") }}
+                                        {{ form.birth_place(class="form-control") }}
                                     </div>
                                     <div class="col-md-6 mb-3">
-                                        <label class="form-label">تاريخ الوفاة</label>
-                                        <input type="date" class="form-control" name="death_date" value="{{ person.death_date if person else '' }}">
+                                        {{ form.death_date.label(class="form-label") }}
+                                        {{ form.death_date(class="form-control") }}
                                     </div>
                                     <div class="col-md-6 mb-3">
-                                        <label class="form-label">سبب الوفاة</label>
-                                        <input type="text" class="form-control" name="death_reason" value="{{ person.death_reason if person else '' }}">
+                                        {{ form.death_reason.label(class="form-label") }}
+                                        {{ form.death_reason(class="form-control") }}
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" name="alive" {% if not person or person.alive %}checked{% endif %}>
-                                            <label class="form-check-label">على قيد الحياة</label>
+                                            {{ form.alive(class="form-check-input") }}
+                                            {{ form.alive.label(class="form-check-label") }}
                                         </div>
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" name="died_in_battle" {% if person and person.died_in_battle %}checked{% endif %}>
-                                            <label class="form-check-label">توفي في معركة</label>
+                                            {{ form.died_in_battle(class="form-check-input") }}
+                                            {{ form.died_in_battle.label(class="form-check-label") }}
                                         </div>
                                     </div>
                                 </div>
@@ -140,41 +137,56 @@
 
                             <!-- Onglet 4: Médias et liens -->
                             <div class="tab-pane fade" id="media" role="tabpanel">
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label">رفع صورة شخصية</label>
-                                        <input type="file" class="form-control" name="photo" accept="image/*">
-                                        <small class="text-muted">الحجم المفضل: 300x300 بكسل</small>
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label">رابط الصورة (بدلاً من الرفع)</label>
-                                        <input type="url" class="form-control" name="photo_url" value="{{ person.photo_url if person else '' }}" placeholder="https://example.com/photo.jpg">
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label">رابط خارجي</label>
-                                        <input type="url" class="form-control" name="external_link" value="{{ person.external_link if person else '' }}">
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label">مكان الإقامة</label>
-                                        <input type="text" class="form-control" name="residence" value="{{ person.residence if person else '' }}">
-                                    </div>
+                            <!-- Image URL -->
+                            <div class="mb-3">
+                                {{ form.image_url.label(class="form-label") }}
+                                {{ form.image_url(class="form-control") }}
+                            </div>
+
+                            <!-- Photo URL -->
+                            <div class="mb-3">
+                                {{ form.photo_url.label(class="form-label") }}
+                                {{ form.photo_url(class="form-control") }}
+                            </div>
+
+                            <!-- Image (si champ texte pour chemin ou base64) -->
+                            <div class="mb-3">
+                                {{ form.image.label(class="form-label") }}
+                                {{ form.image(class="form-control") }}
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                {{ form.photo_url.label(class="form-label") }}
+                                {{ form.photo_url(class="form-control", placeholder="https://example.com/photo.jpg") }}
                                 </div>
+
+                                <div class="col-md-6 mb-3">
+                                {{ form.external_link.label(class="form-label") }}
+                                {{ form.external_link(class="form-control") }}
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                {{ form.residence.label(class="form-label") }}
+                                {{ form.residence(class="form-control") }}
+                                </div>
+                            </div>
                             </div>
 
                             <!-- Onglet 5: Notes supplémentaires -->
                             <div class="tab-pane fade" id="notes" role="tabpanel">
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
-                                        <label class="form-label">الأعداء المعروفون</label>
-                                        <input type="text" class="form-control" name="known_enemies" value="{{ person.known_enemies if person else '' }}">
+                                        {{ form.known_enemies.label(class="form-label") }}
+                                        {{ form.known_enemies(class="form-control") }}
                                     </div>
                                     <div class="col-md-6 mb-3">
-                                        <label class="form-label">الفتن</label>
-                                        <input type="text" class="form-control" name="fitan" value="{{ person.fitan if person else '' }}">
+                                        {{ form.fitan.label(class="form-label") }}
+                                        {{ form.fitan(class="form-control") }}
                                     </div>
                                     <div class="col-12 mb-3">
-                                        <label class="form-label">ملاحظات إضافية</label>
-                                        <textarea class="form-control" name="notes" rows="4">{{ person.notes if person else '' }}</textarea>
+                                        {{ form.notes.label(class="form-label") }}
+                                        {{ form.notes(class="form-control", rows=4) }}
                                     </div>
                                 </div>
                             </div>
@@ -184,8 +196,8 @@
                         {% if require_password %}
                         <div class="row mt-4">
                             <div class="col-md-6 mb-3">
-                                <label class="form-label">كلمة المرور للتأكيد <span class="text-danger">*</span></label>
-                                <input type="password" class="form-control" name="password" required>
+                                {{ form.password.label(class="form-label") }}
+                                {{ form.password(class="form-control", required=true) }}
                             </div>
                         </div>
                         {% endif %}
@@ -199,6 +211,9 @@
                                 <i class="fas fa-save me-1"></i> {{ 'تحديث' if person else 'حفظ' }}
                             </button>
                         </div>
+                        <div style="margin-top: 40px;">
+                            <a href="/tree" class="btn btn-back">العودة إلى شجرة العائلة</a>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -208,42 +223,5 @@
 {% endblock %}
 
 {% block extra_js %}
-<!-- Select2 pour les menus déroulants améliorés -->
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-<script>
-    $(document).ready(function() {
-        // Initialiser Select2 avec support RTL
-        $('.select2').select2({
-            placeholder: 'اختر من القائمة',
-            allowClear: true,
-            width: '100%',
-            language: {
-                noResults: function() {
-                    return "لا توجد نتائج";
-                }
-            }
-        });
-
-        // Gestion dynamique du statut de vie
-        $('input[name="death_date"]').change(function() {
-            if ($(this).val()) {
-                $('input[name="alive"]').prop('checked', false);
-            }
-        });
-
-        $('input[name="alive"]').change(function() {
-            if ($(this).is(':checked')) {
-                $('input[name="death_date"]').val('');
-                $('input[name="death_reason"]').val('');
-            }
-        });
-
-        // Validation du formulaire
-        $('#personForm').submit(function() {
-            // Validation supplémentaire peut être ajoutée ici
-            return true;
-        });
-    });
-</script>
+<!-- [Conserver tout le JavaScript existant] -->
 {% endblock %}
