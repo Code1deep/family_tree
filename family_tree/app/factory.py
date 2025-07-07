@@ -89,11 +89,11 @@ def create_app(config_object='config.Config', testing=False):
         app.config.update(
             SQLALCHEMY_DATABASE_URI=(
                 f"postgresql+psycopg2://"
-                f"{os.getenv('DB_USER', 'hassaniyine_user')}:"
-                f"{os.getenv('DB_PASSWORD', 'MTzpda6BklFr8W0rLUIn1ohgFaN1xfLL')}@"
-                f"{os.getenv('DB_HOST', 'dpg-d1biad6uk2gs739qeh10-a')}:"
+                f"{os.getenv('DB_USER', 'hassaniyine_o9yq_user')}:"
+                f"{os.getenv('DB_PASSWORD', 'ukL2XI6fd6i7eQpO0uZ39VteUsb1dQ3s')}@"
+                f"{os.getenv('DB_HOST', 'dpg-d1m3j4ali9vc73coor00-a')}:"
                 f"{os.getenv('DB_PORT', '5432')}/"
-                f"{os.getenv('DB_NAME', 'hassaniyine')}"
+                f"{os.getenv('DB_NAME', 'hassaniyine_o9yq')}"
             ),
             SQLALCHEMY_TRACK_MODIFICATIONS=False,
             SQLALCHEMY_ENGINE_OPTIONS={
