@@ -5,7 +5,7 @@ SCRIPT DEFINITIF - VIDER ET METTRE À JOUR LES NOMS
 
 from sqlalchemy import create_engine, text
 
-DB_URL = "postgresql://neondb_owner:npg_qUrx9ItSbHa5@ep-weathered-leaf-a67ch667-pooler.us-west-2.aws.neon.tech/usa_nos?sslmode=require"
+DB_URL = "postgresql://hassaniyine_o9yq_user:ukL2XI6fd6i7eQpO0uZ39VteUsb1dQ3s@dpg-d1m3j4ali9vc73coor00-a.oregon-postgres.render.com/hassaniyine_o9yq"
 
 
 def fix_names():
