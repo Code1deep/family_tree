@@ -2,65 +2,74 @@
 {% extends "base_template.html" %}
 
 {% block content %}
-<h1 class="text-center mb-4">شجرة العائلة الحسنة</h1>
+<h1 class="text-center mb-4">شجرة العائلة الحسنية</h1>
 
 <!-- 🔘 Boutons de contrôle -->
 <div class="header-actions text-center mb-3">
   <a href="/api/person/add" class="btn btn-success me-2">➕ إضافة فرد جديد</a>
-  <a href="{{ url_for('person_api.new_person_form') }}" class="btn btn-primary mb-3">Créer une personne</a>
   <button id="fullscreenBtn" class="btn btn-secondary me-2">🖼️ ملء الشاشة</button>
   <button id="centerBtn" class="btn btn-info me-2">🎯 توسيط</button>
   <button id="pngBtn" class="btn btn-warning me-2">⬇️ تصدير PNG</button>
   <button id="svgBtn" class="btn btn-warning me-2">⬇️ تصدير SVG</button>
-  <input id="treeSearch" type="text" class="form-control d-inline-block w-auto" placeholder="🔍 ابحث عن اسم" />
+  <label for="goto-generation">Aller à la génération :</label>
+  <select id="goto-generation"></select>
+  <button id="genBtn">Aller</button>
+
+  <!-- 🔍 Barre de recherche -->
+  <div class="input-group" style="width: 250px; display: inline-flex">
+    <input id="treeSearch"
+           type="search"
+           class="form-control"
+           placeholder="🔍 ابحث عن اسم"
+           aria-label="Recherche">
+    <button id="searchBtn" class="btn btn-primary" type="button">
+      بحث
+    </button>
+  </div>
 </div>
 
-<!-- 📐 Conteneur de l’arbre -->
-<main id="wrapper" class="tree-wrapper mb-5" style="width: 100%; height: 70vh; position: relative;"></main>
+<!-- ✅✅✅ Wrapper scrollable -->
+<div id="tree-scroll-wrapper"
+     style="height: 80vh; overflow-y: auto; overflow-x: hidden; border: 1px solid #ddd; padding: 10px;">
+  <!-- 📐 Conteneur de l’arbre -->
+  <main id="wrapper" class="tree-wrapper mb-5"
+        style="width: 100%; min-height: 1200px; position: relative;">
+    <!-- L’arbre D3 sera injecté ici par JS -->
+  </main>
+</div>
 
+<!-- 🧍 Modal Bootstrap : formulaire -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#personModal">
+  Créer une personne
+</button>
+
+<div class="modal fade" id="personModal" tabindex="-1" aria-labelledby="personModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="POST" action="/api/person/persons">
+        {% include "tree_form.html" %}
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Enregistrer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 {% endblock %}
 
 {% block extra_js %}
-
-<!-- 🌳 Charger D3.js AVANT tout -->
-<!-- Charger D3.js en premier -->
+<!-- ✅ Charger D3.js -->
 <script src="https://d3js.org/d3.v7.min.js"></script>
-<script>
-  console.log("✅ D3 global juste après chargement : ", window.d3);
-  if (window.d3) {
-    console.log("✔ D3 version (window.d3.version) :", window.d3.version);
-  } else {
-    console.error("❌ D3 n’est PAS défini après chargement du script !");
-  }
-</script>
+<script>console.log("✅ D3 chargé :", window.d3);</script>
 
-<!-- 🌟 Tes modules -->
- <script>
-  console.log("D3 global (inline):", window.d3);  // <-- AJOUTEZ ICI
-</script>
-
+<!-- ✅ Modules principaux -->
 <script type="module" src="{{ url_for('static', filename='js/tree/utils.js') }}"></script>
 <script type="module" src="{{ url_for('static', filename='js/tree/d3-tree.js') }}"></script>
 <script type="module" src="{{ url_for('static', filename='js/tree/core.js') }}"></script>
-
 <script type="module" src="{{ url_for('static', filename='js/tree/tree.js') }}"></script>
-<img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo">
-
-<!-- 💡 Import dynamique tree.js après DOM prêt -->
-<script type="module">
-document.addEventListener("DOMContentLoaded", async () => {
-  console.log("📦 DOM complètement chargé → import de tree.js");
-  console.log("🔎 typeof d3 :", typeof d3); // Vérification immédiate
-  if (typeof d3 === "undefined") {
-    console.error("❌ D3.js n'est pas chargé !");
-    return;
-  }
-
-});
-</script>
 
 <style>
-/* 🌳 Style D3.js */
+/* 🎨 Styles D3 */
 .node circle {
   stroke: steelblue;
   stroke-width: 2px;
@@ -73,10 +82,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   stroke: #ccc;
   stroke-width: 2px;
 }
-/* 🎨 Styles personnalisés par génération - MODIFIÉ */
-.ft-node {
-  border-radius: 50%; /* Pour des cercles parfaits */
-}
+.ft-node { border-radius: 50%; }
 .ft-gener-0 { fill: #6a0dad !important; }
 .ft-gener-1 { fill: #1e90ff !important; }
 .ft-gener-2 { fill: #32cd32 !important; }
@@ -87,7 +93,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 .ft-gener-7 { fill: #7f8c8d !important; }
 .ft-gener-8 { fill: #8e44ad !important; }
 .ft-gener-9 { fill: #27ae60 !important; }
-
 .node--highlight {
   stroke: #ff0000 !important;
   stroke-width: 4px;
@@ -95,32 +100,3 @@ document.addEventListener("DOMContentLoaded", async () => {
 </style>
 {% endblock %}
 
-<script>
-// 🔘 Boutons + recherche
-document.addEventListener("DOMContentLoaded", () => {
-  const test = (id, label) => {
-    const el = document.getElementById(id);
-    if (el) {
-      el.addEventListener("click", () => {
-        console.log(`🟢 ${label} cliqué (ID: #${id})`);
-      });
-    } else {
-      console.warn(`❌ Élément non trouvé : #${id}`);
-    }
-  };
-
-  test("fullscreenBtn", "Bouton plein écran");
-  test("centerBtn", "Bouton centrer");
-  test("pngBtn", "Bouton export PNG");
-  test("svgBtn", "Bouton export SVG");
-
-  const search = document.getElementById("treeSearch");
-  if (search) {
-    search.addEventListener("input", () => {
-      console.log(`🔍 Recherche : ${search.value}`);
-    });
-  } else {
-    console.warn("❌ Champ recherche introuvable : #treeSearch");
-  }
-});
-</script>
