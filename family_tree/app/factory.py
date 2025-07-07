@@ -199,9 +199,9 @@ def create_app(config_object='config.Config', testing=False):
             except Exception as e:
                 app.logger.error(f"Erreur création table: {str(e)}")
                 raise
-                
-            from family_tree.insertion import full_initialize
-            full_initialize()
+
+            from family_tree.commands import init_data
+            app.cli.add_command(init_data)
             
             from family_tree.fix_names import fix_names
             fix_names()
