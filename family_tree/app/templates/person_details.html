@@ -1,32 +1,329 @@
-{% extends "base.html" %}
-
-{% block content %}
-<h1>Biographie complète de {{ person.first_name }} {{ person.last_name }}</h1>
-
-<div class="row">
-    <div class="col-md-6">
-        <h3>Informations de base</h3>
-        <p><strong>Date de naissance:</strong> {{ person.birth_date or 'Inconnue' }}</p>
-        <p><strong>Lieu de naissance:</strong> {{ person.birth_place or 'Inconnu' }}</p>
-        <p><strong>Profession:</strong> {{ person.profession or 'Non renseignée' }}</p>
+<!-- app/templates/person_details.html -->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>الملف الشخصي الكامل - {{person.name}}</title>
+    <style>
+        /* Styles de base */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .profile-container {
+            max-width: 900px;
+            margin: 20px auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        /* En-tête */
+        .profile-header {
+            position: relative;
+            background: linear-gradient(135deg, #2c3e50, #4ca1af);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        
+        .profile-header h1 {
+            margin: 0;
+            font-size: 32px;
+        }
+        
+        .profile-image {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 4px solid white;
+            margin: 0 auto 15px;
+            object-fit: cover;
+            display: block;
+        }
+        
+        /* Navigation */
+        .profile-nav {
+            background: #34495e;
+            padding: 10px 20px;
+        }
+        
+        .profile-nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            margin-left: 15px;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+        
+        .profile-nav a:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        /* Contenu principal */
+        .profile-content {
+            padding: 30px;
+        }
+        
+        .profile-section {
+            margin-bottom: 30px;
+        }
+        
+        .profile-section h2 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 8px;
+            margin-top: 0;
+        }
+        
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+        
+        .timeline-item {
+            position: relative;
+            padding-bottom: 20px;
+        }
+        
+        .timeline-item:last-child {
+            padding-bottom: 0;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -20px;
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #3498db;
+        }
+        
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            left: -15px;
+            top: 17px;
+            bottom: -5px;
+            width: 2px;
+            background: #ddd;
+        }
+        
+        .timeline-item:last-child::after {
+            display: none;
+        }
+        
+        .timeline-date {
+            font-weight: bold;
+            color: #e74c3c;
+        }
+        
+        /* Relations familiales */
+        .relations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .relation-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .relation-title {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        /* Liens */
+        .family-link {
+            color: #e74c3c;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .family-link:hover {
+            text-decoration: underline;
+        }
+        
+        /* Boutons */
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            margin-right: 10px;
+            transition: all 0.3s;
+        }
+        
+        .btn-back {
+            background: #95a5a6;
+            color: white;
+        }
+        
+        .btn-back:hover {
+            background: #7f8c8d;
+        }
+        
+        /* Galerie */
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .gallery img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 5px;
+            transition: transform 0.3s;
+        }
+        
+        .gallery img:hover {
+            transform: scale(1.05);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .relations-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .profile-content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="profile-container">
+        <div class="profile-nav">
+            <a href="/tree">← شجرة العائلة</a>
+            <a href="/api/person/person/{{ person.id }}">← العودة إلى العرض المختصر</a>
+        </div>
+        
+        <div class="profile-header">
+            {% if person.image %}
+                <img src="{{ person.image }}" alt="{{ person.name }}" class="profile-image">
+            {% endif %}
+            <h1>{{ person.name }}</h1>
+            {% if person.birth_date or person.death_date %}
+                <p>
+                    {% if person.birth_date %}
+                        {{ person.birth_date }}
+                    {% endif %}
+                    {% if person.death_date %}
+                        - {{ person.death_date }}
+                    {% endif %}
+                </p>
+            {% endif %}
+        </div>
+        
+        <div class="profile-content">
+            <div class="profile-section">
+                <h2>السيرة الذاتية</h2>
+                <div style="white-space: pre-line;">{{ person.bio_full }}</div>
+            </div>
+            
+            <div class="profile-section">
+                <h2>الجدول الزمني</h2>
+                <div class="timeline">
+                    {% for event in person.timeline %}
+                    <div class="timeline-item">
+                        <div class="timeline-date">{{ event.date }}</div>
+                        <div class="timeline-desc">{{ event.description }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="profile-section">
+                <h2>العلاقات العائلية</h2>
+                <div class="relations-grid">
+                    {% if person.spouses %}
+                    <div class="relation-card">
+                        <div class="relation-title">الزوج/الزوجة</div>
+                        <ul>
+                            {% for spouse in person.spouses %}
+                            <li>
+                                <a href="/api/person/person/{{ spouse.id }}" class="family-link">{{ spouse.name }}</a>
+                                ({{ spouse.marriage_date }})
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+                    
+                    {% if person.parents %}
+                    <div class="relation-card">
+                        <div class="relation-title">الوالدين</div>
+                        <ul>
+                            {% for parent in person.parents %}
+                            <li>
+                                <a href="/api/person/person/{{ parent.id }}" class="family-link">{{ parent.name }}</a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+                    
+                    {% if person.siblings %}
+                    <div class="relation-card">
+                        <div class="relation-title">الإخوة والأخوات</div>
+                        <ul>
+                            {% for sibling in person.siblings %}
+                            <li>
+                                <a href="/api/person/person/{{ sibling.id }}" class="family-link">{{ sibling.name }}</a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            {% if person.achievements %}
+            <div class="profile-section">
+                <h2>الإنجازات البارزة</h2>
+                <ul>
+                    {% for achievement in person.achievements %}
+                    <li>{{ achievement }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+            
+            {% if person.gallery %}
+            <div class="profile-section">
+                <h2>معرض الصور</h2>
+                <div class="gallery">
+                    {% for image in person.gallery %}
+                    <img src="{{ image.url }}" alt="{{ image.caption }}">
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+            
+            <div style="margin-top: 40px;">
+                <a href="/tree" class="btn btn-back">العودة إلى شجرة العائلة</a>
+            </div>
+        </div>
     </div>
-    <div class="col-md-6">
-        <h3>Histoire familiale</h3>
-        {% if person.father %}
-        <p><strong>Père:</strong> <a href="/person/{{ person.father.id }}">{{ person.father.first_name }} {{ person.father.last_name }}</a></p>
-        {% endif %}
-        {% if person.mother_rel %}
-        <p><strong>Mère:</strong> <a href="/person/{{ person.mother_rel.id }}">{{ person.mother_rel.first_name }} {{ person.mother_rel.last_name }}</a></p>
-        {% endif %}
-    </div>
-</div>
-
-<h3>Biographie détaillée</h3>
-<div class="bio-content">
-    {{ person.full_bio or 'Aucune biographie détaillée disponible' }}
-</div>
-
-<a href="/person/{{ person.id }}" class="btn btn-secondary">
-    Retour à la biographie courte
-</a>
-{% endblock %}
+</body>
+</html>
