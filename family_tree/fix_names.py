@@ -3,28 +3,25 @@
 SCRIPT DEFINITIF - VIDER ET METTRE À JOUR LES NOMS
 """
 
-from sqlalchemy import create_engine, text, inspect
-
-DB_URL = "postgresql://hassaniyine_o9yq_user:ukL2XI6fd6i7eQpO0uZ39VteUsb1dQ3s@dpg-d1m3j4ali9vc73coor00-a.oregon-postgres.render.com/hassaniyine_o9yq"
-
-engine = create_engine(DB_URL)
+from family_tree.app.extensions import db
+from sqlalchemy import text, inspect
 
 def fix_names():
-    inspector = inspect(engine)
+    inspector = inspect(db.engine)
 
     if 'persons' not in inspector.get_table_names():
         print("❌ Table 'persons' absente. Abandon fix_names()")
         return
 
     # 1️⃣ Vérifier colonne father_full_name
-    with engine.begin() as conn:
+    with db.engine.begin() as conn:
         conn.execute(text("""
             ALTER TABLE persons ADD COLUMN IF NOT EXISTS father_full_name TEXT
         """))
         print("🗂️ Colonne father_full_name vérifiée.")
 
     # 2️⃣ Calculer full_name des pères eux-mêmes
-    with engine.begin() as conn:
+    with db.engine.begin() as conn:
         conn.execute(text("""
             UPDATE persons
             SET full_name = first_name || ' ' || last_name
@@ -33,7 +30,7 @@ def fix_names():
         print("🔄 Calcul full_name pères directs.")
 
     # 3️⃣ Calculer father_full_name pour chaque enfant
-    with engine.begin() as conn:
+    with db.engine.begin() as conn:
         conn.execute(text("""
             UPDATE persons p
             SET father_full_name = f.full_name
@@ -43,7 +40,7 @@ def fix_names():
         print("🔄 Calcul father_full_name enfants.")
 
     # 4️⃣ Boucle pour calculer full_name enfants itérativement
-    with engine.begin() as conn:
+    with db.engine.begin() as conn:
         updated = True
         while updated:
             result = conn.execute(text("""
@@ -63,3 +60,4 @@ def fix_names():
 
 if __name__ == "__main__":
     fix_names()
+
