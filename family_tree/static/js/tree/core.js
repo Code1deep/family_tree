@@ -452,7 +452,7 @@ export async function renderFamilyTree(containerId, data) {
 }
 
 export async function loadTreeData(rootId) {
-    const response = await fetch(`/api/person/api/visualize/tree/${rootId}`);
+    const response = await fetch(`/api/person/visualize/tree/${rootId}`);
     if (!response.ok) throw new Error("Erreur lors du chargement des données");
     return await response.json();
 }
