@@ -191,26 +191,6 @@ def create_app(config_object='config.Config', testing=False):
                     print("✓ Template tree.html trouvé")
             except Exception as e:
                 print(f"❌ Erreur accès templates: {str(e)}")
-
-            # Création table persons atomique via fonction dédiée
-            from family_tree.create_persons import create_persons_table
-            try:
-                create_persons_table()
-                print("✓ Structure de la table créée")
-            except Exception as e:
-                app.logger.error(f"Erreur création table: {str(e)}")
-                raise
-
-            # Import commandes CLI
-            from family_tree.commands import init_data
-            app.cli.add_command(init_data)
-
-            # Correction / fix des noms (DML)
-            from family_tree.fix_names import fix_names
-            fix_names()
-
-            print("✓ full_initialize() exécuté avec succès dans le contexte Flask")
-            print("✓ fix_names() exécuté avec succès dans le contexte Flask")
             
             # Initialisation des services
             try:
