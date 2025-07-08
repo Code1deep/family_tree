@@ -23,7 +23,7 @@ def register_misc_routes(person_api):
     
     @person_api.route('/stats')
     def get_stats():
-        from domain.models.person import Person
+        from family_tree.domain.models.person import Person
         males = Person.query.filter_by(gender='M').count()
         females = Person.query.filter_by(gender='F').count()
         #living = Person.query.filter(Person.death_date == None).count()
