@@ -1,7 +1,6 @@
 # C:\family_tree\app\factory.py
 from family_tree.app.extensions import db, babel, login_manager
-
-# Ensuite seulement les autres imports
+from sqlalchemy import text
 from family_tree.infrastructure.persistence.db import db_session
 import os
 from pathlib import Path
