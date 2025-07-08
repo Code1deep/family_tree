@@ -1,4 +1,4 @@
-# family_tree/commands.py
+# family_tree/commands/commands.py
 import click
 from flask.cli import with_appcontext
 from family_tree.insertion import full_initialize
