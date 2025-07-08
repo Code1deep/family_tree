@@ -15,5 +15,6 @@ RUN pip install -r requirements.txt
 EXPOSE 8000
 
 # Démarrage : gunicorn sans colon
-CMD ["gunicorn", "family_tree.wsgi", "--bind", "0.0.0.0:8000"]
+CMD ["gunicorn", "family_tree.wsgi:app", "--bind", "0.0.0.0:8000"]
+
 
