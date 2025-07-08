@@ -2,10 +2,10 @@
 
 from venv import logger
 from flask import render_template, request, jsonify, abort
-from interfaces.api.serializers.person_serializer import PersonSerializer
-from domain.models import Person
-from app.extensions import db
-from infrastructure.persistence.repositories import PersonRepository
+from family_tree.interfaces.api.serializers.person_serializer import PersonSerializer
+from family_tree.domain.models.person import Person
+from family_tree..app.extensions import db
+from family_tree..infrastructure.persistence.repositories import PersonRepository
 
 person_service = None
 repo = PersonRepository()
