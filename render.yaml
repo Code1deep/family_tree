@@ -12,7 +12,7 @@ services:
       - key: DATABASE_URL
         value: sqlite:///family.db
 
-    releaseCommand: |
-      flask shell -c "from family_tree.create_persons import create_persons_table; create_persons_table()"
-      flask shell -c "from family_tree.insertion import full_initialize; full_initialize()"
-      flask shell -c "from family_tree.fix_names import fix_names; fix_names()"
+    # releaseCommand: |
+      # flask shell -c "from family_tree.create_persons import create_persons_table; create_persons_table()"
+      # flask shell -c "from family_tree.insertion import full_initialize; full_initialize()"
+      # flask shell -c "from family_tree.fix_names import fix_names; fix_names()"
