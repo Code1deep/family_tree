@@ -13,23 +13,30 @@ def fix_names():
         print("❌ Table 'persons' absente. Abandon fix_names()")
         return
 
-    # 1️⃣ Vérifier colonne father_full_name
+    # 1️⃣ Vérifier colonne full_name
+    with db.engine.begin() as conn:
+        conn.execute(text("""
+            ALTER TABLE persons ADD COLUMN IF NOT EXISTS full_name TEXT
+        """))
+        print("🗂️ Colonne full_name vérifiée.")
+
+    # 2️⃣ Vérifier colonne father_full_name
     with db.engine.begin() as conn:
         conn.execute(text("""
             ALTER TABLE persons ADD COLUMN IF NOT EXISTS father_full_name TEXT
         """))
         print("🗂️ Colonne father_full_name vérifiée.")
 
-    # 2️⃣ Calculer full_name des pères eux-mêmes
+    # 3️⃣ Calculer full_name des pères eux-mêmes
     with db.engine.begin() as conn:
         conn.execute(text("""
             UPDATE persons
             SET full_name = first_name || ' ' || last_name
-            WHERE full_name IS NULL
+            WHERE full_name IS NULL OR full_name = ''
         """))
         print("🔄 Calcul full_name pères directs.")
 
-    # 3️⃣ Calculer father_full_name pour chaque enfant
+    # 4️⃣ Calculer father_full_name pour chaque enfant
     with db.engine.begin() as conn:
         conn.execute(text("""
             UPDATE persons p
@@ -39,7 +46,7 @@ def fix_names():
         """))
         print("🔄 Calcul father_full_name enfants.")
 
-    # 4️⃣ Boucle pour calculer full_name enfants itérativement
+    # 5️⃣ Boucle pour calculer full_name enfants itérativement
     with db.engine.begin() as conn:
         updated = True
         while updated:
@@ -48,7 +55,7 @@ def fix_names():
                 SET full_name = p.first_name || ' بْنُ ' || f.first_name
                 FROM persons f
                 WHERE p.father_id = f.id
-                  AND p.full_name IS NULL
+                  AND (p.full_name IS NULL OR p.full_name = '')
                   AND f.full_name IS NOT NULL
                 RETURNING p.id
             """))
@@ -60,4 +67,5 @@ def fix_names():
 
 if __name__ == "__main__":
     fix_names()
+
 
