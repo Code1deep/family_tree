@@ -157,30 +157,26 @@ def create_app(config_object='config.Config', testing=False):
             print(url_for('static', filename='js/tree/core.js'))
             print(url_for('static', filename='js/tree/d3-tree.js'))
             print(url_for('static', filename='images/logo.png'))
-        
+
         with app.app_context():
-            # Test de connexion DB avec PostgreSQL
+            # Test connexion PostgreSQL + création tables
             try:
-                # Vérification de la connexion PostgreSQL - Version corrigée
                 with db.engine.connect() as conn:
-                    # Utilisation de text() pour créer une expression SQL correcte
-                    from sqlalchemy import text
                     result = conn.execute(text("SELECT 1"))
                     print(f"✓ Test PostgreSQL réussi - Résultat: {result.scalar()}")
 
-                    # Création des tables si elles n'existent pas
-                    db.create_all()
-
-                    # Inspection des tables
-                    inspector = db.inspect(db.engine)
-                    print(f"Tables in DB: {inspector.get_table_names()}")
+                # Inspection tables existantes
+                inspector = db.inspect(db.engine)
+                tables = inspector.get_table_names()
+                print(f"Tables in DB: {tables}")
 
                 print("✓ Connexion PostgreSQL ÉTABLIE et fermée proprement")
+
             except Exception as e:
                 print(f"❌ Erreur de connexion PostgreSQL: {str(e)}")
                 raise
 
-            # Vérification des templates
+            # Vérification templates
             try:
                 template_files = os.listdir(app.template_folder)
                 print(f"Templates disponibles: {template_files}")
@@ -190,22 +186,24 @@ def create_app(config_object='config.Config', testing=False):
                     print("✓ Template tree.html trouvé")
             except Exception as e:
                 print(f"❌ Erreur accès templates: {str(e)}")
-            from family_tree.domain.models.person import Person   
+
+            # Création table persons atomique via fonction dédiée
             from family_tree.create_persons import create_persons_table
-            
             try:
-                create_persons_table()  # Crée juste la table vide
+                create_persons_table()
                 print("✓ Structure de la table créée")
             except Exception as e:
                 app.logger.error(f"Erreur création table: {str(e)}")
                 raise
 
+            # Import commandes CLI
             from family_tree.commands import init_data
             app.cli.add_command(init_data)
-            
+
+            # Correction / fix des noms (DML)
             from family_tree.fix_names import fix_names
             fix_names()
-            
+
             print("✓ full_initialize() exécuté avec succès dans le contexte Flask")
             print("✓ fix_names() exécuté avec succès dans le contexte Flask")
             
