@@ -1,8 +1,8 @@
 # interfaces/api/resources/person/routes_tree.py
 from flask import jsonify, render_template, abort, current_app
-from infrastructure.persistence.repositories.person_repo import PersonRepository
-from infrastructure.visualization.tree_visualizer import FamilyTreeVisualizer
-from app.extensions import db
+from family_tree.infrastructure.persistence.repositories.person_repo import PersonRepository
+from family_tree.infrastructure.visualization.tree_visualizer import FamilyTreeVisualizer
+from family_tree.app.extensions import db
 import traceback
 
 person_service = None
@@ -12,7 +12,7 @@ def inject_service(service):
     person_service = service
 
 def register_tree_routes(person_api):
-    from interfaces.forms.person_form import PersonForm
+    from family_tree.interfaces.forms.person_form import PersonForm
     @person_api.route("/visualize/tree/<int:person_id>", endpoint="visualize_tree_by_id")
     def person_get_family_tree():
         try:
