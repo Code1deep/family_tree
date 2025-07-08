@@ -146,6 +146,12 @@ def create_app(config_object='config.Config', testing=False):
         @app.route('/')
         def home():
             return "Bienvenue sur Family Tree API", 200
+            
+        @person_api.route("/api/debug/persons-columns")
+        def debug_persons_columns():
+            inspector = db.inspect(db.engine)
+            columns = inspector.get_columns('persons')
+            return jsonify([col['name'] for col in columns])
 
         @app.route('/static/js/tree/<path:filename>')
         def serve_js_tree(filename):
