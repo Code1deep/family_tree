@@ -3,10 +3,10 @@ import logging
 from datetime import datetime
 from typing import Optional
 from flask import render_template, request, jsonify, abort, redirect, url_for, flash
-from app.extensions import db
-from interfaces.api.serializers.person_serializer import PersonSerializer
+from family_tree.app.extensions import db
+from family_tree.interfaces.api.serializers.person_serializer import PersonSerializer
 from flask import render_template, abort
-from domain.models.person import Person
+from family_tree.domain.models.person import Person
 
 person_service = None
 
@@ -140,7 +140,7 @@ def register_crud_routes(person_api):
             return jsonify({'error': 'Internal server error'}), 500
         
     #from flask import render_template_string
-    from interfaces.forms.person_form import PersonForm
+    from family_tree.interfaces.forms.person_form import PersonForm
 
     from flask import Blueprint, request, render_template, render_template_string, redirect, url_for, flash
 
