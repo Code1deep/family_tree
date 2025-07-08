@@ -1,4 +1,6 @@
 # C:\family_tree\domain\models\person.py
+# ✅ C:\family_tree\domain\models\person.py
+
 from datetime import datetime
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy import or_
@@ -13,7 +15,7 @@ class Person(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     first_name = db.Column(db.String(100), nullable=False)
     last_name = db.Column(db.String(100), nullable=True)
-    full_name = db.Column(db.String(100), nullable=False)  
+    full_name = db.Column(db.String(100), nullable=False)  # ✅ RESTE colonne physique
     father_full_name = db.Column(db.String(100), nullable=False)
     friends_name = db.Column(db.String(100))
     image = db.Column(db.String(100))
@@ -50,22 +52,10 @@ class Person(db.Model):
     
     @property
     def children(self):
-        """Tous les enfants (père et mère confondus)"""
         return list(set((self.children_from_father or []) + (self.children_from_mother or [])))
 
     @property
-    def full_name(self):
-        return f"{self.first_name} {self.last_name}"
-
-    @full_name.setter
-    def full_name(self, value):
-        parts = value.strip().split(maxsplit=1)
-        self.first_name = parts[0]
-        self.last_name = parts[1] if len(parts) > 1 else ""
-
-    @property
     def generation(self):
-        """Calcule la génération récursivement"""
         if not self.father and not self.mother:
             return 1
         father_gen = self.father.generation if self.father else 0
@@ -73,7 +63,6 @@ class Person(db.Model):
         return max(father_gen, mother_gen) + 1
 
     def to_dict(self):
-        """Sérialisation pour l'API"""
         return {
             'id': self.id,
             'name': self.full_name,
