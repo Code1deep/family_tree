@@ -81,7 +81,7 @@ def register_tree_routes(person_api):
             person_id=person_id
         )
 
-    @person_api.route('/tree')
+    @person_api.route('/tree', strict_slashes=False) 
     def api_tree_default():
         print("💡 person_api.route('/tree') API DEFAULT TREE CALLED")
         try:
