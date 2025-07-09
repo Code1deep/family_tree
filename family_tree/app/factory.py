@@ -251,17 +251,6 @@ def create_app(config_object='config.Config', testing=False):
             if request:  # Vérification supplémentaire
                 print(f"[REQUEST] {request.method} {request.path} -> {response.status}")
             return response
-
-        # Route générique pour tous les fichiers statiques
-        @app.route('/static/js/tree/<filename>')
-        def serve_tree_js(filename):
-            return send_from_directory(os.path.join(BASE_DIR, 'static', 'js', 'tree'), filename)
-
-        # Route spécifique pour les JS (double sécurité)
-        @app.route('/js/tree/<filename>')
-        def serve_js(filename):
-            js_dir = Path(__file__).parent.parent / 'static' / 'js' / 'tree'
-            return send_from_directory(js_dir, filename)
         
         print("✅ create_app terminé !")
 
