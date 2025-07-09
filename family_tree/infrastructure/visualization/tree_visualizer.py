@@ -1,14 +1,14 @@
 # infrastructure/visualization/tree_visualizer.py
 from platform import node
 from typing import Optional
-from app.factory import db
+from family_tree.app.factory import db
 from infrastructure.persistence.repositories.person_repo import PersonRepository 
 
-from domain.services.person_service import PersonService
+from family_tree.domain.services.person_service import PersonService
 from flask import current_app, url_for
-from interfaces.api.serializers.person_serializer import PersonSerializer
-from domain.models.person import Person
-from domain.services.tree_service import TreeService 
+from family_tree.interfaces.api.serializers.person_serializer import PersonSerializer
+from family_tree.domain.models.person import Person
+from family_tree.domain.services.tree_service import TreeService 
 
 def get_visualizer():
     return FamilyTreeVisualizer(current_app, PersonRepository(db.session))
