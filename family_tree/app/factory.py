@@ -188,11 +188,11 @@ def create_app(config_object='config.Config', testing=False):
             
             # Initialisation des services
             try:
-                from domain.services.person_service import PersonService
-                from infrastructure.persistence.repositories.person_repo import PersonRepository
-                from interfaces.api.resources.person.init_person_service import init_person_resources, create_person_api
+                from family_tree.domain.services.person_service import PersonService
+                from family_tree.infrastructure.persistence.repositories.person_repo import PersonRepository
+                from family_tree.interfaces.api.resources.person.init_person_service import init_person_resources, create_person_api
 
-                from interfaces.api.resources.tree.init_tree_service import init_tree_resources
+                from family_tree.interfaces.api.resources.tree.init_tree_service import init_tree_resources
 
                 repo = PersonRepository(db.session)
                 person_service = PersonService(repo)
