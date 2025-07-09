@@ -161,22 +161,22 @@ def create_app(config_object='config.Config', testing=False):
             # Test DB
         with app.app_context():
 
-            from family_tree.create_persons import create_persons_table
-            from family_tree.insertion import full_initialize
-            from family_tree.fix_names import fix_names
+            #from family_tree.create_persons import create_persons_table
+            #from family_tree.insertion import full_initialize
+            #from family_tree.fix_names import fix_names
 
-            create_persons_table()
+            #create_persons_table()
 
-            rows = db.session.execute(text("SELECT COUNT(*) FROM persons")).scalar()
-            print(f"🔍 Nombre de lignes dans 'persons': {rows}")
+            #rows = db.session.execute(text("SELECT COUNT(*) FROM persons")).scalar()
+            #print(f"🔍 Nombre de lignes dans 'persons': {rows}")
 
-            if rows == 0:
-                print("✅ Table vide → Peuplement...")
-                full_initialize()
-                fix_names()
-                print("✅ Données insérées + noms corrigés")
-            else:
-                print("✅ Table déjà peuplée")
+            #if rows == 0:
+                #print("✅ Table vide → Peuplement...")
+                #full_initialize()
+                #fix_names()
+                #print("✅ Données insérées + noms corrigés")
+            #else:
+                #print("✅ Table déjà peuplée")
 
             try:
                 with db.engine.connect() as conn:
