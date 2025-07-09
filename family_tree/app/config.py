@@ -7,21 +7,22 @@ instance_path = os.path.join(os.path.dirname(basedir), 'instance')
 class Config:
     SECRET_KEY = 'dev'  # ou os.environ.get("SECRET_KEY")
     WTF_CSRF_ENABLED = False  # désactive CSRF pour les tests
-    
-    """Configuration de base commune à tous les environnements."""
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
-        f"sqlite:///{os.path.join(instance_path, 'family.db')}"
+
+    # ✅ FORCING: pas de fallback silencieux
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
+    if not SQLALCHEMY_DATABASE_URI:
+        raise ValueError("❌ DATABASE_URL est manquant ! Vérifie ton Render envVars !")
+
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ECHO = True  # Active les logs SQL pour le débogage
 
 class DevelopmentConfig(Config):
-    """Configuration spécifique au développement."""
     DEBUG = True
 
 class TestingConfig(Config):
-    """Configuration utilisée pour les tests unitaires."""
     TESTING = True
     DEBUG = True
+    # OK pour testing local → SQLite autorisé ici
     SQLALCHEMY_DATABASE_URI = f"sqlite:///{os.path.join(instance_path, 'family.db')}"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
@@ -39,7 +40,7 @@ LOGGING_CONFIG = {
         }
     },
     "root": {
-        "level": "INFO",  # Peut être DEBUG pour plus de détails
+        "level": "INFO",
         "handlers": ["wsgi"]
     }
 }
