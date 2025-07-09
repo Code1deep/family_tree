@@ -1,14 +1,10 @@
 # interfaces/api/resources/person/init_person_service.py
 from family_tree.domain.services.person_service import PersonService
-
 from family_tree.infrastructure.persistence.repositories.person_repo import PersonRepository
-
-# Import des injecteurs uniquement
 from family_tree.interfaces.api.resources.person.routes_api import inject_service as inject_api, register_api_routes
 from family_tree.interfaces.api.resources.person.routes_crud import inject_service as inject_crud, register_crud_routes
 from family_tree.interfaces.api.resources.person.routes_tree import inject_service as inject_tree, register_tree_routes
 from family_tree.interfaces.api.resources.person.routes_misc import inject_service as inject_misc, register_misc_routes
-
 from family_tree.interfaces.api.resources.person.blueprint import person_api
 
 def init_person_resources(db_session):
