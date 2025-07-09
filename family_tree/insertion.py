@@ -137,6 +137,8 @@ def full_initialize():
         with app.app_context():
             initialize_data()
 
+print("✅ full_initialize() a inséré X personnes")
+
 
 if __name__ == '__main__':
     print("⚠ Utilisez 'flask init-db' ou appelez full_initialize()")
