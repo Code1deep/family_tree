@@ -157,6 +157,7 @@ def create_app(config_object='config.Config', testing=False):
             print(url_for('static', filename='js/tree/d3-tree.js'))
             print(url_for('static', filename='images/logo.png'))
 
+
             # Test DB
         with app.app_context():
             print("✅ STATIC PATH TESTS")
