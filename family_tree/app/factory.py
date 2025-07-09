@@ -160,8 +160,6 @@ def create_app(config_object='config.Config', testing=False):
 
             # Test DB
         with app.app_context():
-            print("✅ STATIC PATH TESTS")
-            print(url_for('static', filename='js/tree/core.js'))
 
             from family_tree.create_persons import create_persons_table
             from family_tree.insertion import full_initialize
