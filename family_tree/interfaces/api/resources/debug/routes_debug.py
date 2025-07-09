@@ -1,4 +1,4 @@
-# Ajoute dans un routes_debug.py par ex
+# family_tree/interfaces/api/resources/debug/routes_debug.py
 from flask import Blueprint, jsonify
 import sys
 
