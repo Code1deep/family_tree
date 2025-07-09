@@ -208,7 +208,7 @@ def create_app(config_object='config.Config', testing=False):
 
             # Enregistrement des blueprints
             try:
-                from interfaces.api.resources.debug.routes_debug import debug_bp
+                from family_tree.interfaces.api.resources.debug.routes_debug import debug_bp
                 app.register_blueprint(debug_bp)
                 app.register_blueprint(create_person_api(), url_prefix='/api/person')
 
