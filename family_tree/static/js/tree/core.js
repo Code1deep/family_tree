@@ -198,6 +198,8 @@ export function initMainD3Tree(containerId, data) {
         }
     });
 
+  setupAdvancedSearch(root, svgRoot, zoom, width, height);
+
 }
 
 // ===========================
