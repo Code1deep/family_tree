@@ -15,17 +15,23 @@
   <select id="goto-generation"></select>
   <button id="genBtn">Aller</button>
 
-  <!-- 🔍 Barre de recherche -->
-  <div class="input-group" style="width: 250px; display: inline-flex">
-    <input id="treeSearch"
-           type="search"
-           class="form-control"
-           placeholder="🔍 ابحث عن اسم"
-           aria-label="Recherche">
-    <button id="searchBtn" class="btn btn-primary" type="button">
-      بحث
-    </button>
-  </div>
+<!-- 🔍 Barre de recherche avec choix de critère -->
+<div class="input-group" style="width: 400px; display: inline-flex; position: relative;">
+  <select id="searchField" class="form-select" style="width: 120px;">
+    <option value="name">Nom</option>
+    <option value="birth_year">Année</option>
+    <option value="generation">Génération</option>
+  </select>
+  <input id="treeSearch"
+         type="search"
+         class="form-control"
+         placeholder="🔍 Saisir..."
+         aria-label="Recherche"
+         style="width: 180px;">
+  <button id="searchBtn" class="btn btn-primary" type="button">
+    بحث
+  </button>
+</div>
 </div>
 
 <!-- ✅✅✅ Wrapper scrollable -->
