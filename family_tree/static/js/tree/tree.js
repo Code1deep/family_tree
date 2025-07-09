@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   try {
-    console.log("📡 Fetch vers /api/person/tree/ ...");
+    console.log("📡 Fetch vers /api/person/tree...");
     const response = await fetch("/api/person/tree");
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const treeData = await response.json();
