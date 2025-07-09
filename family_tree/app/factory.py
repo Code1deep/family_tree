@@ -161,16 +161,24 @@ def create_app(config_object='config.Config', testing=False):
             # Test DB
         with app.app_context():
             # Appel anticipé et sûr à full_initialize
+            from family_tree.create_persons import create_persons_table
             from family_tree.insertion import full_initialize
             from family_tree.fix_names import fix_names
-            from family_tree.create_persons import create_persons_table
-            # Initialisation de la table
+        
+            # Vérifie et crée explicitement
             create_persons_table()
-            print("✅ Tables créées")
-            full_initialize()
-            fix_names()
-            print("✓ full_initialize() exécuté avec succès dans le contexte Flask")
-            print("✓ fix_names() exécuté avec succès dans le contexte Flask")
+        
+            # Vérifie si la table est vide
+            rows = db.session.execute("SELECT COUNT(*) FROM persons;").scalar()
+            print(f"🔍 Nombre de lignes dans 'persons': {rows}")
+        
+            if rows == 0:
+                print("✅ Table vide → Peuplement...")
+                full_initialize()
+                fix_names()
+                print("✅ Données insérées avec succès.")
+            else:
+                print("✅ Table 'persons' déjà peuplée.")
 
             # Test connexion PostgreSQL + création tables
             try:
