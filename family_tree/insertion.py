@@ -47,8 +47,7 @@ def initialize_data():
         # 1. Insertion des données de base sans full_name
         logger.info("➕ Insertion des membres de la famille...")
         db.session.execute(text("""
-            INSERT INTO persons (id, first_name, last_name, gender, father_id, mother_id)
-            VALUES
+
             INSERT INTO persons (
                 id, first_name, last_name, friends_name, image, father_id, mother_id, 
                 birth_date, death_date, birth_place, residence, external_link, image_url, 
