@@ -47,15 +47,15 @@ def initialize_data():
         # 1. Insertion des données de base sans full_name
         logger.info("➕ Insertion des membres de la famille...")
         db.session.execute(text("""
-
+        db.session.execute(text("""
             INSERT INTO persons (
                 id, first_name, last_name, friends_name, image, father_id, mother_id, 
                 birth_date, death_date, birth_place, residence, external_link, image_url, 
                 has_offspring, alive, death_reason, died_in_battle, known_enemies, 
                 fitan, notes, photo_url, gender, short_bio, full_bio, profession, 
-                full_name
+                full_name, father_full_name  
             ) VALUES
-                (1, 'آدَمُ', 'عليه السلام', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'male', NULL, NULL, NULL, 'آدَمُ عليه السلام'),
+                (1, 'آدَمُ', 'عليه السلام', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'male', NULL, NULL, NULL, 'آدَمُ عليه السلام', ''),
                 (2, 'شَيْثُ', 'بْنُ آدَمَ عليهما السلام', NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'male', NULL, NULL, NULL, NULL, 'شَيْثُ بْنُ آدَمَ عليهما السلام'),
                 (3, 'أَنُوشُ', 'بْنُ شَيْثٍ', NULL, NULL, 2, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'male', NULL, NULL, NULL, NULL, 'أَنُوشُ بْنُ شَيْثٍ'),
                 (4, 'قَيْنَانُ', 'بْنُ أَنُوشٍ', NULL, NULL, 3, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'male', NULL, NULL, NULL, NULL, 'قَيْنَانُ بْنُ أَنُوشٍ'),
