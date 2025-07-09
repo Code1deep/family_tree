@@ -14,7 +14,7 @@ class Person(db.Model):
     first_name = db.Column(db.String(100), nullable=False)
     last_name = db.Column(db.String(100), nullable=True)
     full_name = db.Column(db.String(100), nullable=False)  # ✅ RESTE colonne physique
-    father_full_name = db.Column(db.String(100), nullable=False)
+    father_full_name = db.Column(db.String(100), nullable=True)
     friends_name = db.Column(db.String(100))
     image = db.Column(db.String(100))
 
