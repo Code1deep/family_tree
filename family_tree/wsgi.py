@@ -15,7 +15,7 @@ print("===================\n")
 
 # Import de l'application après configuration des chemins
 try:
-    from app.factory import create_app
+    from family_tree.app.factory import create_app
     print("✓ Import de create_app réussi")
 except ImportError as e:
     print(f"❌ Erreur d'import : {e}")
