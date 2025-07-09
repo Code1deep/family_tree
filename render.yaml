@@ -10,7 +10,7 @@ services:
     plan: free
     envVars:
       - key: DATABASE_URL
-        value: sqlite:///family.db
+        value: postgresql://hassaniyine_o9yq_user:ukL2XI6fd6i7eQpO0uZ39VteUsb1dQ3s@dpg-d1m3j4ali9vc73coor00-a/hassaniyine_o9yq
 
     releaseCommand: |
     releaseCommand: |
