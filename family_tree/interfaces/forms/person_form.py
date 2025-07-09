@@ -4,7 +4,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, DateField, SelectField, IntegerField, TextAreaField, BooleanField
 from wtforms.validators import DataRequired, Optional
 from wtforms_sqlalchemy.fields import QuerySelectField
-from domain.models.person import Person
+from family_tree.domain.models.person import Person
 
 class PersonForm(FlaskForm):
     # Identité
