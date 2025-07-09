@@ -1,6 +1,4 @@
 # C:\family_tree\domain\models\person.py
-# ✅ C:\family_tree\domain\models\person.py
-
 from datetime import datetime
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy import or_
