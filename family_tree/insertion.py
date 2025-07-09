@@ -4,9 +4,9 @@ from dotenv import load_dotenv
 load_dotenv()
 from sqlalchemy import text
 from flask import current_app
-from app.extensions import db
-from domain.models.person import Person
+from family_tree.domain.models.person import Person
 import logging
+from family_tree.app.extensions import db
 
 # Configuration du logging
 logging.basicConfig(
@@ -132,7 +132,7 @@ def full_initialize():
     if has_app_context():
         initialize_data()
     else:
-        from app.factory import create_app
+        from family_tree.app.factory import create_app
         app = create_app()
         with app.app_context():
             initialize_data()
