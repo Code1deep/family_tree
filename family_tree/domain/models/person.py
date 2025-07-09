@@ -4,7 +4,7 @@
 from datetime import datetime
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy import or_
-from app.extensions import db
+from family_tree.app.extensions import db
 from sqlalchemy import Column, Integer, String, Date, ForeignKey
 from sqlalchemy.orm import relationship
 
