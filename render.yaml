@@ -12,9 +12,3 @@ services:
       - key: DATABASE_URL
         value: postgresql://hassaniyine_o9yq_user:ukL2XI6fd6i7eQpO0uZ39VteUsb1dQ3s@dpg-d1m3j4ali9vc73coor00-a/hassaniyine_o9yq
 
-    releaseCommand: |
-      flask shell -c "from family_tree.database import db; print('✅ DATABASE:', db.engine.url); db.drop_all(); db.create_all()"
-      flask shell -c "from family_tree.insertion import full_initialize; full_initialize()"
-      flask shell -c "from family_tree.fix_names import fix_names; fix_names()"
-
-
