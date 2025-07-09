@@ -157,45 +157,49 @@ def create_app(config_object='config.Config', testing=False):
             print(url_for('static', filename='js/tree/d3-tree.js'))
             print(url_for('static', filename='images/logo.png'))
 
-
             # Test DB
         with app.app_context():
-            # Appel anticipé et sûr à full_initialize
+            print("✅ STATIC PATH TESTS")
+            print(url_for('static', filename='js/tree/core.js'))
+
             from family_tree.create_persons import create_persons_table
             from family_tree.insertion import full_initialize
             from family_tree.fix_names import fix_names
-        
-            # Vérifie et crée explicitement
+
             create_persons_table()
-        
-            # Vérifie si la table est vide
-            rows = db.session.execute(text("SELECT COUNT(*) FROM persons;")).scalar()
+
+            rows = db.session.execute(text("SELECT COUNT(*) FROM persons")).scalar()
             print(f"🔍 Nombre de lignes dans 'persons': {rows}")
-        
+
             if rows == 0:
                 print("✅ Table vide → Peuplement...")
                 full_initialize()
                 fix_names()
-                print("✅ Données insérées avec succès.")
+                print("✅ Données insérées + noms corrigés")
             else:
-                print("✅ Table 'persons' déjà peuplée.")
+                print("✅ Table déjà peuplée")
 
-            # Test connexion PostgreSQL + création tables
             try:
                 with db.engine.connect() as conn:
-                    result = conn.execute(text("SELECT 1"))
-                    print(f"✓ Test PostgreSQL réussi - Résultat: {result.scalar()}")
-
-                # Inspection tables existantes
-                inspector = db.inspect(db.engine)
-                tables = inspector.get_table_names()
-                print(f"Tables in DB: {tables}")
-
-                print("✓ Connexion PostgreSQL ÉTABLIE et fermée proprement")
-
+                    res = conn.execute(text("SELECT 1"))
+                    print(f"✓ PostgreSQL OK: {res.scalar()}")
             except Exception as e:
-                print(f"❌ Erreur de connexion PostgreSQL: {str(e)}")
-                raise
+                print(f"❌ PostgreSQL FAIL: {e}")
+
+            try:
+                inspector = db.inspect(db.engine)
+                print(f"Tables: {inspector.get_table_names()}")
+            except Exception as e:
+                print(f"❌ Inspect FAIL: {e}")
+
+            try:
+                templates = os.listdir(app.template_folder)
+                print(f"Templates: {templates}")
+                if 'tree.html' not in templates:
+                    print("⚠️ tree.html manquant")
+            except Exception as e:
+                print(f"❌ Template check FAIL: {e}")
+
 
             # Vérification templates
             try:
