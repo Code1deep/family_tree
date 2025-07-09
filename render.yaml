@@ -13,6 +13,9 @@ services:
         value: sqlite:///family.db
 
     releaseCommand: |
+    releaseCommand: |
+      flask shell -c "from family_tree.database import db; print('✅ DATABASE:', db.engine.url); db.create_all()"
+      flask shell -c "from family_tree.insertion import full_initialize; full_initialize()"
       flask shell -c "from family_tree.database import db; db.drop_all()"  # Supprime les tables
       flask shell -c "from family_tree.create_persons import create_persons_table; create_persons_table()"  # Recrée les tables
       flask shell -c "from family_tree.insertion import full_initialize; full_initialize()"  # Repeuple
