@@ -2,7 +2,7 @@
 import flask
 from flask import Blueprint
 import flask_login
-from .user import users, User
+from family_tree.interfaces.auth.user import users, User
 
 auth_bp = Blueprint("auth", __name__, url_prefix="/auth")
 
