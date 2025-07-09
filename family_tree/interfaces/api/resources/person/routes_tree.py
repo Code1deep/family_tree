@@ -66,6 +66,7 @@ def register_tree_routes(person_api):
 
     @person_api.route('/tree/<int:person_id>', methods=['GET'])
     def show_tree_by_id(person_id):
+        print(f"💡 API SHOW_TREE_BY_ID CALLED avec ID: {person_id}")
         visualizer = FamilyTreeVisualizer(current_app, PersonRepository(db.session))
         tree_data = visualizer.generate_familytree_data(root_person_id=person_id)
         form = PersonForm()  
@@ -82,6 +83,7 @@ def register_tree_routes(person_api):
 
     @person_api.route('/tree')
     def api_tree_default():
+        print("💡 person_api.route('/tree') API DEFAULT TREE CALLED")
         try:
             visualizer = FamilyTreeVisualizer(current_app, PersonRepository(db.session))
             root_person_id = 1
