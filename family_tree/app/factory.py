@@ -169,7 +169,7 @@ def create_app(config_object='config.Config', testing=False):
             create_persons_table()
         
             # Vérifie si la table est vide
-            rows = db.session.execute("SELECT COUNT(*) FROM persons;").scalar()
+            rows = db.session.execute(text("SELECT COUNT(*) FROM persons;")).scalar()
             print(f"🔍 Nombre de lignes dans 'persons': {rows}")
         
             if rows == 0:
