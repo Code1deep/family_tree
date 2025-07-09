@@ -157,7 +157,21 @@ def create_app(config_object='config.Config', testing=False):
             print(url_for('static', filename='js/tree/d3-tree.js'))
             print(url_for('static', filename='images/logo.png'))
 
+
+            # Test DB
         with app.app_context():
+            # Appel anticipé et sûr à full_initialize
+            from family_tree.insertion import full_initialize
+            from family_tree.fix_names import fix_names
+            from family_tree.create_persons import create_persons_table
+            # Initialisation de la table
+            create_persons_table()
+            print("✅ Tables créées")
+            full_initialize()
+            fix_names()
+            print("✓ full_initialize() exécuté avec succès dans le contexte Flask")
+            print("✓ fix_names() exécuté avec succès dans le contexte Flask")
+
             # Test connexion PostgreSQL + création tables
             try:
                 with db.engine.connect() as conn:
