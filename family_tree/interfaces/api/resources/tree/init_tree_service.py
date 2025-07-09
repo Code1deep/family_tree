@@ -2,8 +2,8 @@
 
 from flask import Blueprint, jsonify, render_template
 
-from .routes_tree_api import register_tree_api_routes
-from .routes_tree_views import register_tree_view_routes
+from family_tree.interfaces.api.resources.tree.routes_tree_api import register_tree_api_routes
+from family_tree.interfaces.api.resources.tree.routes_tree_views import register_tree_view_routes
 from family_tree.interfaces.api.resources.person.routes_tree import register_tree_routes, inject_service
 
 def init_tree_resources(app, person_service):
@@ -39,7 +39,7 @@ def init_tree_resources(app, person_service):
 
     # ✅ 4. HOME PAGE
     try:
-        from ..home.routes_home import register_home_routes
+        from family_tree.interfaces.api.resources.home.routes_home import register_home_routes
         register_home_routes(app)
     except ImportError as e:
         print(f"Erreur d'importation des routes home: {e}")
