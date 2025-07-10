@@ -1,7 +1,6 @@
 // static/js/tree/utils.js
 console.log("✅ utils.js chargé");
 
-
 export function setupAdvancedSearch(root, svgRoot, zoom, width, height, update) {
   console.log("✅ JS de recherche chargé");
   
@@ -37,17 +36,21 @@ export function setupAdvancedSearch(root, svgRoot, zoom, width, height, update) 
     }
   });
 
-  // 📌 Ta fonction de centrage (tu l’as sûrement déjà)
   function focusNode(node) {
     if (node._children) {
       node.children = node._children;
       node._children = null;
-      update(node);
     }
-  
+
+    // ⚡ Recalcul layout
+    update(node);
+
+    console.log("FocusNode:", node);
+    console.log("node.x =", node.x, "node.y =", node.y);
+
     const x = node.x;
     const y = node.y;
-  
+
     svgRoot.transition().duration(750).call(
       zoom.transform,
       d3.zoomIdentity
@@ -57,7 +60,6 @@ export function setupAdvancedSearch(root, svgRoot, zoom, width, height, update) 
     );
   }
 }
-
 
 /* Debounce générique */
 export function debounce(func, wait) {
