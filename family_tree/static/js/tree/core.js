@@ -287,31 +287,32 @@ export async function drawTree(data) {
 
         // Ajouter sélecteur racine
         addRootSelector(rootCandidates, nodeById, data, g, width, height, zoom);
-
-    // Juste avant setupTreeControls, récupérez le selector existant
-    const selector = document.getElementById("rootSelector");
-
-    if (selector) {
-    window.setupTreeControls({
-    container: d3.select("#wrapper"),
-    svgRoot: g,
-    svgNode: document.querySelector("#wrapper svg"),
-    root: nodeById[rootCandidates[0].id],
-    update: () => renderTreeFromRoot(selector.value, nodeById, g, width, height, zoom),
-    g: g,
-    zoom: zoom,
-    baseTranslate: baseTranslate   // ✅✅✅ AJOUT INDISPENSABLE
-    });
-
-    } else {
-    console.warn("⚠ Selector non trouvé, chargement des contrôles ignoré");
-    }
-        return { g, svgRoot, zoom, baseTranslate }; // ✅ DANS le try
-    } catch (err) {
+    
+        const selector = document.getElementById("rootSelector");
+        if (!selector) {
+          console.warn("⚠ Selector non trouvé");
+          return;
+        }
+    
+        // Fonction update : réutilise renderTreeFromRoot
+        const update = () => renderTreeFromRoot(selector.value, nodeById, g, width, height, zoom);
+    
+        // Premier rendu
+        renderTreeFromRoot(selector.value || rootId, nodeById, g, width, height, zoom);
+    
+        // ⚡ Important : Construire le vrai root.hierarchy pour la recherche
+        const rootData = nodeById[selector.value || rootId];
+        const root = d3.hierarchy(rootData);
+    
+        // 🔑 Brancher la recherche ici
+        setupAdvancedSearch(root, svgRoot, zoom, width, height, update);
+    
+        return { g, svgRoot, zoom, baseTranslate };
+      } catch (err) {
         console.error("❌ Erreur drawTree():", err);
-        throw err; // ⚡ Important : rejette pour bloquer la suite
+        throw err;
+      }
     }
-}
 //Ajoute un sélecteur dynamique de racine à l'interface
 function addRootSelector(rootCandidates, nodeById, data, g, width, height, zoom) {
     let selector = document.getElementById("rootSelector");
