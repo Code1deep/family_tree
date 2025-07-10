@@ -3,8 +3,8 @@
 const wrapper = document.getElementById("wrapper");
 console.log("🔍 wrapper in core.js ?", wrapper);
 
-import { setupGenerationJump } from '/static/js/tree/d3-tree.js';
-import { transformDataForD3 } from '/static/js/tree/d3-tree.js';
+import { setupGenerationJump } from './d3-tree.js';
+import { transformDataForD3 } from './d3-tree.js';
 console.log("✅✅✅ VERSION core.js ACTIVE ✅✅✅");
 console.log("✔ core.js initialisé");
 console.log("📦 [core.js] D3 dispo ?", window.d3, typeof d3);
