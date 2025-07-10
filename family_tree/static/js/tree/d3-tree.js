@@ -1,6 +1,6 @@
 // static/js/tree/d3-tree.js
-import { downloadURL, toggleFullscreen, centerTree } from '/static/js/tree/utils.js';
-import { openModal } from '/static/js/modal.js';
+import { downloadURL, toggleFullscreen, centerTree } from './utils.js';
+import { openModal } from '../modal.js';
 
 // Définition des couleurs pour chaque génération (0 à 9)
 const generationColors = [
