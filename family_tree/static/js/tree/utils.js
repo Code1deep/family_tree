@@ -30,6 +30,7 @@ export function setupAdvancedSearch(root, svgRoot, zoom, width, height, update) 
     console.log("Match trouvé :", match);
   
     if (match) {
+      update(match); 
       focusNode(match);
     } else {
       alert("Aucun résultat !");
