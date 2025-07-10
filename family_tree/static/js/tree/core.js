@@ -2,7 +2,7 @@
 
 const wrapper = document.getElementById("wrapper");
 console.log("🔍 wrapper in core.js ?", wrapper);
-import { setupAdvancedSearch } from './tree.js';
+import { setupAdvancedSearch } from './utils.js';
 import { setupGenerationJump } from './d3-tree.js';
 import { transformDataForD3 } from './d3-tree.js';
 console.log("✅✅✅ VERSION core.js ACTIVE ✅✅✅");
