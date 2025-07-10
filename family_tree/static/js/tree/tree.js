@@ -88,91 +88,106 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 export function setupAdvancedSearch(root, svgRoot, zoom, width, height, update) {
-  const input = document.getElementById("treeSearch2");
-  const btn = document.getElementById("searchBtn2");
-  const field = document.getElementById("searchField2");
-
-  // ✅ Boîte suggestions unique
-  const box = document.createElement("ul");
-  box.style.position = "absolute";
-  box.style.background = "#fff";
-  box.style.border = "1px solid #ccc";
-  box.style.padding = "0";
-  box.style.margin = "0";
-  box.style.listStyle = "none";
-  box.style.width = input.offsetWidth + "px";
-  box.style.maxHeight = "200px";
-  box.style.overflowY = "auto";
-  box.style.zIndex = "9999";
-  input.parentNode.style.position = "relative";
-  input.parentNode.appendChild(box);
-
-  input.addEventListener("keyup", (e) => {
-    const val = input.value.trim().toLowerCase();
-    const fieldVal = field.value;
-
-    box.innerHTML = "";
-
-    if (val.length < 1) return;
-
+  const searchInput = document.getElementById("treeSearch");
+  const searchBtn = document.getElementById("searchBtn");
+  const searchField = document.getElementById("searchField");
+  
+  // 🟢 Si tu veux une boîte de suggestions
+  const suggestionBox = document.createElement("ul");
+  suggestionBox.style.position = "absolute";
+  suggestionBox.style.background = "white";
+  suggestionBox.style.border = "1px solid #ccc";
+  suggestionBox.style.listStyle = "none";
+  suggestionBox.style.padding = "0";
+  suggestionBox.style.margin = "0";
+  suggestionBox.style.width = searchInput.offsetWidth + "px";
+  suggestionBox.style.zIndex = "1000";
+  suggestionBox.style.maxHeight = "200px";
+  suggestionBox.style.overflowY = "auto";
+  
+  searchInput.parentNode.style.position = "relative";
+  searchInput.parentNode.appendChild(suggestionBox);
+  
+  // 🔎 Suggestions dynamiques
+  searchInput.addEventListener("keyup", (e) => {
+    const term = e.target.value.toLowerCase().trim();
+    const field = searchField.value;
+    suggestionBox.innerHTML = "";
+  
+    if (term.length === 0) return;
+  
     const matches = root.descendants().filter(d => {
-      if (fieldVal === "name") return d.data.name?.toLowerCase().includes(val);
-      if (fieldVal === "birth_year") return String(d.data.birth_year || "").includes(val);
-      if (fieldVal === "generation") return String(d.depth).includes(val);
-      return false;
+      let val = "";
+      if (field === "name") val = d.data.name?.toLowerCase();
+      else if (field === "birth_year") val = String(d.data.birth_year || "");
+      else if (field === "generation") val = String(d.depth);
+  
+      return val.includes(term);
     }).slice(0, 10);
-
-    matches.forEach(d => {
+  
+    matches.forEach(match => {
       const li = document.createElement("li");
+      li.textContent = field === "name"
+        ? match.data.name
+        : field === "birth_year"
+          ? `${match.data.name} (${match.data.birth_year || "?"})`
+          : `${match.data.name} (Gen ${match.depth})`;
+  
+      li.style.cursor = "pointer";
       li.style.padding = "4px 8px";
       li.style.borderBottom = "1px solid #eee";
-      li.style.cursor = "pointer";
-      li.textContent = fieldVal === "name"
-        ? d.data.name
-        : fieldVal === "birth_year"
-          ? `${d.data.name} (${d.data.birth_year || "?"})`
-          : `${d.data.name} (Gen ${d.depth})`;
-      li.onclick = () => {
-        focusAndZoom(d);
-        box.innerHTML = "";
-      };
-      box.appendChild(li);
+  
+      li.addEventListener("click", () => {
+        focusNode(match);
+        suggestionBox.innerHTML = "";
+      });
+  
+      suggestionBox.appendChild(li);
     });
   });
-
-  btn.addEventListener("click", () => {
-    const val = input.value.trim().toLowerCase();
-    const fieldVal = field.value;
-
+  
+  // 🔍 Clic bouton
+  searchBtn.addEventListener("click", () => {
+    const term = searchInput.value.toLowerCase().trim();
+    const field = searchField.value;
+  
     const match = root.descendants().find(d => {
-      if (fieldVal === "name") return d.data.name?.toLowerCase().includes(val);
-      if (fieldVal === "birth_year") return String(d.data.birth_year || "").includes(val);
-      if (fieldVal === "generation") return String(d.depth).includes(val);
-      return false;
+      let val = "";
+      if (field === "name") val = d.data.name?.toLowerCase();
+      else if (field === "birth_year") val = String(d.data.birth_year || "");
+      else if (field === "generation") val = String(d.depth);
+  
+      return val.includes(term);
     });
-
+  
     if (match) {
-      focusAndZoom(match);
-      box.innerHTML = "";
+      focusNode(match);
     } else {
       alert("Aucun résultat !");
     }
+  
+    suggestionBox.innerHTML = "";
   });
-
-  function focusAndZoom(node) {
+  
+  // 📌 Ta fonction de centrage (tu l’as sûrement déjà)
+  function focusNode(node) {
     if (node._children) {
       node.children = node._children;
       node._children = null;
+      update(node);
     }
-    update(node);
-
+  
+    const x = node.x;
+    const y = node.y;
+  
     svgRoot.transition().duration(750).call(
       zoom.transform,
       d3.zoomIdentity
         .translate(width / 2, height / 2)
         .scale(1)
-        .translate(-node.y, -node.x)
+        .translate(-y, -x)
     );
   }
+
 }
 
