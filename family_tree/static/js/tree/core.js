@@ -200,6 +200,8 @@ export function initMainD3Tree(containerId, data) {
 
   setupAdvancedSearch(root, svgRoot, zoom, width, height, update);
 
+  return { root, svgRoot, zoom, width, height, update };
+
 }
 
 // ===========================
