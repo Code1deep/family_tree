@@ -1,6 +1,44 @@
 // static/js/tree/utils.js
 console.log("✅ utils.js chargé");
 
+export function setupAdvancedSearch(root, svgRoot, zoom, width, height, update) {
+  console.log("✅ JS de recherche chargé");
+  const searchInput = document.getElementById("treeSearch");
+  const searchBtn = document.getElementById("genBtn"); // ⚠️ Ton bouton s'appelle bien `genBtn` ?
+  if (!searchInput || !searchBtn) {
+    console.warn("🔍 Eléments recherche non trouvés");
+    return;
+  }
+
+  searchBtn.addEventListener("click", () => {
+    const term = searchInput.value.toLowerCase().trim();
+    const match = root.descendants().find(d =>
+      d.data.name?.toLowerCase().includes(term)
+    );
+    console.log("Match trouvé :", match);
+
+    if (match) {
+      focusNode(match);
+    } else {
+      alert("Aucun résultat !");
+    }
+  });
+
+  function focusNode(node) {
+    if (node._children) {
+      node.children = node._children;
+      node._children = null;
+      update(node);
+    }
+    const x = node.x;
+    const y = node.y;
+    svgRoot.transition().duration(750).call(
+      zoom.transform,
+      d3.zoomIdentity.translate(width / 2, height / 2).scale(1).translate(-y, -x)
+    );
+  }
+}
+
 /* Debounce générique */
 export function debounce(func, wait) {
   let timeout;
