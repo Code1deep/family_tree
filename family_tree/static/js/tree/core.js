@@ -113,13 +113,16 @@ export function initMainD3Tree(containerId, data) {
     // ⏩ Appel correct du jump avec le bon zoom et g
     setupGenerationJump(root, svg, zoom);
 
-    // Tu peux aussi brancher tes autres boutons ici si besoin
-
   function update(source) {
-    const nodes = root.descendants();
-    const links = treeLayout(root).links();
-
-    nodes.forEach(d => d.y = d.depth * 180);
+    // 1️⃣ Recalculer :
+    const treeData = tree(root);
+  
+    // 2️⃣ Liste tous les nodes :
+    const nodes = treeData.descendants();
+    const links = treeData.links();
+  
+    // 3️⃣ Appliquer Y en fonction de la profondeur
+    nodes.forEach(d => { d.y = d.depth * 180; });
 
     const node = svg.selectAll("g.node")
       .data(nodes, d => d.data.id);
