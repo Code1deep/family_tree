@@ -41,16 +41,17 @@ export function setupAdvancedSearch(root, svgRoot, zoom, width, height, update) 
       node.children = node._children;
       node._children = null;
     }
-
-    // ⚡ Recalcul layout
+  
     update(node);
-
-    console.log("FocusNode:", node);
-    console.log("node.x =", node.x, "node.y =", node.y);
-
-    const x = node.x;
-    const y = node.y;
-
+  
+    const updated = root.descendants().find(d => d.data.id === node.data.id);
+  
+    console.log("FocusNode mis à jour:", updated);
+    console.log("updated.x =", updated.x, "updated.y =", updated.y);
+  
+    const x = updated.x;
+    const y = updated.y;
+  
     svgRoot.transition().duration(750).call(
       zoom.transform,
       d3.zoomIdentity
