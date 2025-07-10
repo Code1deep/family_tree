@@ -114,16 +114,19 @@ export function initMainD3Tree(containerId, data) {
     setupGenerationJump(root, svg, zoom);
 
   function update(source) {
-    // 1️⃣ Recalculer :
-    const treeData = tree(root);
-  
-    // 2️⃣ Liste tous les nodes :
-    const nodes = treeData.descendants();
-    const links = treeData.links();
-  
-    // 3️⃣ Appliquer Y en fonction de la profondeur
-    nodes.forEach(d => { d.y = d.depth * 180; });
+  // 1️⃣ (Re)calcule le layout :
+  const treeData = treeLayout(root);
 
+  // 2️⃣ Liste des nœuds et liens :
+  const nodes = treeData.descendants();
+  const links = treeData.links();
+
+  // 3️⃣ Définit y en fonction de la profondeur :
+  nodes.forEach(d => d.y = d.depth * 180);
+
+  // 4️⃣ Affiche les positions :
+  console.log("✅ Nodes après layout :", nodes.map(d => [d.data.name, d.x, d.y]));
+    
     const node = svg.selectAll("g.node")
       .data(nodes, d => d.data.id);
 
