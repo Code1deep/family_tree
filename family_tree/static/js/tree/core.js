@@ -204,8 +204,8 @@ export function initMainD3Tree(containerId, data) {
         }
     });
 
-  setupAdvancedSearch(root, svgRoot, zoom, width, height, update, tree)
-
+  console.log("Je passe tree ?", tree);
+  setupAdvancedSearch(root, svgRoot, zoom, width, height, update, tree);
   return { root, svgRoot, zoom, width, height, update };
 
 }
