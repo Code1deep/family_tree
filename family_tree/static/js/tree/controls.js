@@ -6,7 +6,7 @@ console.log("📦 [core.js] D3 dispo ?", window.d3, typeof d3);
 // const wrapper = document.getElementById("wrapper");
 // console.log("🔍 wrapper in core.js ?", wrapper);
 
-import { transformDataForD3 } from '/static/js/tree/d3-tree.js';
+import { transformDataForD3 } from './d3-tree.js';
 
   
 /**
