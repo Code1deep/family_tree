@@ -36,6 +36,9 @@ function convertToHierarchy(data) {
   }
 
   console.log("✅ Racine trouvée :", root);
+  console.log("🌳 root défini :", root);
+  console.log("🌳 root.descendants :", root.descendants());
+
   return nodeById[root.id];
 }
 
