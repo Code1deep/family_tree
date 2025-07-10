@@ -1,13 +1,13 @@
 // static/js/tree/utils.js
 console.log("✅ utils.js chargé");
 
-export function setupAdvancedSearch(root, svgRoot, zoom, width, height, update) {
+export function setupAdvancedSearch(root, svgRoot, zoom, width, height, update, tree) {
   console.log("✅ JS de recherche chargé");
-  
+
   const searchInput = document.getElementById("treeSearch");
   const searchBtn = document.getElementById("searchBtn");
   const searchField = document.getElementById("searchField");
-  
+
   console.log("searchInput =", searchInput);
   console.log("searchBtn =", searchBtn);
   console.log("searchField =", searchField);
@@ -16,9 +16,9 @@ export function setupAdvancedSearch(root, svgRoot, zoom, width, height, update) 
     console.log("✅ Bouton recherche cliqué !");
     const term = searchInput.value.toLowerCase().trim();
     const field = searchField.value;
-  
+
     console.log("Terme =", term, "Field =", field);
-  
+
     const match = root.descendants().find(d => {
       let val = "";
       if (field === "name") val = d.data.name?.toLowerCase();
@@ -26,11 +26,11 @@ export function setupAdvancedSearch(root, svgRoot, zoom, width, height, update) 
       else if (field === "generation") val = String(d.depth);
       return val.includes(term);
     });
-  
+
     console.log("Match trouvé :", match);
-  
+
     if (match) {
-      update(match); 
+      update(match);
       focusNode(match);
     } else {
       alert("Aucun résultat !");
@@ -42,19 +42,16 @@ export function setupAdvancedSearch(root, svgRoot, zoom, width, height, update) 
       node.children = node._children;
       node._children = null;
     }
-  
-    // ⚡ Toujours update le ROOT, pas juste le sous-node
-    update(root);
-  
-    // 🔍 Prendre le nouveau nœud dans le nouvel arbre
-    const updated = root.descendants().find(d => d.data.id === node.data.id);
-  
-    console.log("FocusNode mis à jour:", updated);
-    console.log("updated.x =", updated.x, "updated.y =", updated.y);
-  
-    const x = updated.x;
-    const y = updated.y;
-  
+
+    // ⚡ Ici on EXÉCUTE ton VRAI layout :
+    tree(root);
+
+    console.log("FocusNode mis à jour:", node);
+    console.log("updated.x =", node.x, "updated.y =", node.y);
+
+    const x = node.x;
+    const y = node.y;
+
     svgRoot.transition().duration(750).call(
       zoom.transform,
       d3.zoomIdentity
