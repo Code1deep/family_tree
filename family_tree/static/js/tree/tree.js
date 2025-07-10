@@ -125,8 +125,6 @@ export function setupAdvancedSearch(root, svgRoot, zoom, width, height, update) 
       alert("Aucun résultat !");
     }
   });
-
-  });
   
   // 🔍 Clic bouton
   searchBtn.addEventListener("click", () => {
