@@ -88,62 +88,41 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 export function setupAdvancedSearch(root, svgRoot, zoom, width, height, update) {
+  console.log("✅ JS de recherche chargé");
+  
   const searchInput = document.getElementById("treeSearch");
   const searchBtn = document.getElementById("searchBtn");
   const searchField = document.getElementById("searchField");
   
-  // 🟢 Si tu veux une boîte de suggestions
-  const suggestionBox = document.createElement("ul");
-  suggestionBox.style.position = "absolute";
-  suggestionBox.style.background = "white";
-  suggestionBox.style.border = "1px solid #ccc";
-  suggestionBox.style.listStyle = "none";
-  suggestionBox.style.padding = "0";
-  suggestionBox.style.margin = "0";
-  suggestionBox.style.width = searchInput.offsetWidth + "px";
-  suggestionBox.style.zIndex = "1000";
-  suggestionBox.style.maxHeight = "200px";
-  suggestionBox.style.overflowY = "auto";
+  console.log("searchInput =", searchInput);
+  console.log("searchBtn =", searchBtn);
+  console.log("searchField =", searchField);
   
-  searchInput.parentNode.style.position = "relative";
-  searchInput.parentNode.appendChild(suggestionBox);
-  
-  // 🔎 Suggestions dynamiques
-  searchInput.addEventListener("keyup", (e) => {
-    const term = e.target.value.toLowerCase().trim();
+  searchBtn.addEventListener("click", () => {
+    console.log("✅ Bouton recherche cliqué !");
+    const term = searchInput.value.toLowerCase().trim();
     const field = searchField.value;
-    suggestionBox.innerHTML = "";
   
-    if (term.length === 0) return;
+    console.log("Terme =", term, "Field =", field);
   
-    const matches = root.descendants().filter(d => {
+    const match = root.descendants().find(d => {
       let val = "";
       if (field === "name") val = d.data.name?.toLowerCase();
       else if (field === "birth_year") val = String(d.data.birth_year || "");
       else if (field === "generation") val = String(d.depth);
   
       return val.includes(term);
-    }).slice(0, 10);
-  
-    matches.forEach(match => {
-      const li = document.createElement("li");
-      li.textContent = field === "name"
-        ? match.data.name
-        : field === "birth_year"
-          ? `${match.data.name} (${match.data.birth_year || "?"})`
-          : `${match.data.name} (Gen ${match.depth})`;
-  
-      li.style.cursor = "pointer";
-      li.style.padding = "4px 8px";
-      li.style.borderBottom = "1px solid #eee";
-  
-      li.addEventListener("click", () => {
-        focusNode(match);
-        suggestionBox.innerHTML = "";
-      });
-  
-      suggestionBox.appendChild(li);
     });
+  
+    console.log("Match trouvé :", match);
+  
+    if (match) {
+      focusNode(match);
+    } else {
+      alert("Aucun résultat !");
+    }
+  });
+
   });
   
   // 🔍 Clic bouton
