@@ -12,7 +12,7 @@ export function setupAdvancedSearch(root, svgRoot, zoom, width, height, update) 
   console.log("searchInput =", searchInput);
   console.log("searchBtn =", searchBtn);
   console.log("searchField =", searchField);
-  
+
   searchBtn.addEventListener("click", () => {
     console.log("✅ Bouton recherche cliqué !");
     const term = searchInput.value.toLowerCase().trim();
@@ -25,7 +25,6 @@ export function setupAdvancedSearch(root, svgRoot, zoom, width, height, update) 
       if (field === "name") val = d.data.name?.toLowerCase();
       else if (field === "birth_year") val = String(d.data.birth_year || "");
       else if (field === "generation") val = String(d.depth);
-  
       return val.includes(term);
     });
   
@@ -37,30 +36,7 @@ export function setupAdvancedSearch(root, svgRoot, zoom, width, height, update) 
       alert("Aucun résultat !");
     }
   });
-  
-  // 🔍 Clic bouton
-  searchBtn.addEventListener("click", () => {
-    const term = searchInput.value.toLowerCase().trim();
-    const field = searchField.value;
-  
-    const match = root.descendants().find(d => {
-      let val = "";
-      if (field === "name") val = d.data.name?.toLowerCase();
-      else if (field === "birth_year") val = String(d.data.birth_year || "");
-      else if (field === "generation") val = String(d.depth);
-  
-      return val.includes(term);
-    });
-  
-    if (match) {
-      focusNode(match);
-    } else {
-      alert("Aucun résultat !");
-    }
-  
-    suggestionBox.innerHTML = "";
-  });
-  
+
   // 📌 Ta fonction de centrage (tu l’as sûrement déjà)
   function focusNode(node) {
     if (node._children) {
