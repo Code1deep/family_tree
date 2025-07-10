@@ -42,8 +42,10 @@ export function setupAdvancedSearch(root, svgRoot, zoom, width, height, update) 
       node._children = null;
     }
   
-    update(node);
+    // ⚡ Toujours update le ROOT, pas juste le sous-node
+    update(root);
   
+    // 🔍 Prendre le nouveau nœud dans le nouvel arbre
     const updated = root.descendants().find(d => d.data.id === node.data.id);
   
     console.log("FocusNode mis à jour:", updated);
