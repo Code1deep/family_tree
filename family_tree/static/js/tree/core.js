@@ -204,7 +204,7 @@ export function initMainD3Tree(containerId, data) {
         }
     });
 
-    console.log("Je passe tree ?", tree);
+    console.log("Je passe treeLayout ?", treeLayout);
     console.log("---- CHECKPOINT ----");
     console.log("root :", root);
     console.log("root.descendants :", root?.descendants);
@@ -321,7 +321,7 @@ export async function drawTree(data) {
         // 🟢 Ajoute ça :
         const treeLayout = d3.tree().nodeSize([350, 250]);
         treeLayout(root);
-        console.log("Je passe tree ?", tree);
+        console.log("Je passe treeLayout ?", treeLayout);
         console.log("---- CHECKPOINT ----");
         console.log("root :", root);
         console.log("root.descendants :", root?.descendants);
