@@ -15,22 +15,28 @@
   <select id="goto-generation"></select>
   <button id="genBtn">Aller</button>
 
-<!-- 🔍 Nouvelle recherche multi-critères ISOLÉE -->
-<div class="input-group" style="width: 350px; display: inline-flex">
+<!-- 🔍 Barre de recherche multi-critères -->
+<div class="input-group mb-3" style="width: 350px;">
   <input id="treeSearch"
          type="search"
          class="form-control"
          placeholder="🔍 ابحث عن ..."
          aria-label="Recherche">
+
   <select id="searchField" class="form-select">
     <option value="name">Nom</option>
     <option value="birth_year">Année</option>
     <option value="generation">Génération</option>
   </select>
+
   <button id="searchBtn" class="btn btn-primary" type="button">
     بحث
   </button>
 </div>
+
+<!-- 🧩 Résultats -->
+<div id="searchResults" class="list-group mt-2"></div>
+
 </div>
 
 <!-- ✅✅✅ Wrapper scrollable -->
