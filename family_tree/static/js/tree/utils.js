@@ -60,7 +60,18 @@ export function setupAdvancedSearch(root, svgRoot, zoom, width, height, update, 
     tree(root);
     update(root);
 
-    centerTreeAt(node.x, node.y);
+    centerTreeAt(node.x, node.y); // ✅ centrer ici
+  }
+
+  function centerTreeAt(x, y) {
+    const scale = 1;
+    svgRoot.transition().duration(750).call(
+      zoom.transform,
+      d3.zoomIdentity
+        .translate(width / 2, height / 2)
+        .scale(scale)
+        .translate(-y, -x)
+    );
   }
 
   function drawArrow(node) {
@@ -92,19 +103,7 @@ export function setupAdvancedSearch(root, svgRoot, zoom, width, height, update, 
       .attr("marker-end", "url(#arrow)");
   }
 
-  /** 🔵 Centre l'arbre proprement à n'importe quel moment **/
-  export function centerTreeAt(x, y) {
-    const scale = 1;
-    svgRoot.transition().duration(750).call(
-      zoom.transform,
-      d3.zoomIdentity
-        .translate(width / 2, height / 2)
-        .scale(scale)
-        .translate(-y, -x)
-    );
-  }
-
-  /** 🔵 Option bouton "Centrer l'arbre" **/
+  // ✅ Si tu veux le bouton centrer général, garde ça :
   export function centerWholeTree() {
     const bbox = svgRoot.node().getBBox();
     const midX = (bbox.x + bbox.width / 2) || 0;
@@ -119,6 +118,7 @@ export function setupAdvancedSearch(root, svgRoot, zoom, width, height, update, 
     );
   }
 }
+
 
 
 /* Debounce générique */
