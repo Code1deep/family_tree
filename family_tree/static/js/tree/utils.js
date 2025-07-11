@@ -7,6 +7,7 @@ export function setupAdvancedSearch(root, svgRoot, zoom, width, height, update, 
   const searchInput = document.getElementById("treeSearch");
   const searchBtn = document.getElementById("searchBtn");
   const searchField = document.getElementById("searchField");
+  const resultsDiv = document.getElementById("searchResults");
 
   console.log("searchInput =", searchInput);
   console.log("searchBtn =", searchBtn);
@@ -19,7 +20,7 @@ export function setupAdvancedSearch(root, svgRoot, zoom, width, height, update, 
 
     console.log("Terme =", term, "Field =", field);
 
-    const match = root.descendants().find(d => {
+    const matches = root.descendants().filter(d => {
       let val = "";
       if (field === "name") val = d.data.name?.toLowerCase();
       else if (field === "birth_year") val = String(d.data.birth_year || "");
@@ -27,13 +28,26 @@ export function setupAdvancedSearch(root, svgRoot, zoom, width, height, update, 
       return val.includes(term);
     });
 
-    console.log("Match trouvé :", match);
+    console.log("Matches trouvés :", matches);
 
-    if (match) {
-      update(root);
-      focusNode(match);
+    resultsDiv.innerHTML = ""; // Vider avant de remplir
+
+    if (matches.length > 0) {
+      matches.forEach(node => {
+        const btn = document.createElement("button");
+        btn.className = "list-group-item list-group-item-action";
+        btn.innerText = `${node.data.name} (Génération ${node.depth})`;
+
+        btn.addEventListener("click", () => {
+          update(root);
+          focusNode(node);
+          drawArrow(node);
+        });
+
+        resultsDiv.appendChild(btn);
+      });
     } else {
-      alert("Aucun résultat !");
+      resultsDiv.innerHTML = "<div class='text-danger'>Aucun résultat !</div>";
     }
   });
 
@@ -43,22 +57,48 @@ export function setupAdvancedSearch(root, svgRoot, zoom, width, height, update, 
       node._children = null;
     }
 
-    // ⚡ Ici on EXÉCUTE ton VRAI layout :
     tree(root);
 
     console.log("FocusNode mis à jour:", node);
     console.log("updated.x =", node.x, "updated.y =", node.y);
-
-    const x = node.x;
-    const y = node.y;
 
     svgRoot.transition().duration(750).call(
       zoom.transform,
       d3.zoomIdentity
         .translate(width / 2, height / 2)
         .scale(1)
-        .translate(-y, -x)
+        .translate(-node.y, -node.x)
     );
+  }
+
+  function drawArrow(node) {
+    svgRoot.selectAll("line.search-arrow").remove();
+
+    // Définir la flèche une seule fois si besoin :
+    if (svgRoot.select("defs").empty()) {
+      const defs = svgRoot.append("defs");
+      defs.append("marker")
+        .attr("id", "arrow")
+        .attr("viewBox", "0 -5 10 10")
+        .attr("refX", 10)
+        .attr("refY", 0)
+        .attr("markerWidth", 4)
+        .attr("markerHeight", 4)
+        .attr("orient", "auto")
+        .append("path")
+        .attr("d", "M0,-5L10,0L0,5")
+        .attr("fill", "red");
+    }
+
+    svgRoot.append("line")
+      .attr("class", "search-arrow")
+      .attr("x1", 0)
+      .attr("y1", 0)
+      .attr("x2", -node.y)
+      .attr("y2", node.x)
+      .attr("stroke", "red")
+      .attr("stroke-width", 2)
+      .attr("marker-end", "url(#arrow)");
   }
 }
 
