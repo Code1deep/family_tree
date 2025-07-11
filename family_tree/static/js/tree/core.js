@@ -205,6 +205,14 @@ export function initMainD3Tree(containerId, data) {
     });
 
     console.log("Je passe tree ?", tree);
+    console.log("---- CHECKPOINT ----");
+    console.log("root :", root);
+    console.log("root.descendants :", root?.descendants);
+    console.log("Is hierarchy:", root && typeof root.descendants === 'function');
+    console.log("rootData:", rootData);
+    console.log("nodeById:", Object.keys(nodeById));
+    console.log("selector.value:", selector.value);
+
     setupAdvancedSearch(root, svgRoot, zoom, width, height, update, treeLayout);
     return { root, svgRoot, zoom, width, height, update };
 
@@ -313,10 +321,18 @@ export async function drawTree(data) {
         // 🟢 Ajoute ça :
         const treeLayout = d3.tree().nodeSize([350, 250]);
         treeLayout(root);
-        
+        console.log("Je passe tree ?", tree);
+        console.log("---- CHECKPOINT ----");
+        console.log("root :", root);
+        console.log("root.descendants :", root?.descendants);
+        console.log("Is hierarchy:", root && typeof root.descendants === 'function');
+        console.log("rootData:", rootData);
+        console.log("nodeById:", Object.keys(nodeById));
+        console.log("selector.value:", selector.value);
+  
         setupAdvancedSearch(root, svgRoot, zoom, width, height, update, treeLayout);
 
-        return { g, svgRoot, zoom, baseTranslate };
+        //return { g, svgRoot, zoom, baseTranslate };
       
       } catch (err) {
         console.error("❌ Erreur drawTree():", err);
