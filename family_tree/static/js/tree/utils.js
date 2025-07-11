@@ -19,14 +19,16 @@ export function setupAdvancedSearch(root, svgRoot, zoom, width, height, update, 
     const field = searchField.value;
 
     console.log("Terme =", term, "Field =", field);
-
-    const matches = root.descendants().filter(d => {
-      let val = "";
-      if (field === "name") val = d.data.name?.toLowerCase();
-      else if (field === "birth_year") val = String(d.data.birth_year || "");
-      else if (field === "generation") val = String(d.depth);
-      return val.includes(term);
-    });
+    
+  const termNorm = normalizeArabic(term);
+  
+  const matches = root.descendants().filter(d => {
+    let val = "";
+    if (field === "name") val = normalizeArabic(d.data.name || "");
+    else if (field === "birth_year") val = String(d.data.birth_year || "");
+    else if (field === "generation") val = String(d.depth);
+    return val.includes(termNorm);
+  });
 
     console.log("Matches trouvés :", matches);
 
@@ -52,23 +54,39 @@ export function setupAdvancedSearch(root, svgRoot, zoom, width, height, update, 
   });
 
   function focusNode(node) {
-    if (node._children) {
-      node.children = node._children;
-      node._children = null;
-    }
+  if (node._children) {
+    node.children = node._children;
+    node._children = null;
+  }
 
-    tree(root);
+  tree(root); // Re-layout
+  update(root); // Redessiner
+    
+  console.log("FocusNode mis à jour:", node);
+  console.log("updated.x =", node.x, "updated.y =", node.y);
 
-    console.log("FocusNode mis à jour:", node);
-    console.log("updated.x =", node.x, "updated.y =", node.y);
+  // Centrage propre :
+  const x = node.x;
+  const y = node.y;
 
-    svgRoot.transition().duration(750).call(
-      zoom.transform,
-      d3.zoomIdentity
-        .translate(width / 2, height / 2)
-        .scale(1)
-        .translate(-node.y, -node.x)
-    );
+  const scale = 1; // Optionnel : ajuster si ton arbre est très grand
+
+  svgRoot.transition().duration(750).call(
+    zoom.transform,
+    d3.zoomIdentity
+      .translate(width / 2, height / 2)
+      .scale(scale)
+      .translate(-y, -x)
+  );
+}
+
+  function normalizeArabic(text) {
+    return text
+      .replace(/[\u064B-\u0652]/g, "") // Enlève toutes les harakat
+      .replace(/[إأآ]/g, "ا")           // Normalise les alef
+      .replace(/ة/g, "ه")               // Optionnel : normalise ta marbouta -> ha
+      .replace(/ى/g, "ي")               // Alef Maqsura -> Ya
+      .trim();
   }
 
   function drawArrow(node) {
@@ -79,7 +97,8 @@ export function setupAdvancedSearch(root, svgRoot, zoom, width, height, update, 
       const defs = svgRoot.append("defs");
       defs.append("marker")
         .attr("id", "arrow")
-        .attr("viewBox", "0 -5 10 10")
+        .attr("viewBox", [ -width/2, -height/2, width, height ]);
+        .overflow: visible;
         .attr("refX", 10)
         .attr("refY", 0)
         .attr("markerWidth", 4)
