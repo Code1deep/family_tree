@@ -97,8 +97,8 @@ export function setupAdvancedSearch(root, svgRoot, zoom, width, height, update, 
       const defs = svgRoot.append("defs");
       defs.append("marker")
         .attr("id", "arrow")
-        .attr("viewBox", [ -width/2, -height/2, width, height ]);
-        .overflow: visible;
+        .attr("viewBox", [ -width/2, -height/2, width, height ])
+        .overflow: visible
         .attr("refX", 10)
         .attr("refY", 0)
         .attr("markerWidth", 4)
