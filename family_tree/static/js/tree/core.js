@@ -309,10 +309,14 @@ export async function drawTree(data) {
         // ⚡ Important : Construire le vrai root.hierarchy pour la recherche
         const rootData = nodeById[selector.value || rootId];
         const root = d3.hierarchy(rootData);
-    
-        // 🔑 Brancher la recherche ici
-        setupAdvancedSearch(g, svgRoot, zoom, width, height, update);
-        return { g, svgRoot, zoom, baseTranslate };
+        
+        // 🟢 Ajoute ça :
+        const treeLayout = d3.tree().nodeSize([350, 250]);
+        treeLayout(root);
+        
+        setupAdvancedSearch(root, svgRoot, zoom, width, height, update, treeLayout);
+
+        //return { g, svgRoot, zoom, baseTranslate };
       
       } catch (err) {
         console.error("❌ Erreur drawTree():", err);
