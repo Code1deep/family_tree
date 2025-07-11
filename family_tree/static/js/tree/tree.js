@@ -11,6 +11,7 @@ import {
 import { openModal } from '../modal.js';
 import { initMainD3Tree, initSubD3Tree } from './index.js';
 import { setupCenterButton } from './d3-tree.js';
+import { setupAdvancedSearch, centerTreeAt, centerWholeTree } from './utils.js';
 
 // Pour exposer la fonction au bouton HTML :
 window.centerWholeTree = centerWholeTree;
