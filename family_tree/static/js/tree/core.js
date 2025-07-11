@@ -316,7 +316,7 @@ export async function drawTree(data) {
         
         setupAdvancedSearch(root, svgRoot, zoom, width, height, update, treeLayout);
 
-        //return { g, svgRoot, zoom, baseTranslate };
+        return { g, svgRoot, zoom, baseTranslate };
       
       } catch (err) {
         console.error("❌ Erreur drawTree():", err);
