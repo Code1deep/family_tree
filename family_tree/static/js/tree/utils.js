@@ -15,19 +15,17 @@ export function setupAdvancedSearch(root, svgRoot, zoom, width, height, update, 
 
   searchBtn.addEventListener("click", () => {
     console.log("✅ Bouton recherche cliqué !");
-    const term = searchInput.value.toLowerCase().trim();
+    const term = normalizeArabic(searchInput.value.trim().toLowerCase());
     const field = searchField.value;
 
     console.log("Terme =", term, "Field =", field);
-    
-  const termNorm = normalizeArabic(term);
-  
+
   const matches = root.descendants().filter(d => {
     let val = "";
     if (field === "name") val = normalizeArabic(d.data.name || "");
     else if (field === "birth_year") val = String(d.data.birth_year || "");
     else if (field === "generation") val = String(d.depth);
-    return val.includes(termNorm);
+    return val.includes(term);
   });
 
     console.log("Matches trouvés :", matches);
@@ -43,7 +41,6 @@ export function setupAdvancedSearch(root, svgRoot, zoom, width, height, update, 
         btn.addEventListener("click", () => {
           update(root);
           focusNode(node);
-          drawArrow(node);
         });
 
         resultsDiv.appendChild(btn);
@@ -52,6 +49,15 @@ export function setupAdvancedSearch(root, svgRoot, zoom, width, height, update, 
       resultsDiv.innerHTML = "<div class='text-danger'>Aucun résultat !</div>";
     }
   });
+
+  function normalizeArabic(text) {
+    return text
+      .replace(/[\u064B-\u0652]/g, "") // Enlève toutes les harakat
+      .replace(/[إأآ]/g, "ا")           // Normalise les alef
+      .replace(/ة/g, "ه")               // Optionnel : normalise ta marbouta -> ha
+      .replace(/ى/g, "ي")               // Alef Maqsura -> Ya
+      .trim();
+  }
 
   function focusNode(node) {
   if (node._children) {
@@ -73,21 +79,9 @@ export function setupAdvancedSearch(root, svgRoot, zoom, width, height, update, 
 
   svgRoot.transition().duration(750).call(
     zoom.transform,
-    d3.zoomIdentity
-      .translate(width / 2, height / 2)
-      .scale(scale)
-      .translate(-y, -x)
+    d3.zoomIdentity.translate(width / 2, height / 2).scale(1).translate(-y, -x)
   );
 }
-
-  function normalizeArabic(text) {
-    return text
-      .replace(/[\u064B-\u0652]/g, "") // Enlève toutes les harakat
-      .replace(/[إأآ]/g, "ا")           // Normalise les alef
-      .replace(/ة/g, "ه")               // Optionnel : normalise ta marbouta -> ha
-      .replace(/ى/g, "ي")               // Alef Maqsura -> Ya
-      .trim();
-  }
 
   function drawArrow(node) {
     svgRoot.selectAll("line.search-arrow").remove();
