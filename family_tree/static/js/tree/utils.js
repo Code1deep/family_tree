@@ -93,7 +93,7 @@ export function setupAdvancedSearch(root, svgRoot, zoom, width, height, update, 
   }
 
   /** 🔵 Centre l'arbre proprement à n'importe quel moment **/
-  function centerTreeAt(x, y) {
+  export function centerTreeAt(x, y) {
     const scale = 1;
     svgRoot.transition().duration(750).call(
       zoom.transform,
@@ -105,7 +105,7 @@ export function setupAdvancedSearch(root, svgRoot, zoom, width, height, update, 
   }
 
   /** 🔵 Option bouton "Centrer l'arbre" **/
-  function centerWholeTree() {
+  export function centerWholeTree() {
     const bbox = svgRoot.node().getBBox();
     const midX = (bbox.x + bbox.width / 2) || 0;
     const midY = (bbox.y + bbox.height / 2) || 0;
