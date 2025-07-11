@@ -1,7 +1,7 @@
 // static/js/tree/utils.js
 console.log("✅ utils.js chargé");
 
-function setupAdvancedSearch(root, svgRoot, zoom, width, height, update, tree) {
+export function setupAdvancedSearch(root, svgRoot, zoom, width, height, update, tree) {
   console.log("✅ JS de recherche chargé");
 
   const searchInput = document.getElementById("treeSearch");
