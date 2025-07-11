@@ -204,9 +204,9 @@ export function initMainD3Tree(containerId, data) {
         }
     });
 
-  // console.log("Je passe tree ?", tree);
-  // setupAdvancedSearch(root, svgRoot, zoom, width, height, update, tree);
-  // return { root, svgRoot, zoom, width, height, update };
+    console.log("Je passe tree ?", tree);
+    setupAdvancedSearch(root, svgRoot, zoom, width, height, update, tree);
+    return { root, svgRoot, zoom, width, height, update };
 
 }
 
@@ -311,9 +311,9 @@ export async function drawTree(data) {
         const root = d3.hierarchy(rootData);
     
         // 🔑 Brancher la recherche ici
-        console.log("Je passe tree ?", tree);
-        setupAdvancedSearch(root, svgRoot, zoom, width, height, update, treeLayout);
-        return { root, svgRoot, zoom, width, height, update };
+        //console.log("Je passe tree ?", tree);
+        //setupAdvancedSearch(root, svgRoot, zoom, width, height, update, treeLayout);
+        //return { root, svgRoot, zoom, width, height, update };
         //return { g, svgRoot, zoom, baseTranslate };
       } catch (err) {
         console.error("❌ Erreur drawTree():", err);
