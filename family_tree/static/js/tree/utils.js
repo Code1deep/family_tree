@@ -1,7 +1,7 @@
 // static/js/tree/utils.js
 console.log("✅ utils.js chargé");
 
-export function setupAdvancedSearch(root, svgRoot, zoom, width, height, update, tree) {
+function setupAdvancedSearch(root, svgRoot, zoom, width, height, update, tree) {
   console.log("✅ JS de recherche chargé");
 
   const searchInput = document.getElementById("treeSearch");
@@ -60,18 +60,7 @@ export function setupAdvancedSearch(root, svgRoot, zoom, width, height, update, 
     tree(root);
     update(root);
 
-    centerTreeAt(node.x, node.y); // ✅ centrer ici
-  }
-
-  function centerTreeAt(x, y) {
-    const scale = 1;
-    svgRoot.transition().duration(750).call(
-      zoom.transform,
-      d3.zoomIdentity
-        .translate(width / 2, height / 2)
-        .scale(scale)
-        .translate(-y, -x)
-    );
+    centerTreeAt(node.x, node.y);
   }
 
   function drawArrow(node) {
@@ -103,21 +92,20 @@ export function setupAdvancedSearch(root, svgRoot, zoom, width, height, update, 
       .attr("marker-end", "url(#arrow)");
   }
 
-  // ✅ Si tu veux le bouton centrer général, garde ça :
-  export function centerWholeTree() {
-    const bbox = svgRoot.node().getBBox();
-    const midX = (bbox.x + bbox.width / 2) || 0;
-    const midY = (bbox.y + bbox.height / 2) || 0;
-
+  function centerTreeAt(x, y) {
+    const scale = 1;
     svgRoot.transition().duration(750).call(
       zoom.transform,
       d3.zoomIdentity
         .translate(width / 2, height / 2)
-        .scale(1)
-        .translate(-midX, -midY)
+        .scale(scale)
+        .translate(-y, -x)
     );
   }
 }
+
+// ✅ Tu rends `setupAdvancedSearch` accessible si nécessaire :
+window.setupAdvancedSearch = setupAdvancedSearch;
 
 
 
