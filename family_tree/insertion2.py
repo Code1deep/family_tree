@@ -1,0 +1,81 @@
+# family_tree/insertion2.py
+import os
+from dotenv import load_dotenv
+load_dotenv()
+from sqlalchemy import text
+from flask import current_app
+from family_tree.domain.models.person import Person
+import logging
+from family_tree.app.extensions import db
+
+# Configuration du logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler('family_tree_debug.log'),
+        logging.StreamHandler()
+    ]
+)
+logger = logging.getLogger(__name__)
+
+def initialize_data2():
+    logger.info("Initialisation des données démarrée")
+
+    # VRAI test de contexte
+    from flask import has_app_context
+    if not has_app_context():
+        logger.error("Erreur: Doit être exécuté dans un contexte Flask")
+        raise RuntimeError("Doit être exécuté dans un contexte Flask")
+
+    try:
+
+        # 1. Insertion des données de base sans full_name
+        logger.info("➕ Insertion de nouveaux membres de la famille...")
+
+        db.session.execute(text("""
+            INSERT INTO persons (
+                id, first_name, last_name, friends_name, image, father_id, mother_id, 
+                birth_date, death_date, birth_place, residence, external_link, image_url, 
+                has_offspring, alive, death_reason, died_in_battle, known_enemies, 
+                fitan, notes, photo_url, gender, short_bio, full_bio, profession, 
+                full_name, father_full_name  
+            ) VALUES
+                (44, 'عَلِي', 'بْنُ أَبِي طَالِب', NULL, NULL, 42, 43, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'male', NULL, NULL, NULL, NULL, 'عَلِي بْنُ أَبِي طَالِب'),
+                (45, 'الحَسَن السِّبْط', 'بْنُ عَلِي', NULL, NULL, 44, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'male', NULL, NULL, NULL, NULL, 'الحَسَن السِّبْط بْنُ عَلِي'),
+                (46, 'حُسَيْن', 'بْنُ عَلِي', NULL, NULL, 44, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'male', NULL, NULL, NULL, NULL, 'حُسَيْن بْنُ عَلِي'),
+                (47, 'عَبْدُاللَّه', 'بْنُ الحَسَن السِّبْط', NULL, NULL, 45, NULL, 680, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'male', NULL, NULL, NULL, NULL, 'عَبْدُاللَّه بْنُ الحَسَن السِّبْط'),
+                (48, 'فَاطِمَة', 'بِنْتُ الحَسَن السِّبْط', NULL, NULL, 45, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'female', NULL, NULL, NULL, NULL, 'فَاطِمَة بِنْتُ الحَسَن السِّبْط'),
+                (49, 'عَلِي', 'بْنُ عَبْدُاللَّه', NULL, NULL, 47, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'male', NULL, NULL, NULL, NULL, 'عَلِي بْنُ عَبْدُاللَّه'),
+                (50, 'زَيْنَب', 'بِنْتُ عَبْدُاللَّه', NULL, NULL, 47, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'female', NULL, NULL, NULL, NULL, 'زَيْنَب بِنْتُ عَبْدُاللَّه'),
+                (51, 'الحسن المُثَنَّى', 'بْنُ الحَسَن السِّبْط', NULL, NULL, 45, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'male', NULL, NULL, NULL, NULL, 'الحسن المُثَنَّى بْنُ الحَسَن السِّبْط'),
+                (52, 'عَبْدُاللَّه الكَامل', 'بْنُ الحَسَن المُثَنَّى', NULL, NULL, 51, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'male', NULL, NULL, NULL, NULL, 'عَبْدُاللَّه الكَامل بْنُ الحَسَن المُثَنَّى'),
+                (53, 'مولاَي إِدْرَيس الأَوَّل', 'بْنُ عَبْدُاللَّه الكَامل', NULL, NULL, 52, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'male', NULL, NULL, NULL, NULL, 'مولاَي إِدْرَيس الأَوَّل بْنُ عَبْدُاللَّه الكَامل'),
+   
+
+                (68, 'أَبُو يَحْيَى البصِير', 'بْنُ عَلِي', NULL, NULL, 67, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'male', NULL, NULL, NULL, NULL, 'أَبُو يَحْيَى البصِير بْنُ عَلِي')
+        """))
+    
+        db.session.commit()
+        logger.info("✅ Données insérées sans calcul")
+    except Exception as e:
+        db.session.rollback()
+        logger.error(f"❌ Erreur : {str(e)}")
+        raise
+    
+from flask import has_app_context
+
+def full_initialize2():
+    if has_app_context():
+        initialize_data2()
+    else:
+        from family_tree.app.factory import create_app
+        app = create_app()
+        with app.app_context():
+            initialize_data2()
+
+print("✅ full_initialize2() a inséré X personnes")
+
+
+if __name__ == '__main__':
+    print("⚠ Utilisez 'flask init-db' ou appelez full_initialize2()")
