@@ -51,18 +51,9 @@ def initialize_data2():
                 (49, 'عَلِي', 'بْنُ عَبْدُاللَّه', NULL, NULL, 47, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'male', NULL, NULL, NULL, NULL, 'عَلِي بْنُ عَبْدُاللَّه'),
                 (50, 'زَيْنَب', 'بِنْتُ عَبْدُاللَّه', NULL, NULL, 47, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'female', NULL, NULL, NULL, NULL, 'زَيْنَب بِنْتُ عَبْدُاللَّه'),
 
-                (51, 'الحسن المُثَنَّى', 'بْنُ الحَسَن السِّبْط', NULL, NULL, 45, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'male', NULL, NULL, NULL, NULL, 'الحسن المُثَنَّى بْنُ الحَسَن السِّبْط'),
-                (52, 'عَبْدُاللَّه الكَامل', 'بْنُ الحَسَن المُثَنَّى', NULL, NULL, 51, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'male', NULL, NULL, NULL, NULL, 'عَبْدُاللَّه الكَامل بْنُ الحَسَن المُثَنَّى'),
-
-                
-                (51, 'الحَسَن', 'المُثَنَّى', NULL, NULL, 45, NULL, NULL, NULL, 'المدينة', 'الحجاز', NULL, NULL, true, NULL, NULL, NULL, NULL, NULL, 'من أحfathédar الحسن', NULL, 'male', 'حfathéd الإمام الحسن', NULL, 'عالم', NULL, 'الحَسَن السِّبْط'),
-                (52, 'عَبْدُاللَّه', 'الكَامِل', NULL, NULL, 51, NULL, NULL, NULL, 'المدينة', 'الحجاز', NULL, NULL, true, NULL, NULL, NULL, NULL, NULL, 'من الأشراف', NULL, 'male', 'جد العلويين', NULL, 'عالم', NULL, 'الحَسَن المُثَنَّى'),
-                
+                (51, 'الحسن المُثَنَّى', 'بْنُ الحَسَن السِّبْط', NULL, NULL, 45, NULL, NULL, NULL, 'المدينة', 'الحجاز', NULL, NULL, true, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'male', NULL, NULL, 'عالم', NULL, 'الحسن المُثَنَّى بْنُ الحَسَن السِّبْط'),
+                (52, 'عَبْدُاللَّه الكَامل', 'بْنُ الحَسَن المُثَنَّى', NULL, NULL, 51, NULL, NULL, NULL, 'المدينة', 'الحجاز', NULL, NULL, true, NULL, NULL, NULL, NULL, NULL, 'من الأشراف', NULL, 'male', 'جد العلويين', NULL, 'عالم', NULL, 'عَبْدُاللَّه الكَامل بْنُ الحَسَن المُثَنَّى'),
               
-
-                (51, 'الحسن المُثَنَّى', 'بْنُ الحَسَن السِّبْط', NULL, NULL, 45, NULL, NULL, NULL, 'المدينة', 'الحجاز', NULL, NULL, true, NULL, NULL, NULL, NULL, NULL, 'من أحفاد الحسن', NULL, 'male', 'حفيد الإمام الحسن', NULL, 'عالم', 'الحَسَنُ المُثَنَّى بْنُ الحَسَن السِّبْط', 'الحَسَنُ السِّبْط'),
-                (52, 'عَبْدُاللَّه الكَامل', 'بْنُ الحَسَن المُثَنَّى', NULL, NULL, 51, NULL, NULL, NULL, 'المدينة', 'الحجاز', NULL, NULL, true, NULL, NULL, NULL, NULL, NULL, 'من الأشراف', NULL, 'male', 'جد العلويين', NULL, 'عالم', 'عَبْدُ اللهِ الكَامِل بْنُ الحَسَن المُثَنَّى', 'الحَسَنُ المُثَنَّى'),
-                
                 (103, 'مولاَي الحَسَن', 'بنُ مُحَمَّدٌ السَّادِس ', NULL, NULL, 102, NULL, '2003-03-08', NULL, 'الرباط', 'المغرب', NULL, NULL, true, true, NULL, false, NULL, NULL, 'ولِيُّ العَهْد الحالي', NULL, 'male', 'ولِيُّ العَهْد', NULL, 'رجل دولة', 'مولاَي الحَسَن بنُ مُحَمَّدٌ السَّادِس', 'الحَسَنُ الثَّانِي'),
                 (102, 'مُحَمَّدٌ', 'السَّادِسُ', NULL, NULL, 101, NULL, '1963-08-21', NULL, 'الرباط', 'المغرب', NULL, NULL, true, true, NULL, false, NULL, NULL, 'ملك المغرب الحالي', NULL, 'male', 'ملك المغرب منذ 1999', NULL, 'رجل دولة', 'مُحَمَّدٌ السَّادِسُ بن الحَسَنِ', 'الحَسَنُ الثَّانِي'),
                 (101, 'الحَسَنُ', 'الثَّانِي', NULL, NULL, 100, NULL, '1929-07-09', '1999-07-23', 'الرباط', 'المغرب', NULL, NULL, true, false, 'naturelle', false, NULL, NULL, 'قاد المسيرة الخضراء', NULL, 'male', 'ملك المغرب 1961-1999', NULL, 'رجل دولة', 'الحَسَنُ الثَّانِي بن مُحَمَّدٍ', 'مُحَمَّدٌ الخَامِسُ'),
