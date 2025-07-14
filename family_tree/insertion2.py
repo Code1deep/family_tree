@@ -40,17 +40,27 @@ def initialize_data2():
                 has_offspring, alive, death_reason, died_in_battle, known_enemies, 
                 fitan, notes, photo_url, gender, short_bio, full_bio, profession, 
                 full_name, father_full_name  
-            ) VALUES               
-                (40, 'أَبُو', 'طَالِب', NULL, NULL, 1, NULL, '0539-01-01', '0619-01-01', 'مكة', 'الحجاز', NULL, NULL, true, false, 'naturelle', false, NULL, NULL, 'عم النبي', NULL, 'male', 'كفيل النبي ﷺ', NULL, 'زعيم', 'أَبُو طَالِب بن عَبْدِ المُطَّلِب', 'عَبْدُ المُطَّلِب');
-                (44, 'عَلِي', 'بْنُ أَبِي طَالِب', NULL, NULL, 40, 43, '0599-01-01', '0661-01-01', 'مكة', 'الحجاز', NULL, NULL, true, false, 'اغتيال', false, NULL, NULL, 'الخليفة الرابع', NULL, 'male', 'ابن عم النبي ﷺ', NULL, 'خليفة', 'عَلِيٌّ بن أَبِي طَالِب', 'أَبُو طَالِب'),
-                (45, 'الحَسَن السِّبْط', 'بْنُ عَلِي',, NULL, NULL, 44, NULL, NULL, '0670-01-01', 'المدينة', 'الحجاز', NULL, NULL, true, false, NULL, NULL, NULL, NULL, 'حفيد النبي', NULL, 'male', 'سبط النبي ﷺ', NULL, 'إمام', 'الحَسَنُ السِّبْط بن عَلِيٍّ', 'عَلِيٌّ بن أَبِي طَالِب'),
-                (46, 'حُسَيْن', 'بْنُ عَلِي', NULL, NULL, 44, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'male', NULL, NULL, NULL, NULL, 'حُسَيْن بْنُ عَلِي'),
-                (47, 'عَبْدُاللَّه', 'بْنُ الحَسَن السِّبْط', NULL, NULL, 45, NULL, 680, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'male', NULL, NULL, NULL, NULL, 'عَبْدُاللَّه بْنُ الحَسَن السِّبْط'),
+            ) VALUES 
+
+                (40, 'أَبُو', 'طَالِب', NULL, NULL, 1, NULL, '0539-01-01', '0619-01-01', 'مكة', 'الحجاز', NULL, NULL, true, false, 'naturelle', false, NULL, NULL, 'عم النبي', NULL, 'male', 'كفيل النبي ﷺ', NULL, 'زعيم', NULL, 'أَبُو طَالِب بن عَبْدِ المُطَّلِب'),
+                (44, 'عَلِي', 'بْنُ أَبِي طَالِب', NULL, NULL, 40, NULL, '0599-01-01', '0661-01-01', 'مكة', 'الحجاز', NULL, NULL, true, false, 'اغتيال', false, NULL, NULL, 'الخليفة الرابع', NULL, 'male', 'ابن عم النبي ﷺ', NULL, 'خليفة', NULL, 'عَلِيٌّ بن أَبِي طَالِب'),
+                (45, 'الحَسَن', 'السِّبْط', NULL, NULL, 44, NULL, NULL, '0670-01-01', 'المدينة', 'الحجاز', NULL, NULL, true, false, NULL, NULL, NULL, NULL, 'حفيد النبي', NULL, 'male', 'سبط النبي ﷺ', NULL, 'إمام', NULL, 'الحَسَنُ السِّبْط بن عَلِيٍّ'),
+                (46, 'الحُسَيْن', 'بْنُ عَلِي', NULL, NULL, 44, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'male', NULL, NULL, NULL, NULL, 'الحُسَيْن بْنُ عَلِي'),
+                (47, 'عَبْدُاللَّه', 'بْنُ الحَسَن', NULL, NULL, 45, NULL, '0680-01-01', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'male', NULL, NULL, NULL, NULL, 'عَبْدُاللَّه بْنُ الحَسَن السِّبْط'),
+                
+                (48, 'فَاطِمَة', 'بِنْتُ الحَسَن', NULL, NULL, 45, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'female', NULL, NULL, NULL, NULL, 'الحَسَن السِّبْط'),
+                (49, 'عَلِي', 'بْنُ عَبْدُاللَّه', NULL, NULL, 47, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'male', NULL, NULL, NULL, NULL, 'عَبْدُاللَّه بْنُ الحَسَن'),
+                (50, 'زَيْنَب', 'بِنْتُ عَبْدُاللَّه', NULL, NULL, 47, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'female', NULL, NULL, NULL, NULL, 'عَبْدُاللَّه بْنُ الحَسَن'),
+                (51, 'الحَسَن', 'المُثَنَّى', NULL, NULL, 45, NULL, NULL, NULL, 'المدينة', 'الحجاز', NULL, NULL, true, NULL, NULL, NULL, NULL, NULL, 'من أحfathédar الحسن', NULL, 'male', 'حfathéd الإمام الحسن', NULL, 'عالم', NULL, 'الحَسَن السِّبْط'),
+                (52, 'عَبْدُاللَّه', 'الكَامِل', NULL, NULL, 51, NULL, NULL, NULL, 'المدينة', 'الحجاز', NULL, NULL, true, NULL, NULL, NULL, NULL, NULL, 'من الأشراف', NULL, 'male', 'جد العلويين', NULL, 'عالم', NULL, 'الحَسَن المُثَنَّى'),
+                
+              
                 (48, 'فَاطِمَة', 'بِنْتُ الحَسَن السِّبْط', NULL, NULL, 45, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'female', NULL, NULL, NULL, NULL, 'فَاطِمَة بِنْتُ الحَسَن السِّبْط'),
                 (49, 'عَلِي', 'بْنُ عَبْدُاللَّه', NULL, NULL, 47, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'male', NULL, NULL, NULL, NULL, 'عَلِي بْنُ عَبْدُاللَّه'),
                 (50, 'زَيْنَب', 'بِنْتُ عَبْدُاللَّه', NULL, NULL, 47, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'female', NULL, NULL, NULL, NULL, 'زَيْنَب بِنْتُ عَبْدُاللَّه'),
                 (51, 'الحسن المُثَنَّى', 'بْنُ الحَسَن السِّبْط', NULL, NULL, 45, NULL, NULL, NULL, 'المدينة', 'الحجاز', NULL, NULL, true, NULL, NULL, NULL, NULL, NULL, 'من أحفاد الحسن', NULL, 'male', 'حفيد الإمام الحسن', NULL, 'عالم', 'الحَسَنُ المُثَنَّى بْنُ الحَسَن السِّبْط', 'الحَسَنُ السِّبْط'),
                 (52, 'عَبْدُاللَّه الكَامل', 'بْنُ الحَسَن المُثَنَّى', NULL, NULL, 51, NULL, NULL, NULL, 'المدينة', 'الحجاز', NULL, NULL, true, NULL, NULL, NULL, NULL, NULL, 'من الأشراف', NULL, 'male', 'جد العلويين', NULL, 'عالم', 'عَبْدُ اللهِ الكَامِل بْنُ الحَسَن المُثَنَّى', 'الحَسَنُ المُثَنَّى'),
+                
                 (103, 'مولاَي الحَسَن', 'بنُ مُحَمَّدٌ السَّادِس ', NULL, NULL, 102, NULL, '2003-03-08', NULL, 'الرباط', 'المغرب', NULL, NULL, true, true, NULL, false, NULL, NULL, 'ولِيُّ العَهْد الحالي', NULL, 'male', 'ولِيُّ العَهْد', NULL, 'رجل دولة', 'مولاَي الحَسَن بنُ مُحَمَّدٌ السَّادِس', 'الحَسَنُ الثَّانِي'),
                 (102, 'مُحَمَّدٌ', 'السَّادِسُ', NULL, NULL, 101, NULL, '1963-08-21', NULL, 'الرباط', 'المغرب', NULL, NULL, true, true, NULL, false, NULL, NULL, 'ملك المغرب الحالي', NULL, 'male', 'ملك المغرب منذ 1999', NULL, 'رجل دولة', 'مُحَمَّدٌ السَّادِسُ بن الحَسَنِ', 'الحَسَنُ الثَّانِي'),
                 (101, 'الحَسَنُ', 'الثَّانِي', NULL, NULL, 100, NULL, '1929-07-09', '1999-07-23', 'الرباط', 'المغرب', NULL, NULL, true, false, 'naturelle', false, NULL, NULL, 'قاد المسيرة الخضراء', NULL, 'male', 'ملك المغرب 1961-1999', NULL, 'رجل دولة', 'الحَسَنُ الثَّانِي بن مُحَمَّدٍ', 'مُحَمَّدٌ الخَامِسُ'),
