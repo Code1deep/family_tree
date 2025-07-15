@@ -163,6 +163,7 @@ def create_app(config_object='config.Config', testing=False):
 
             from family_tree.create_persons import create_persons_table
             from family_tree.insertion import full_initialize
+            from family_tree.insertion2 import full_initialize2
             from family_tree.fix_names import fix_names
 
             create_persons_table()
@@ -173,6 +174,7 @@ def create_app(config_object='config.Config', testing=False):
             if rows == 0:
                 print("✅ Table vide → Peuplement...")
                 full_initialize()
+                full_initialize2()
                 fix_names()
                 print("✅ Données insérées + noms corrigés")
             else:
