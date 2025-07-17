@@ -92,7 +92,7 @@ def create_app(config_object='config.Config', testing=False):
                 f"{os.getenv('DB_PASSWORD', '1WyJy3nPNO0iWpIrpDao2ufq63PkbT3L')}@"
                 f"{os.getenv('DB_HOST', 'dpg-d1otikmr433s73coi47g-a')}:"
                 f"{os.getenv('DB_PORT', '5432')}/"
-                f"{os.getenv('DB_NAME', 'hassaniyine_o9yq')}"
+                f"{os.getenv('DB_NAME', 'hassaniyine_t4os')}"
             ),
             SQLALCHEMY_TRACK_MODIFICATIONS=False,
             SQLALCHEMY_ENGINE_OPTIONS={
