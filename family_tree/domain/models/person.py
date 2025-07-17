@@ -13,7 +13,7 @@ class Person(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     first_name = db.Column(db.String(100), nullable=False)
     last_name = db.Column(db.String(100), nullable=True)
-    full_name = db.Column(db.String(100), nullable=False)  # ✅ RESTE colonne physique
+    full_name = db.Column(db.String(100), nullable=True)  # ✅ RESTE colonne physique
     father_full_name = db.Column(db.String(100), nullable=True)
     friends_name = db.Column(db.String(100))
     image = db.Column(db.String(100))
