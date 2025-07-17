@@ -41,19 +41,6 @@ def initialize_data2():
                 fitan, notes, photo_url, gender, short_bio, full_bio, profession, 
                 full_name, father_full_name  
             ) VALUES 
-
-                (42, 'أَبُو ', 'طَالِب بن عَبْدِ المُطَّلِب', NULL, NULL, 41, NULL, '0539-01-01', '0619-01-01', 'مكة', 'الحجاز', NULL, NULL, true, false, 'naturelle', false, NULL, NULL, 'عم النبي', NULL, 'male', 'كفيل النبي ﷺ', NULL, 'زعيم', NULL, 'أَبُو طَالِب بن عَبْدِ المُطَّلِب'),
-                (44, 'عَلِي ', 'بْنُ أَبِي طَالِب', NULL, NULL, 42, 43, '0599-01-01', '0661-01-01', 'مكة', 'الحجاز', NULL, NULL, true, false, 'اغتيال', false, NULL, NULL, 'الخليفة الرابع', NULL, 'male', 'ابن عم النبي ﷺ', NULL, 'خليفة', NULL, 'عَلِيٌّ بن أَبِي طَالِب'),
-                (45, 'الحَسَنُ السِّبْط ', 'بْنُ عَلِي', NULL, NULL, 44, NULL, NULL, '0670-01-01', 'المدينة', 'الحجاز', NULL, NULL, true, false, NULL, NULL, NULL, NULL, 'حفيد النبي', NULL, 'male', 'سبط النبي ﷺ', NULL, 'إمام', NULL, 'الحَسَنُ السِّبْط بن عَلِيٍّ'),
-                (46, 'الحُسَيْن ', 'بْنُ عَلِي', NULL, NULL, 44, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'male', NULL, NULL, NULL, NULL, 'الحُسَيْن بْنُ عَلِي'),
-                (47, ' عَبْدُاللَّه', ' بْنُ الحَسَن السِّبْط', NULL, NULL, 45, NULL, '0680-01-01', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'male', NULL, NULL, NULL, NULL, 'عَبْدُاللَّه بْنُ الحَسَن السِّبْط'),
-                (48, 'فَاطِمَة', 'بِنْتُ الحَسَن السِّبْط', NULL, NULL, 45, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'female', NULL, NULL, NULL, NULL, 'فَاطِمَة بِنْتُ الحَسَن السِّبْط'),
-                (49, 'عَلِي', 'بْنُ عَبْدُاللَّه', NULL, NULL, 47, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'male', NULL, NULL, NULL, NULL, 'عَلِي بْنُ عَبْدُاللَّه'),
-                (50, 'زَيْنَب', 'بِنْتُ عَبْدُاللَّه', NULL, NULL, 47, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'female', NULL, NULL, NULL, NULL, 'زَيْنَب بِنْتُ عَبْدُاللَّه'),
-
-                (51, 'الحسن المُثَنَّى', 'بْنُ الحَسَن السِّبْط', NULL, NULL, 45, NULL, NULL, NULL, 'المدينة', 'الحجاز', NULL, NULL, true, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'male', NULL, NULL, 'عالم', NULL, 'الحسن المُثَنَّى بْنُ الحَسَن السِّبْط'),
-                (52, 'عَبْدُاللَّه الكَامل', 'بْنُ الحَسَن المُثَنَّى', NULL, NULL, 51, NULL, NULL, NULL, 'المدينة', 'الحجاز', NULL, NULL, true, NULL, NULL, NULL, NULL, NULL, 'من الأشراف', NULL, 'male', 'جد العلويين', NULL, 'عالم', NULL, 'عَبْدُاللَّه الكَامل بْنُ الحَسَن المُثَنَّى'),
-
                 (69, 'مُحَمَّدٌ', 'النَّفْسُ الزَّكِيَّةُ', NULL, NULL, 52, NULL, '0722-01-01', '0762-01-01', 'المدينة', 'الحجاز', NULL, NULL, true, false, 'استشهاد', true, 'العباسيون', NULL, 'قائد الثورة', NULL, 'male', 'ثائر ضد العباسيين', NULL, 'عالم', NULL, 'مُحَمَّد النَّفْسُ الزَّكِيَّة'),
                 (70, 'القَاسِمُ', 'بْنُ مُحَمَّدٍ', NULL, NULL, 69, NULL, '1035-01-01', NULL, 'المدينة', 'الحجاز', NULL, NULL, true, NULL, NULL, NULL, NULL, NULL, 'راوي حديث', NULL, 'male', 'من رواة الحديث', NULL, 'عالم', NULL, 'القَاسِمُ بن مُحَمَّدٍ'),
                 (71, 'إسْمَاعِيلُ', 'بْنُ القَاسِمِ', NULL, NULL, 70, NULL, '1060-01-01', NULL, 'المدينة', 'الحجاز', NULL, NULL, true, NULL, NULL, NULL, NULL, NULL, 'مقاوم للعباسيين', NULL, 'male', 'من المعارضين للعباسيين', NULL, 'عالم', NULL, 'إسْمَاعِيلُ بن القَاسِمِ'),
